@@ -1,0 +1,31 @@
+version: '3'
+services:
+  co-traffic:
+    build: .
+    container_name: co-traffic
+    volumes:
+      - .:/home/app
+    external_links:
+      - actionmedia
+    ports:
+      - 5000:5000
+    environment:
+      - BRANCH=dev
+      - VIRTUAL_HOST=co-traffic-local.jatun.systems
+    networks:
+      - proxy
+      - database
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+
+networks:
+  database:
+    external: true
+  proxy:
+    external: true
+  default:
+    external:
+      name: actionmedia-network

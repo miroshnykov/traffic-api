@@ -36,12 +36,14 @@
     HOST = localhost
     ENV = development
     PORT = 5000
-    SOCKET_HOST=localhost
-    SOCKET_PORT=3001
+    SOCKET_HOST=http://localhost:3001
     
     AWS_ACCESS_KEY_ID=
     AWS_SECRET_ACCESS_KEY=
     AWS_REGION=us-east-1
+    AWS_DYNAMODB_REGION=us-west-2
+    AWS_DYNAMODB_ENDPOINT=dynamodb.us-west-2.amazonaws.com
+    AWS_DYNAMODB_TABLE_NAME=customOffers-production
    
     OFFERS_RECIPE_PATH=/tmp/co-recipe-traffic/offersRecipe.json.gz
     CAMPAIGNS_RECIPE_PATH=/tmp/co-recipe-traffic/campaignsRecipe.json.gz

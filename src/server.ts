@@ -17,8 +17,19 @@ const app: Application = express();
 let coreThread: CpuInfo[] = cpus();
 import 'dotenv/config';
 import {getOffersFileFromBucket} from "./Crons/offersReceipS3Cron";
-import {redis} from "./redis";
 import {getCampaignsFileFromBucket} from "./Crons/campaignsReceipS3Cron";
+import {sendToAggrOffer} from "./Utils/aggregator";
+import {setSqsDataToRedis} from "./Utils/cache";
+import {redis} from "./redis";
+
+let logBufferOffer: { [index: string]: any } = {}
+
+const addToBufferOffer = (buffer: any, t: number, msg: string) => {
+  if (!buffer[t]) {
+    buffer[t] = [];
+  }
+  buffer[t][buffer[t].length] = msg;
+}
 
 coreThread.length = 1
 
@@ -32,19 +43,14 @@ if (cluster.isMaster) {
 
   // let host = 'http://localhost:3001/'
 
-  const socketHost: any = process.env.SOCKET_HOST
-  const socketPort: any = process.env.SOCKET_PORT
-
-  let host = `http://${socketHost}:${String(socketPort)}`
-  // console.log('socketHost:', host)
-  // console.log('socketPort:', socketPort)
-  const socket = io(host);
+  const socketHost: string = process.env.SOCKET_HOST || ''
+  const socket = io(socketHost);
 
   socket.on('connect', () => {
-    console.log(`Socket connected, host: ${host}`)
+    console.log(`Socket connected, host: ${socketHost}`)
   });
 
-  socket.on('fileSizeOffersCheck', async (offersSize:number) => {
+  socket.on('fileSizeOffersCheck', async (offersSize: number) => {
 
     try {
       consola.warn('Size offers from recipe and from engine is different  ')
@@ -70,9 +76,13 @@ if (cluster.isMaster) {
     }
   })
 
+  socket.on('updRecipe', async (message) => {
+    await setSqsDataToRedis(message)
+  })
+
   const setOffersCheckSize: () => Promise<void> = async () => {
     try {
-      let offerSize:number = Number(await redis.get(`offersSize_`))
+      let offerSize: number = Number(await redis.get(`offersSize_`))
       socket.emit('fileSizeOffersCheck', offerSize)
     } catch (e) {
       consola.error(`setOffersCheckSizeError:`, e)
@@ -89,6 +99,29 @@ if (cluster.isMaster) {
     }
   }
   setInterval(setCampaignsCheckSize, 20000)
+
+  const aggregatorData = async () => {
+
+    let timer = new Date();
+    let t:number = Math.round(timer.getTime() / 1000);
+    if (Object.keys(logBufferOffer).length >= 5) {
+      consola.info('logBufferOffer count:', Object.keys(logBufferOffer).length)
+    }
+    for (const index in logBufferOffer) {
+      if (Number(index) < t - 2) {
+        if (logBufferOffer[index].length === 0) return
+
+        for (const j in logBufferOffer[index]) {
+          let statsData: object = logBufferOffer[index][j]
+          sendToAggrOffer(statsData)
+
+        }
+        delete logBufferOffer[index]
+      }
+    }
+  }
+
+  setInterval(aggregatorData, 200000)
 
   for (let i = 0; i < coreThread.length; i++) {
     cluster.fork()
@@ -109,21 +142,29 @@ if (cluster.isMaster) {
       })
     }
   )
+  cluster.on('message', (worker: Worker, msg): void => {
+    let timer: Date = new Date();
+    let t: number = Math.round(timer.getTime() / 1000);
+    if (msg.type === "clickOffer") {
+      addToBufferOffer(logBufferOffer, t, msg.stats);
+    }
+  })
 
-  if (process.env.NODE_ENV !== 'production') {
-    cluster.on('online', (worker: Worker): void => {
-      if (worker.isConnected()) {
-        console.info(`${chalk.greenBright('worker active pid')}: ${worker.process.pid}`)
-      }
-    })
 
-    cluster.on('exit', (worker: Worker, code: number, signal: string): void => {
-      if (worker.isDead()) {
-        console.info(`${chalk.redBright('worker dead pid')}: ${worker.process.pid}`)
-      }
-      cluster.fork()
-    })
-  }
+  // if (process.env.NODE_ENV !== 'production') {
+  cluster.on('online', (worker: Worker): void => {
+    if (worker.isConnected()) {
+      console.info(`${chalk.greenBright('worker active pid')}: ${worker.process.pid}`)
+    }
+  })
+
+  cluster.on('exit', (worker: Worker, code: number, signal: string): void => {
+    if (worker.isDead()) {
+      console.info(`${chalk.redBright('worker dead pid')}: ${worker.process.pid}`)
+    }
+    cluster.fork()
+  })
+  // }
   if (process.env.ENV === 'development') {
     // setInterval(setOffersToRedis, 60000) // 60000 -> 60 sec
 

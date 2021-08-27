@@ -13,7 +13,7 @@ export class OffersController extends BaseController {
 
   public async read(req: Request, res: Response, next: NextFunction): Promise<any> {
     let responseOffer: IResOffer = await offersServices(req)
-    consola.info('responseOffer:', responseOffer)
+    // consola.info('responseOffer:', responseOffer)
     // consola.info(req.query)
     if (!responseOffer.success) {
       res.status(400).json({

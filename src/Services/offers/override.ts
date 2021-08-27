@@ -6,19 +6,20 @@ import {createLidOffer} from "../../Utils/dynamoDb"
 
 export const override = async (params: any, offerIdRedirectExitTraffic: number) => {
 
-  let offerExitTrafficInfo: any = await getOffer(offerIdRedirectExitTraffic)
+  const offerExitTraffic: any = await getOffer(offerIdRedirectExitTraffic)
+  const offerExitTrafficInfo: any = JSON.parse(offerExitTraffic)
 
   try {
-    params.referredAdvertiserId = params.offerInfo.advertiserId || 0
-    params.referredAdvertiserName = params.offerInfo.advertiserName || 0
-    params.referredConversionType = params.offerInfo.conversionType || 0
-    params.referredIsCpmOptionEnabled = params.offerInfo.isCpmOptionEnabled || 0
-    params.referredOfferId = params.offerInfo.offerId || 0
-    params.referredVerticalId = params.offerInfo.verticalId || 0
-    params.referredVerticalName = params.offerInfo.verticalName || 0
+    params.referredAdvertiserId = params.offerInfo?.advertiserId || 0
+    params.referredAdvertiserName = params.offerInfo?.advertiserName || 0
+    params.referredConversionType = params.offerInfo?.conversionType || 0
+    params.referredIsCpmOptionEnabled = params.offerInfo?.isCpmOptionEnabled || 0
+    params.referredOfferId = params.offerInfo?.offerId || 0
+    params.referredVerticalId = params.offerInfo?.verticalId || 0
+    params.referredVerticalName = params.offerInfo?.verticalName || 0
 
-    params.landingPageUrlOrigin = params.offerInfo.landingPageUrl || 0
-    params.offerIdRedirectExitTraffic = params.offerInfo.offerIdRedirectExitTraffic || 0
+    params.landingPageUrlOrigin = params.offerInfo?.landingPageUrl
+    params.offerIdRedirectExitTraffic = params.offerInfo?.offerIdRedirectExitTraffic || 0
 
     params.landingPageUrl = offerExitTrafficInfo?.landingPageUrl || exitTrafficDefaultUrl
     params.advertiserId = offerExitTrafficInfo?.advertiserId || 0

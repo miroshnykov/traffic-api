@@ -8,8 +8,8 @@ export class RecipeOffersController extends BaseController {
   public async read(req: Request, res: Response, next: NextFunction): Promise<any> {
     const offerId: number = +req.query.offerId! || 0
     let responseOffer = await recipeOffersServices(offerId)
-    consola.info('responseOffer:', responseOffer)
-    consola.info(req.query)
+    // consola.info('responseOffer:', responseOffer)
+    // consola.info(req.query)
 
     if (req.query.debug !== 'debug') {
       res.status(400).json({

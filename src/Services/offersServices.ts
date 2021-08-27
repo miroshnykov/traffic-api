@@ -9,6 +9,11 @@ import {decrypt} from "../Utils/decrypt";
 import {createLidOffer} from "../Utils/dynamoDb"
 import {offersDefaultRedirection} from "./offers/defaultRedirection"
 import {offerAggregatedCalculations} from "./offers/offersAggregated"
+import {offersStartEndDateSetupCalculations} from "./offers/restrictions/offersStartEndDateSetup"
+import {offersGeoRestrictions} from "./offers/restrictions/offersGeoRestrictions"
+import {offersCustomLpRules} from "./offers/restrictions/offersCustomLpRules"
+import {capsChecking} from "./offers/caps/capsSetup"
+import {campaignsTargetRules} from "./campaigns/restrictions/targetRules"
 import {v4} from "uuid"
 
 interface IGeo {
@@ -23,7 +28,6 @@ interface IGeo {
 export const offersServices = async (req: Request) => {
   try {
     let params = await getParams(req)
-    let calculations = {}
     if (params.offerInfo.type === 'aggregated') {
       // http://localhost:5000/offer?ad=f9c57171977587f093370d3289ae6ad9:0ee91f0de08ae5099a1efc0e22933b549cca6ce96d3ec39123963fad79e4b5500b5fa843459a83796d951daae99bfab0&debug=debug
       const offerAggregatedRes = await offerAggregatedCalculations(params)
@@ -35,8 +39,59 @@ export const offersServices = async (req: Request) => {
       }
     }
 
-    //caps
+    if (params.offerInfo.startEndDateSetup) {
+      const offersStartEndDateSetupRes = await offersStartEndDateSetupCalculations(params)
+      if (offersStartEndDateSetupRes) {
+        return {
+          success: true,
+          data: params
+        }
+      }
+    }
+
+    if (params.offerInfo.geoRules) {
+      const offersGeoRestrictionsRes = await offersGeoRestrictions(params)
+      if (offersGeoRestrictionsRes) {
+        return {
+          success: true,
+          data: params
+        }
+      }
+
+    }
+
+    if (params.offerInfo.customLpRules) {
+      const offersCustomLpRulesRes = await offersCustomLpRules(params)
+      if (offersCustomLpRulesRes) {
+        return {
+          success: true,
+          data: params
+        }
+      }
+
+    }
     // http://localhost:5000/offer?ad=44669c38ea032aa63b94b904804131c8:2aad25bba4a84235956c7d8884fc53b85f9f5c3f3468544ae69880a225115c5dc9822ae051f70559d674a439ca272cac&debug=debug
+    if (params.offerInfo.capSetup) {
+      let capsCheckingRes = await capsChecking(params)
+      if (capsCheckingRes) {
+        return {
+          success: true,
+          data: params
+        }
+      }
+
+    }
+
+    if (params.campaignInfo.targetRules) {
+      let campaignsTargetRulesRes = await campaignsTargetRules(params)
+      if (campaignsTargetRulesRes) {
+        return {
+          success: true,
+          data: params
+        }
+      }
+    }
+
     let resOffer = await offersDefaultRedirection(params)
 
     return {

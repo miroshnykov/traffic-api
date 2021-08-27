@@ -36,8 +36,7 @@
     HOST = localhost
     ENV = development
     PORT = 5000
-    SOCKET_HOST=localhost
-    SOCKET_PORT=3001
+    SOCKET_HOST=http://localhost:3001
     
     AWS_ACCESS_KEY_ID=
     AWS_SECRET_ACCESS_KEY=

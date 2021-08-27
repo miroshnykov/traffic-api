@@ -7,23 +7,27 @@ dotenv.config();
 
 export const createLidOffer = async (lidInfo: any) => {
   try {
+    // const dynamoDbConf = {
+    //   region: process.env.AWS_DYNAMODB_REGION,
+    //   endpoint: process.env.AWS_DYNAMODB_ENDPOINT,
+    //   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    //   tableName: process.env.AWS_DYNAMODB_TABLE_NAME,
+    // }
+
     const dynamoDbConf = {
       region: process.env.AWS_DYNAMODB_REGION,
-      endpoint: process.env.AWS_DYNAMODB_ENDPOINT,
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      tableName: process.env.AWS_DYNAMODB_TABLE_NAME,
     }
 
     const ddbClient = new DynamoDBClient(dynamoDbConf);
     let YearPlusOne = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
     lidInfo['ttl'] = YearPlusOne.getTime()
 
-    for (const key in lidInfo) {
-      if (!lidInfo[key]) {
-        delete lidInfo[key]
-      }
-    }
+    // for (const key in lidInfo) {
+    //   if (!lidInfo[key]) {
+    //     delete lidInfo[key]
+    //   }
+    // }
     let stats = redshiftOffer(lidInfo)
 
     // @ts-ignore

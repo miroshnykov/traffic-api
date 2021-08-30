@@ -171,6 +171,8 @@ const getParams = async (req: Request) => {
     const advertiserId: number = offerInfo.advertiserId
     const advertiserName: string = offerInfo.advertiserName
     const advertiserManagerId: number = offerInfo.advertiserManagerId
+    const payin: number = offerInfo.payin
+    const payout: number = offerInfo.payout
 
     return {
       offerId,
@@ -183,6 +185,8 @@ const getParams = async (req: Request) => {
       conversionType,
       landingPageId,
       landingPageUrl,
+      payin,
+      payout,
       verticalId,
       verticalName,
       advertiserId,

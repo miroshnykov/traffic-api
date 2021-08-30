@@ -6,6 +6,8 @@ export const lidOffer = (params:any) => (
     'device': params.deviceType || null,
     'domain': params.adDomain || null,
     'campaignId': +params.campaignId || null,
+    'payin': params.payin || null,
+    'payout': params.payout || null,
     'advertiserId': params.advertiserId || null,
     'advertiserManagerId': params.advertiserManagerId || null,
     'advertiserName': params.advertiserName || null,

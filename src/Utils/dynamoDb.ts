@@ -59,6 +59,7 @@ const redshiftOffer = (lidObj: any) => (
     'payout': lidObj.payout || 0,
     'geo': lidObj.country || '',
     'cap_override_offer_id': lidObj.capOverrideOfferId || 0,
+    'is_cpm_option_enabled': lidObj.isCpmOptionEnabled || null,
     'landing_page_id_origin': 0,
     'landing_page_url_origin': lidObj.landingPageUrlOrigin || 0,
     'advertiser_id': +lidObj.advertiserId || '',

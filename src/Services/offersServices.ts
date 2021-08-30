@@ -173,6 +173,7 @@ const getParams = async (req: Request) => {
     const advertiserManagerId: number = offerInfo.advertiserManagerId
     const payin: number = offerInfo.payin
     const payout: number = offerInfo.payout
+    const isCpmOptionEnabled: boolean = offerInfo.isCpmOptionEnabled
 
     return {
       offerId,
@@ -187,6 +188,7 @@ const getParams = async (req: Request) => {
       landingPageUrl,
       payin,
       payout,
+      isCpmOptionEnabled,
       verticalId,
       verticalName,
       advertiserId,

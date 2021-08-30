@@ -103,7 +103,7 @@ if (cluster.isMaster) {
   const aggregatorData = async () => {
 
     let timer = new Date();
-    let t:number = Math.round(timer.getTime() / 1000);
+    let t: number = Math.round(timer.getTime() / 1000);
     if (Object.keys(logBufferOffer).length >= 5) {
       consola.info('logBufferOffer count:', Object.keys(logBufferOffer).length)
     }
@@ -113,7 +113,7 @@ if (cluster.isMaster) {
 
         for (const j in logBufferOffer[index]) {
           let statsData: object = logBufferOffer[index][j]
-          sendToAggrOffer(statsData)
+          await sendToAggrOffer(statsData)
 
         }
         delete logBufferOffer[index]
@@ -121,7 +121,7 @@ if (cluster.isMaster) {
     }
   }
 
-  setInterval(aggregatorData, 200000)
+  setInterval(aggregatorData, 20000) // 20 sec
 
   for (let i = 0; i < coreThread.length; i++) {
     cluster.fork()

@@ -66,7 +66,7 @@ const redshiftOffer = (lidObj: any) => (
     'advertiser_manager_id': +lidObj.advertiserManagerId || '',
     'affiliate_manager_id': +lidObj.affiliateManagerId || '',
     'referred_advertiser_id': +lidObj.referredAdvertiserId || 0,
-    'referred_conversion_type': lidObj.referredAdvertiserName || '',
+    'referred_conversion_type': lidObj.referredConversionType || '',
     'referred_is_cpm_option_enabled': lidObj.referredIsCpmOptionEnabled || null,
     'referred_offer_id': +lidObj.referredOfferId || 0,
     'referred_vertical_id': +lidObj.referredVerticalId || 0,

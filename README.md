@@ -29,7 +29,8 @@
     create folder on local env /tmp/co-recipe-traffic
     download maxmind DB to folder /usr/share/GeoIP/GeoIP2-City.mmdb /usr/share/GeoIP/GeoIP2-ISP.mmdb
     npm run dev
-
+## ex link
+    http://localhost:5000/offer?ad=44669c38ea032aa63b94b904804131c8:2aad25bba4a84235956c7d8884fc53b85f9f5c3f3468544ae69880a225115c5dc9822ae051f70559d674a439ca272cac&debug=debug
 ## build
     npm run build
 ## env example

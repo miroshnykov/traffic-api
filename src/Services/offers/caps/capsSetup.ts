@@ -26,7 +26,7 @@ export const capsChecking = async (params: any) => {
       params.referredAdvertiserId = referredOfferInfo?.advertiserId || null
       params.referredAdvertiserName = referredOfferInfo?.advertiserName || null
       params.referredConversionType = referredOfferInfo?.conversionType || null
-      params.referredIsCpmOptionEnabled = referredOfferInfo?.isCpmOptionEnabled || null
+      params.referredIsCpmOptionEnabled = referredOfferInfo?.isCpmOptionEnabled || 0
       params.referredOfferId = referredOfferInfo?.offerId || null
       params.referredVerticalId = referredOfferInfo?.verticalId || null
       params.referredVerticalName = referredOfferInfo?.verticalName || null

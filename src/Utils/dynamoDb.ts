@@ -25,6 +25,9 @@ export const createLidOffer = async (lidInfo: any) => {
 
     // for (const key in lidInfo) {
     //   if (!lidInfo[key]) {
+    //     if (key === 'isCpmOptionEnabled' || key === 'referredIsCpmOptionEnabled') {
+    //       continue
+    //     }
     //     delete lidInfo[key]
     //   }
     // }
@@ -59,7 +62,7 @@ const redshiftOffer = (lidObj: any) => (
     'payout': lidObj.payout || 0,
     'geo': lidObj.country || '',
     'cap_override_offer_id': lidObj.capOverrideOfferId || 0,
-    'is_cpm_option_enabled': lidObj.isCpmOptionEnabled || null,
+    'is_cpm_option_enabled': lidObj.isCpmOptionEnabled || 0,
     'landing_page_id_origin': 0,
     'landing_page_url_origin': lidObj.landingPageUrlOrigin || 0,
     'advertiser_id': +lidObj.advertiserId || '',
@@ -67,7 +70,7 @@ const redshiftOffer = (lidObj: any) => (
     'affiliate_manager_id': +lidObj.affiliateManagerId || '',
     'referred_advertiser_id': +lidObj.referredAdvertiserId || 0,
     'referred_conversion_type': lidObj.referredConversionType || '',
-    'referred_is_cpm_option_enabled': lidObj.referredIsCpmOptionEnabled || null,
+    'referred_is_cpm_option_enabled': lidObj.referredIsCpmOptionEnabled || 0,
     'referred_offer_id': +lidObj.referredOfferId || 0,
     'referred_vertical_id': +lidObj.referredVerticalId || 0,
     'verticals': lidObj.verticalId || '',

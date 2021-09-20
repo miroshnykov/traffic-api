@@ -46,8 +46,9 @@ if (cluster.isMaster) {
   const socketHost: string = process.env.SOCKET_HOST || ''
   const socket = io(socketHost);
 
+  // consola.info(`env config:${JSON.stringify(process.env)}`)
   socket.on('connect', () => {
-    console.log(`Socket connected, host: ${socketHost}`)
+    consola.info(`Socket connected, host: ${socketHost}`)
   });
 
   socket.on('fileSizeOffersCheck', async (offersSize: number) => {
@@ -165,17 +166,13 @@ if (cluster.isMaster) {
     cluster.fork()
   })
   // }
-  if (process.env.ENV === 'development') {
-    // setInterval(setOffersToRedis, 60000) // 60000 -> 60 sec
-
-    // setInterval(getOffersFileFromBucket, 6000)
+  if (process.env.NODE_ENV !== 'development') {
     setTimeout(getOffersFileFromBucket, 6000)
     setTimeout(setOffersToRedis, 9000)
 
     // setInterval(setCampaignsToRedis, 60000) // 60000 -> 60 sec
     setTimeout(getCampaignsFileFromBucket, 13000)
     setTimeout(setCampaignsToRedis, 15000)
-
   }
 
 
@@ -184,7 +181,7 @@ if (cluster.isMaster) {
   app.use(loggerMiddleware);
   app.use(bodyParser.json());
   app.get('/health', (req: Request, res: Response, next: NextFunction) => {
-    res.send('done')
+    res.send('Ok')
   });
 
   app.use(routes);
@@ -192,6 +189,6 @@ if (cluster.isMaster) {
   const port: number = parseInt(process.env.PORT || '5000')
 
   server.listen(port, host, (): void => {
-    consola.success(`Server is running on host http://${host}:${port}, env:${process.env.ENV} `)
+    consola.success(`Server is running on host http://${host}:${port}, env:${process.env.NODE_ENV} `)
   })
 }

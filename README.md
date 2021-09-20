@@ -55,3 +55,7 @@
     
     MAXMIND_PATH=/usr/share/GeoIP/GeoIP2-City.mmdb
     MAXMIND_PATH_ISP=/usr/share/GeoIP/GeoIP2-ISP.mmdb
+
+## docker build
+	docker build -t co-traffic .
+   	docker run -it -p 5000:5000 --rm --name co-traffic-  co-traffic

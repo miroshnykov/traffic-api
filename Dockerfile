@@ -1,5 +1,5 @@
-FROM ubuntu:18.04
-ARG node_version=12.16.1
+FROM ubuntu:20.04
+ARG node_version=14.17.6
 
 #COPY tests/run_docker_tests.sh /usr/local/bin/run_docker_tests.sh
 RUN rm -rf /var/lib/apt/lists/*
@@ -15,7 +15,7 @@ RUN apt-get install \
     python -y \
     redis-server
 
-RUN curl --silent --location https://deb.nodesource.com/setup_12.x | bash -
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install --yes nodejs
 
 RUN mkdir /tmp/co-recipe-traffic
@@ -24,7 +24,10 @@ RUN chmod 755 /tmp
 WORKDIR /home/app
 COPY . .
 RUN npm install
-# RUN npm run build
+
+RUN cp /var/run/secrets/environment /home/app/.env || echo "Coldn't copy env from /run/secrets";
+
+RUN npm run build
 EXPOSE 5000
 
 
@@ -36,6 +39,8 @@ ENTRYPOINT redis-server --daemonize yes && if [ "$BRANCH" = "stage1" ] ; then \
         npm run stage1 ; \
     elif [ "$BRANCH" = "stage2" ] ; then \
         npm run stage2 ; \
+    elif [ "$BRANCH" = "dev" ] ; then \
+        npm run dev ; \
     else \
         npm run prod ; \
     fi

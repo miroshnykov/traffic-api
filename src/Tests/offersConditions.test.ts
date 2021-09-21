@@ -1,7 +1,7 @@
-import {offersStartEndDateSetupCalculations} from '../src/Services/offers/restrictions/offersStartEndDateSetup'
+import {offersStartEndDateSetupCalculations} from '../Services/offers/restrictions/offersStartEndDateSetup'
 import consola from "consola";
-import {offersGeoRestrictions} from '../src/Services/offers/restrictions/offersGeoRestrictions'
-import {offersCustomLpRules} from '../src/Services/offers/restrictions/offersCustomLpRules'
+import {offersGeoRestrictions} from '../Services/offers/restrictions/offersGeoRestrictions'
+import {offersCustomLpRules} from '../Services/offers/restrictions/offersCustomLpRules'
 
 let offerInfo = {
   offerId: 5,

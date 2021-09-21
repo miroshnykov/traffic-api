@@ -14,7 +14,7 @@ export const resolveIP = async (req: Request) => {
     const lookupIPR = await maxmind.open<IspResponse>(process.env.MAXMIND_PATH_ISP || '');
     let ip: string = getClientIp(req) || ''
 
-    if (process.env.ENV === 'development') {
+    if (process.env.NODE_ENV === 'development') {
       ip = '199.102.242.155'
     }
     consola.info(`IP address:${ip}`)

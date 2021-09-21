@@ -10,6 +10,9 @@ export const override = async (params: any, offerIdRedirectExitTraffic: number) 
   const offerExitTrafficInfo: any = JSON.parse(offerExitTraffic)
 
   try {
+
+    params.referredPayIn = params.offerInfo?.payin || 0
+    params.referredPayOut = params.offerInfo?.payout || 0
     params.referredAdvertiserId = params.offerInfo?.advertiserId || 0
     params.referredAdvertiserName = params.offerInfo?.advertiserName || 0
     params.referredConversionType = params.offerInfo?.conversionType || 0
@@ -29,6 +32,9 @@ export const override = async (params: any, offerIdRedirectExitTraffic: number) 
     params.offerId = offerExitTrafficInfo?.offerId || 0
     params.verticalId = offerExitTrafficInfo?.verticalId || 0
     params.verticalName = offerExitTrafficInfo?.verticalName || 0
+
+    params.payin = offerExitTrafficInfo && offerExitTrafficInfo?.payin || 0
+    params.payout = offerExitTrafficInfo && offerExitTrafficInfo?.payout || 0
 
     let lidObj = lidOffer(params)
 

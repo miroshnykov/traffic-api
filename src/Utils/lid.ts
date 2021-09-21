@@ -32,6 +32,8 @@ export const lidOffer = (params:any) => (
     'refererDomain': params.refererDomain || null,
     'refererPath': params.referer || null,
     'searchEngine': params.searchEngine || null,
+    'referredPayIn': params.referredPayIn || 0,
+    'referredPayOut': params.referredPayOut || 0,
     'referredAdvertiserId': params.referredAdvertiserId || null,
     'referredAdvertiserName': params.referredAdvertiserName || null,
     'referredConversionType': params.referredConversionType || null,

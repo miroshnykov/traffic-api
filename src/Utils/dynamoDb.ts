@@ -83,6 +83,7 @@ const redshiftOffer = (lidObj: any) => (
     'isp': lidObj.isp || '',
     'date_added': new Date().getTime(),
     'click': 1,
+    'event_type': lidObj.event_type
   }
 )
 

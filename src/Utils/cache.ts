@@ -5,7 +5,7 @@ export const setSqsDataToRedis = async (message: any) => {
 
   consola.info(`got SQS message: ${JSON.stringify(message)} `)
   try {
-    if (message.action === 'insert') {
+    if (message.action === 'updateOrCreate') {
       await redis.set(`${message.type}_${message.id}`, message.body)
 
     }

@@ -23,6 +23,7 @@ export const capsChecking = async (params: any) => {
 
       params.redirectType = params.offerInfo?.redirectType || null
       params.redirectReason = params.offerInfo?.redirectReason || null
+      params.capOverrideOfferId = params.offerInfo?.referredOfferId || null
       params.referredAdvertiserId = referredOfferInfo?.advertiserId || null
       params.referredAdvertiserName = referredOfferInfo?.advertiserName || null
       params.referredConversionType = referredOfferInfo?.conversionType || null

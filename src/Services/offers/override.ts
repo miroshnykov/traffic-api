@@ -21,6 +21,7 @@ export const override = async (params: any, offerIdRedirectExitTraffic: number) 
     params.referredVerticalId = params.offerInfo?.verticalId || 0
     params.referredVerticalName = params.offerInfo?.verticalName || 0
 
+    params.landingPageIdOrigin = params.offerInfo?.landingPageId || 0
     params.landingPageUrlOrigin = params.offerInfo?.landingPageUrl
     params.offerIdRedirectExitTraffic = params.offerInfo?.offerIdRedirectExitTraffic || 0
 

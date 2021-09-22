@@ -41,13 +41,15 @@ export const lidOffer = (params:any) => (
     'referredOfferId': +params.referredOfferId || null,
     'referredVerticalId': +params.referredVerticalId || null,
     'referredVerticalName': params.referredVerticalName || null,
+    'landingPageIdOrigin': params.landingPageIdOrigin || null,
     'landingPageUrlOrigin': params.landingPageUrlOrigin || null,
-    'capOverrideOfferId': +params.capOverrideOfferId || null,
+    'capOverrideOfferId': +params.capOverrideOfferId || 0,
     'offerIdRedirectExitTraffic': params.offerIdRedirectExitTraffic || null,
     'redirectType': params.redirectType || null,
     'redirectReason': params.redirectReason || null,
     'capsType': params.capsType || null,
     'country': params.country || null,
+    'platform': params.platform || null,
     'event_type': 'click',
     '_messageType': 'aggregatorStatSflOffer'
   }

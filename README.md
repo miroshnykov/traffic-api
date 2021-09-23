@@ -22,8 +22,8 @@
     Co-traffic get new record and update local redis 
 
 ## Docker setup
-	docker build -t co-traffic .
-   	docker run -it -p 5000:5000 --rm --name co-traffic-  co-traffic
+   docker build -t co-traffic .
+   docker run -it -p 5000:5000 --rm --name co-traffic-  co-traffic
 
 ## run
     create folder on local env /tmp/co-recipe-traffic
@@ -38,24 +38,24 @@
     ENV = development
     PORT = 5000
     SOCKET_HOST=http://localhost:3001
-    
+
     AWS_ACCESS_KEY_ID=
     AWS_SECRET_ACCESS_KEY=
     AWS_REGION=us-east-1
     AWS_DYNAMODB_REGION=us-west-2
     AWS_DYNAMODB_ENDPOINT=dynamodb.us-west-2.amazonaws.com
     AWS_DYNAMODB_TABLE_NAME=customOffers-production
-   
+
     OFFERS_RECIPE_PATH=/tmp/co-recipe-traffic/offersRecipe.json.gz
     CAMPAIGNS_RECIPE_PATH=/tmp/co-recipe-traffic/campaignsRecipe.json.gz
-    
+
     S3_OFFERS_RECIPE_PATH=offersRecipe.json.gz
     S3_CAMPAIGNS_RECIPE_PATH=campaignsRecipe.json.gz
     S3_BUCKET_NAME=co-recipe-staging
-    
+
     MAXMIND_PATH=/usr/share/GeoIP/GeoIP2-City.mmdb
     MAXMIND_PATH_ISP=/usr/share/GeoIP/GeoIP2-ISP.mmdb
 
 ## docker build
-	docker build -t co-traffic .
-   	docker run -it -p 5000:5000 --rm --name co-traffic-  co-traffic
+   docker build -t co-traffic .
+   docker run -it -p 5000:5000 --rm --name co-traffic-  co-traffic

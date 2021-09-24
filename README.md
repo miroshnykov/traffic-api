@@ -59,4 +59,3 @@
 ## docker build
    docker build -t co-traffic .
    docker run -it -p 5000:5000 --rm --name co-traffic-  co-traffic
-

@@ -79,6 +79,7 @@ const redshiftOffer = (lidObj: any) => (
     'verticals': lidObj.verticalId || '',
     'conversion_type': lidObj.conversionType || '',
     'platform': lidObj.platform || '',
+    'payout_percent': lidObj.payoutPercent || '',
     'device': lidObj.device || '',
     'os': lidObj.os || '',
     'isp': lidObj.isp || '',

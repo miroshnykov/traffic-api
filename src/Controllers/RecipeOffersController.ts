@@ -11,7 +11,7 @@ export class RecipeOffersController extends BaseController {
     // consola.info('responseOffer:', responseOffer)
     // consola.info(req.query)
 
-    if (req.query.debug !== 'debug') {
+    if (req.query.debugging !== 'debugging') {
       res.status(400).json({
         status: 'error',
         error: 'body  empty'

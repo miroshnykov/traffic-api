@@ -24,11 +24,11 @@ interface IGeo {
   ll: Array<string>
 }
 
-// http://localhost:5000/offer?ad=6194f64326946ddc0082fe24b23742fd:4f54afd33b68d65e1bc0db4a28d99cfca323a44d8de9390b53a68b192c2ffc669c7893750d2d049e5696d98f43a172a8&debug=debug
+// http://localhost:5000/ad?offer=6194f64326946ddc0082fe24b23742fd:4f54afd33b68d65e1bc0db4a28d99cfca323a44d8de9390b53a68b192c2ffc669c7893750d2d049e5696d98f43a172a8&debugging=debugging
 
-// http://localhost:5000/offer?ad=3f5517b50e9a5b827e20a5c34f5adf65:6f3812b10a17b668a17fb2b0a4f18043dfd940d71a0d42899a8a2506ddf767d69aee2d22c866f152a0d0105344f9f0a5&debug=debug
+// http://localhost:5000/ad?offer=3f5517b50e9a5b827e20a5c34f5adf65:6f3812b10a17b668a17fb2b0a4f18043dfd940d71a0d42899a8a2506ddf767d69aee2d22c866f152a0d0105344f9f0a5&debugging=debugging
 //
-// http://localhost:5000/offer?ad=953f0918f3c5927377954e0a9feae40d:b067aca287f4fe9991276dd1bfaa9e7ad2defdcbc8cb69d6c9d3153523933762ed2027e4ad6eac3a1a2a8ab1e6d41ef8&debug=debug
+// http://localhost:5000/ad?offer=953f0918f3c5927377954e0a9feae40d:b067aca287f4fe9991276dd1bfaa9e7ad2defdcbc8cb69d6c9d3153523933762ed2027e4ad6eac3a1a2a8ab1e6d41ef8&debugging=debugging
 export const offersServices = async (req: Request) => {
   try {
     let params = await getParams(req)

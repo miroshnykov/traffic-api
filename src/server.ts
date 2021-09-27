@@ -34,7 +34,7 @@ const addToBufferOffer = (buffer: any, t: number, msg: string) => {
 coreThread.length = 1
 
 function loggerMiddleware(request: express.Request, response: express.Response, next: NextFunction) {
-  consola.info(`${request.method} ${request.path}`);
+ // consola.info(`${request.method} ${request.path}`);
   next();
 }
 

@@ -18,7 +18,7 @@ export const createLidOffer = async (lidInfo: any) => {
     const dynamoDbConf = {
       region: process.env.AWS_DYNAMODB_REGION,
     }
-    consola.info('dynamoDbConf:', dynamoDbConf)
+
     const ddbClient = new DynamoDBClient(dynamoDbConf);
     let YearPlusOne = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
     lidInfo['ttl'] = YearPlusOne.getTime()
@@ -47,7 +47,9 @@ export const createLidOffer = async (lidInfo: any) => {
       Item: lidInfo
     }
     const data = await ddbClient.send(new PutCommand(leadParams));
-    consola.info(" Dynamo Db Success res:", JSON.stringify(data));
+    consola.info("AWS_DYNAMODB_TABLE_NAME config:", process.env.AWS_DYNAMODB_TABLE_NAME);
+    consola.info("AWS_DYNAMODB_REGION config:", process.env.AWS_DYNAMODB_REGION);
+    consola.info("Dynamo Db Success res:", JSON.stringify(data));
   } catch (e) {
     consola.error('createLidOfferError:', e)
   }

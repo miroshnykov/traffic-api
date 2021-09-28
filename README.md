@@ -32,7 +32,7 @@
 ## ex link
     http://localhost:5000/ad?offer=44669c38ea032aa63b94b904804131c8:2aad25bba4a84235956c7d8884fc53b85f9f5c3f3468544ae69880a225115c5dc9822ae051f70559d674a439ca272cac&debugging=debugging
     https://co-traffic.jatun.systems/ad?offer=e3afc1dbfa2982b015f6b6fcb3e81fda:02ef3d97347b27d00f5435378160cfec31e292b63dea316ac3dd50c9c53ede65c3cfd206cc3717e60edab20a65de13d6&debugging=debugging
-    
+
 ## build
     npm run build
 ## env example
@@ -61,4 +61,3 @@
 ## docker build
    docker build -t co-traffic .
    docker run -it -p 5000:5000 --rm --name co-traffic-  co-traffic
-

@@ -18,7 +18,7 @@ export const sendToAggrOffer = async (stats: any) => {
 
     let params: object = {
       method: 'POST',
-      url: `sfloffer`,
+      url: `offer`,
       data: {
         key: Base64.encode(JSON.stringify(statsClone)),
         event: eventType,
@@ -28,6 +28,7 @@ export const sendToAggrOffer = async (stats: any) => {
     }
 
     consola.info(`send to aggregator before send, data: ${JSON.stringify(params)}`)
+    consola.info('process.env.AGGREGATOR_API:',process.env.AGGREGATOR_API)
     // @ts-ignore
     const {data} = await aggrRequest(params)
     return data

@@ -24,7 +24,7 @@ export const redirectUrl = async (lp: string, params: any) => {
   if (params.conversionType === 'cpm'
     || (params.conversionType === 'hybrid/multistep' && params.isCpmOptionEnabled)
   ) {
-    await sqsConversionTypeCmpOrHybrid(params)
+    setTimeout(sqsConversionTypeCmpOrHybrid, 30000, params) // 30 sec delay
   }
 
   return urlToRedirect

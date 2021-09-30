@@ -35,7 +35,6 @@ export const offerAggregatedCalculations = async (params:any) => {
         await override(params, bestOfferId)
         params.groupBestOffer = bestOfferId
         params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
-        consola.info(` **** info lid { ${params.lid} } ${JSON.stringify(params.info)}`)
         pass = true
 
       }

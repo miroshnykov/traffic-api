@@ -28,7 +28,7 @@ export const sendToAggrOffer = async (stats: any) => {
     }
 
     consola.info(`send to aggregator before send, data: ${JSON.stringify(params)}`)
-    consola.info('process.env.AGGREGATOR_API:',process.env.AGGREGATOR_API)
+    // consola.info('process.env.AGGREGATOR_API:',process.env.AGGREGATOR_API)
     // @ts-ignore
     const {data} = await aggrRequest(params)
     return data

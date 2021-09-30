@@ -23,17 +23,17 @@ export const createLidOffer = async (lidInfo: any) => {
     let YearPlusOne = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
     lidInfo['ttl'] = YearPlusOne.getTime()
 
-    // for (const key in lidInfo) {
-    //   if (!lidInfo[key]) {
-    //     if (key === 'isCpmOptionEnabled'
-    //       || key === 'referredIsCpmOptionEnabled'
-    //       || key === 'referredPayIn'
-    //       || key === 'referredPayOut') {
-    //       continue
-    //     }
-    //     delete lidInfo[key]
-    //   }
-    // }
+    for (const key in lidInfo) {
+      if (!lidInfo[key]) {
+        if (key === 'isCpmOptionEnabled'
+          || key === 'referredIsCpmOptionEnabled'
+          || key === 'referredPayIn'
+          || key === 'referredPayOut') {
+          continue
+        }
+        delete lidInfo[key]
+      }
+    }
     let stats = redshiftOffer(lidInfo)
 
     // @ts-ignore

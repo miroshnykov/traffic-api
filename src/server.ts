@@ -34,7 +34,7 @@ const addToBufferOffer = (buffer: any, t: number, msg: string) => {
 coreThread.length = 1
 
 function loggerMiddleware(request: express.Request, response: express.Response, next: NextFunction) {
- // consola.info(`${request.method} ${request.path}`);
+  // consola.info(`${request.method} ${request.path}`);
   next();
 }
 
@@ -54,9 +54,7 @@ if (cluster.isMaster) {
   socket.on('fileSizeOffersCheck', async (offersSize: number) => {
 
     try {
-      consola.warn('Size offers from recipe and from engine is different  ')
-      consola.info('GET from recipe fileSizeOffersCheck:', offersSize)
-      consola.info(`Re-download new recipe offers from S3`)
+      consola.warn(`Size offers from recipe and from engine is different, offersSize:${offersSize} Re-download new recipe offers from S3 `)
       setTimeout(getOffersFileFromBucket, 6000)
       setTimeout(setOffersToRedis, 20000)
     } catch (e) {
@@ -67,9 +65,7 @@ if (cluster.isMaster) {
   socket.on('fileSizeCampaignsCheck', async (campaignsSize) => {
 
     try {
-      consola.warn('Size campaigns from recipe and from engine is different  ')
-      consola.info('GET from recipe fileSizeCampaignsCheck:', campaignsSize)
-      consola.info(`Re-download new recipe campaigns from S3`)
+      consola.warn(`Size campaigns from recipe and from engine is different, campaignsSize:${campaignsSize}, Re-download new recipe campaigns from S3  `)
       setTimeout(getCampaignsFileFromBucket, 6000)
       setTimeout(setCampaignsToRedis, 20000)
     } catch (e) {
@@ -166,15 +162,11 @@ if (cluster.isMaster) {
     cluster.fork()
   })
   // }
-  if (process.env.NODE_ENV !== 'development') {
-    setTimeout(getOffersFileFromBucket, 6000)
-    setTimeout(setOffersToRedis, 9000)
+  setTimeout(getOffersFileFromBucket, 6000)
+  setTimeout(setOffersToRedis, 12000)
 
-    // setInterval(setCampaignsToRedis, 60000) // 60000 -> 60 sec
-    setTimeout(getCampaignsFileFromBucket, 13000)
-    setTimeout(setCampaignsToRedis, 15000)
-  }
-
+  setTimeout(getCampaignsFileFromBucket, 13000)
+  setTimeout(setCampaignsToRedis, 20000)
 
 } else {
   const server = http.createServer(app) as Server

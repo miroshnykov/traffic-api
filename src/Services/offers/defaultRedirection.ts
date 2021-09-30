@@ -13,8 +13,8 @@ export const offersDefaultRedirection = async (params: any) => {
     params.lid = lidObj.lid
     params.lidObj = lidObj
     params.redirectUrl = await redirectUrl(params.offerInfo.landingPageUrl, params)
-    consola.info(`Info lid { ${params.lid} }`)
-    // consola.info(`Info lid { ${params.lid} } data ${JSON.stringify(params)}`)
+    // consola.info(`Info lid { ${params.lid} }`)
+
     return params
   } catch (e) {
     consola.error('offersGeoRestrictionsError:', e)

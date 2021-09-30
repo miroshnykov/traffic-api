@@ -36,6 +36,7 @@ export const offersServices = async (req: Request) => {
       // http://localhost:5000/offer?ad=f9c57171977587f093370d3289ae6ad9:0ee91f0de08ae5099a1efc0e22933b549cca6ce96d3ec39123963fad79e4b5500b5fa843459a83796d951daae99bfab0&debug=debug
       const offerAggregatedRes = await offerAggregatedCalculations(params)
       if (offerAggregatedRes) {
+        consola.info(` **** info aggregated lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
           data: params
@@ -46,6 +47,7 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.startEndDateSetup) {
       const offersStartEndDateSetupRes = await offersStartEndDateSetupCalculations(params)
       if (offersStartEndDateSetupRes) {
+        consola.info(` **** info startEndDateSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
           data: params
@@ -56,6 +58,7 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.geoRules) {
       const offersGeoRestrictionsRes = await offersGeoRestrictions(params)
       if (offersGeoRestrictionsRes) {
+        consola.info(` **** info geoRules lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
           data: params
@@ -67,6 +70,7 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.customLpRules) {
       const offersCustomLpRulesRes = await offersCustomLpRules(params)
       if (offersCustomLpRulesRes) {
+        consola.info(` **** info customLpRules lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
           data: params
@@ -78,6 +82,7 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.capSetup) {
       let capsCheckingRes = await capsChecking(params)
       if (capsCheckingRes) {
+        consola.info(` **** info capSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
           data: params
@@ -89,6 +94,7 @@ export const offersServices = async (req: Request) => {
     if (params.campaignInfo.targetRules) {
       let campaignsTargetRulesRes = await campaignsTargetRules(params)
       if (campaignsTargetRulesRes) {
+        consola.info(` **** info targetRules lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
           data: params
@@ -97,7 +103,7 @@ export const offersServices = async (req: Request) => {
     }
 
     let resOffer = await offersDefaultRedirection(params)
-
+    consola.info(`Info default lid { ${params.lid} } data ${JSON.stringify(params)}`)
     return {
       success: true,
       data: resOffer

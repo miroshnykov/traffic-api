@@ -47,8 +47,8 @@ export const createLidOffer = async (lidInfo: any) => {
       Item: lidInfo
     }
     const data = await ddbClient.send(new PutCommand(leadParams));
-    consola.info("AWS_DYNAMODB_TABLE_NAME config:", process.env.AWS_DYNAMODB_TABLE_NAME);
-    consola.info("AWS_DYNAMODB_REGION config:", process.env.AWS_DYNAMODB_REGION);
+    // consola.info("AWS_DYNAMODB_TABLE_NAME config:", process.env.AWS_DYNAMODB_TABLE_NAME);
+    // consola.info("AWS_DYNAMODB_REGION config:", process.env.AWS_DYNAMODB_REGION);
     consola.info("Dynamo Db Success res:", JSON.stringify(data));
   } catch (e) {
     consola.error('createLidOfferError:', e)

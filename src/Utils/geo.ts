@@ -10,8 +10,8 @@ let ipData: CityResponse | null
 let ISP: IspResponse | null
 export const resolveIP = async (req: Request) => {
   try {
-    consola.info('process.env.MAXMIND_PATH:',process.env.MAXMIND_PATH)
-    consola.info('process.env.MAXMIND_PATH_ISP:',process.env.MAXMIND_PATH_ISP)
+    // consola.info('process.env.MAXMIND_PATH:',process.env.MAXMIND_PATH)
+    // consola.info('process.env.MAXMIND_PATH_ISP:',process.env.MAXMIND_PATH_ISP)
     const lookup = await maxmind.open<CityResponse>(process.env.MAXMIND_PATH || '');
     const lookupIPR = await maxmind.open<IspResponse>(process.env.MAXMIND_PATH_ISP || '');
     let ip: string = getClientIp(req) || ''

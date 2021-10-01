@@ -5,7 +5,8 @@ import {redis} from "../redis";
 import consola from "consola";
 
 import * as dotenv from "dotenv";
-
+import os from "os"
+const computerName = os.hostname()
 dotenv.config();
 
 export const setOffersToRedis = async () => {
@@ -16,7 +17,7 @@ export const setOffersToRedis = async () => {
     let stream = fs.createReadStream(file)
     let jsonStream = JSONStream.parse('*')
     stream.pipe(gunzip).pipe(jsonStream)
-    consola.info(`Set offers to Local Redis`)
+    consola.info(`Set offers to Local Redis computerName:${computerName}`)
     jsonStream.on('data', async (item: any) => {
       if (!item.offerId) {
         return

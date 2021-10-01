@@ -4,6 +4,8 @@ import consola from "consola";
 import {getFileSize} from "../Utils/file";
 import {redis} from "../redis";
 import * as dotenv from "dotenv";
+import os from "os"
+const computerName = os.hostname()
 
 dotenv.config();
 AWS.config.update({
@@ -31,7 +33,7 @@ export const getCampaignsFileFromBucket = async () => {
       })
       .on('close', () => {
         getFileSize(tempFileName).then(async size => {
-          consola.success(`file size ${tempFileName} is { ${size} }`);
+          consola.success(`Campaign computer name ${computerName} file size ${tempFileName} is { ${size} }`);
           await redis.set(`campaignsSize_`, size!)
         })
         consola.success(`file from s3:${s3BucketName}/${s3Key}, to  ${tempFileName} was uploaded correctly.`);

@@ -88,7 +88,6 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.capSetup) {
       let capsCheckingRes = await capsChecking(params)
       if (capsCheckingRes) {
-        influxdb(200, 'offer_custom_lp_rules')
         consola.info(` **** info capSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,

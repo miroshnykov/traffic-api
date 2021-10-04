@@ -119,7 +119,7 @@ export const offersServices = async (req: Request) => {
 
   } catch (e) {
     consola.error('Service offer error:', e)
-    influxdb(500, 'offer_ad')
+    influxdb(500, 'offer_ad_error')
     return {
       errors: e
     }

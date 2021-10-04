@@ -20,7 +20,7 @@ export const sendMessageToQueue = async (body: any) => {
 
   let params = {
     MessageBody: JSON.stringify(body),
-    MessageGroupId: 'sfl-engine-group',
+    MessageGroupId: 'co-traffic-group',
     QueueUrl: queueUrl,
   };
 

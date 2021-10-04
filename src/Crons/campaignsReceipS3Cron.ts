@@ -5,6 +5,7 @@ import {getFileSize} from "../Utils/file";
 import {redis} from "../redis";
 import * as dotenv from "dotenv";
 import os from "os"
+import {influxdb} from "../Utils/metrics";
 const computerName = os.hostname()
 
 dotenv.config();
@@ -41,7 +42,8 @@ export const getCampaignsFileFromBucket = async () => {
       });
 
   } catch (error) {
-    console.error('s3 error:', error)
+    influxdb(500, `get_campaigns_file_from_s3_error`)
+    console.error('campaigns s3 error:', error)
   } finally {
 
   }

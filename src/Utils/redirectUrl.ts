@@ -1,6 +1,7 @@
 import url from "url";
 import consola from "consola";
 import {sendMessageToQueue} from "./sqs";
+import {influxdb} from "./metrics";
 
 export const redirectUrl = async (lp: string, params: any) => {
 
@@ -61,6 +62,8 @@ const sqsConversionTypeCmpOrHybrid = async (params: any) => {
 
     consola.info(`Added to SQS Conversion Type Cmp, Body:${JSON.stringify(sendObj)}`)
     let sqsData = await sendMessageToQueue(sendObj)
+
+    influxdb(200, `send_sqs_type_cmp_or_hybrid`)
     params.sendTOSQS = sqsData
     params.sendTOSQSBody = sendObj
     params.sqsUrl = process.env.AWS_SQS_QUEUE_URL || ''

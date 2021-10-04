@@ -2,6 +2,7 @@ import axios from "axios"
 import consola from "consola";
 import * as dotenv from "dotenv";
 import Base64 from "js-base64"
+import {influxdb} from "./metrics";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ export const sendToAggrOffer = async (stats: any) => {
     return data
 
   } catch (e) {
+    influxdb(500, 'send_to_aggregator_error')
     consola.error('sendToAggrOfferError:', e)
   }
 }

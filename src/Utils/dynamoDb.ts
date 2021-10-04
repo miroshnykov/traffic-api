@@ -2,6 +2,7 @@ import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
 import {PutCommand} from "@aws-sdk/lib-dynamodb";
 import * as dotenv from "dotenv";
 import consola from "consola";
+import {influxdb} from "./metrics";
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ export const createLidOffer = async (lidInfo: any) => {
     // consola.info("AWS_DYNAMODB_REGION config:", process.env.AWS_DYNAMODB_REGION);
     consola.info("Dynamo Db Success res:", JSON.stringify(data));
   } catch (e) {
+    influxdb(500, 'create_lid_offer_error')
     consola.error('createLidOfferError:', e)
   }
 }

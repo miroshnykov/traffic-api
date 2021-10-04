@@ -4,6 +4,7 @@ import {Request} from "express";
 import maxmind, {CityResponse, IspResponse} from 'maxmind';
 import {getClientIp} from "request-ip"
 import * as dotenv from "dotenv";
+import {influxdb} from "./metrics";
 
 dotenv.config();
 let ipData: CityResponse | null
@@ -24,6 +25,7 @@ export const resolveIP = async (req: Request) => {
     ISP = lookupIPR.get(ip)
 
   } catch (e) {
+    influxdb(500, 'maxmind_error')
     consola.error(`Maxmind does not work or does not setup properly,`, e)
   } finally {
     return resolveGeo(ipData, ISP)

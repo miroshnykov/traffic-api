@@ -2,6 +2,8 @@ import {Request, Response, NextFunction} from 'express';
 import {BaseController} from './BaseController';
 import {offersServices} from '../Services/offersServices'
 import consola from 'consola'
+import {rangeSpeed} from "../Utils/rangeSpped";
+import {influxdb} from "../Utils/metrics";
 
 interface IResOffer {
   success?: boolean;
@@ -15,11 +17,21 @@ export class OffersController extends BaseController {
     let responseOffer: IResOffer = await offersServices(req)
     // consola.info('responseOffer:', responseOffer)
     // consola.info(req.query)
+
+    let timeCurrent: number = new Date().getTime()
+    responseOffer.data.speedTime = timeCurrent - responseOffer.data.startTime
+    let speedTime = rangeSpeed(responseOffer.data.speedTime)
+    if (speedTime >= 2500) {
+      influxdb(200, `speed_time_more_${speedTime}_ms`)
+    } else {
+      influxdb(200, `speed_time_less_${speedTime}_ms`)
+    }
+
     if (!responseOffer.success) {
       res.status(400).json({
         error: `Recipe is not ready or broken url ${responseOffer.errors.toString()}`,
         data: responseOffer.data,
-        redirect:"defaultRedirect.com"
+        redirect: "defaultRedirect.com"
       })
       return next()
     }
@@ -32,7 +44,7 @@ export class OffersController extends BaseController {
       return next()
     }
 
-    if (responseOffer?.success ) {
+    if (responseOffer?.success) {
       let redirectUrl = responseOffer.data.redirectUrl
       consola.info(`redirect to ${redirectUrl}`)
       res.redirect(redirectUrl)

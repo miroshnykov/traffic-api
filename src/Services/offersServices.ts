@@ -153,7 +153,7 @@ const getParams = async (req: Request) => {
     }
     let offerInfo = JSON.parse(offer!)
     let campaignInfo = JSON.parse(campaign!)
-    let startTime = new Date()
+    let startTime: number = new Date().getTime()
     const deviceDetector = new DeviceDetector();
     const userAgent = req.headers['user-agent'] || ''
     let deviceInfo = deviceDetector.parse(userAgent)

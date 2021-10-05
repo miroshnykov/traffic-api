@@ -11,7 +11,11 @@ import * as _ from "lodash";
 const projectName = process.env.GRAFANA_PROJECT_NAME
 const project = (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') && `${projectName}_staging` || projectName
 const hostname = os.hostname()
-const intervalRequest = 10
+
+enum Interval {
+  INTERVAL_REQUEST = 10,
+  INTERVAL_SYSTEMS = 30000
+}
 
 interface IParam {
   code: number
@@ -40,7 +44,7 @@ export const influxdb = (statusCode: number, route: string) => {
     .time(Date.now(), 'ms')
     .queue()
 
-  if (clientInfluxdb.writeQueueLength >= intervalRequest) {
+  if (clientInfluxdb.writeQueueLength >= Interval.INTERVAL_REQUEST) {
     clientInfluxdb.syncWrite()
       .catch((error: any) => {
         consola.error(error)

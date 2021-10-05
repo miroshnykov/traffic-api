@@ -22,11 +22,12 @@ export class OffersController extends BaseController {
     responseOffer.data.speedTime = timeCurrent - responseOffer.data.startTime
     let speedTime = rangeSpeed(responseOffer.data.speedTime)
     if (speedTime >= 2500) {
-      influxdb(200, `speed_time_more_${speedTime}_ms`)
+      influxdb(200, `speed_time_more_${speedTime}_ms_country_${responseOffer.data.country}`)
     } else {
       influxdb(200, `speed_time_less_${speedTime}_ms`)
     }
 
+    influxdb(200, `country_${responseOffer.data.country}`)
     if (!responseOffer.success) {
       res.status(400).json({
         error: `Recipe is not ready or broken url ${responseOffer.errors.toString()}`,

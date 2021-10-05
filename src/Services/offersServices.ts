@@ -159,10 +159,10 @@ const getParams = async (req: Request) => {
     let deviceInfo = deviceDetector.parse(userAgent)
 
     const deviseType: string = deviceInfo?.device?.type!
-    let browserEngine
-    if ("engine" in deviceInfo?.client!) {
-      browserEngine = deviceInfo?.client?.engine!
-    }
+
+    // @ts-ignore
+    const browserEngine = deviceInfo?.client?.engine || ''
+
     const browserVersion = deviceInfo?.client?.version!
     const offerHash = req.query.offer
     const browser: string = deviceInfo?.client?.name!

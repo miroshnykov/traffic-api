@@ -21,6 +21,7 @@ import {getCampaignsFileFromBucket} from "./Crons/campaignsReceipS3Cron";
 import {sendToAggrOffer} from "./Utils/aggregator";
 import {setSqsDataToRedis} from "./Utils/cache";
 import {redis} from "./redis";
+import {influxdb} from "./Utils/metrics";
 
 let logBufferOffer: { [index: string]: any } = {}
 
@@ -58,6 +59,7 @@ if (cluster.isMaster) {
       setTimeout(getOffersFileFromBucket, 6000)
       setTimeout(setOffersToRedis, 20000)
     } catch (e) {
+      influxdb(500, `file_size_offers_check_error`)
       console.log(`fileSizeOffersInfoError:`, e)
     }
   })
@@ -69,6 +71,7 @@ if (cluster.isMaster) {
       setTimeout(getCampaignsFileFromBucket, 6000)
       setTimeout(setCampaignsToRedis, 20000)
     } catch (e) {
+      influxdb(500, `file_size_campaigns_check_error`)
       console.log(`fileSizeCampaignsInfoError:`, e)
     }
   })
@@ -82,6 +85,7 @@ if (cluster.isMaster) {
       let offerSize: number = Number(await redis.get(`offersSize_`))
       socket.emit('fileSizeOffersCheck', offerSize)
     } catch (e) {
+      influxdb(500, `set_offers_check_size_error`)
       consola.error(`setOffersCheckSizeError:`, e)
     }
   }
@@ -92,6 +96,7 @@ if (cluster.isMaster) {
       let campaignsSize: number = Number(await redis.get(`campaignsSize_`))
       socket.emit('fileSizeCampaignsCheck', campaignsSize)
     } catch (e) {
+      influxdb(500, `set_campaigns_check_size_error`)
       consola.error(`setCampaignsCheckSizeError:`, e)
     }
   }
@@ -157,6 +162,7 @@ if (cluster.isMaster) {
 
   cluster.on('exit', (worker: Worker, code: number, signal: string): void => {
     if (worker.isDead()) {
+      influxdb(500, `worker_dead`)
       console.info(`${chalk.redBright('worker dead pid')}: ${worker.process.pid}`)
     }
     cluster.fork()

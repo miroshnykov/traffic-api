@@ -2,8 +2,8 @@ import consola from "consola";
 
 import AWS from 'aws-sdk'
 import * as dotenv from "dotenv";
-
 dotenv.config();
+import {influxdb} from "./metrics";
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -20,7 +20,7 @@ export const sendMessageToQueue = async (body: any) => {
 
   let params = {
     MessageBody: JSON.stringify(body),
-    MessageGroupId: 'sfl-engine-group',
+    MessageGroupId: 'co-traffic-group',
     QueueUrl: queueUrl,
   };
 
@@ -30,6 +30,7 @@ export const sendMessageToQueue = async (body: any) => {
       return data
     })
     .catch(err => {
+      influxdb(500,'send_message_to_queue_error')
       console.error('Error while send message to the sqs queue', err)
     })
 }

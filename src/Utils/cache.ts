@@ -1,5 +1,6 @@
 import consola from "consola";
 import {redis} from "../redis";
+import {influxdb} from "./metrics";
 
 export const setSqsDataToRedis = async (message: any) => {
 
@@ -13,6 +14,7 @@ export const setSqsDataToRedis = async (message: any) => {
       await redis.del(`${message.type}_${message.id}`)
     }
   } catch (e) {
+    influxdb(500, 'sqs_processing_error')
     consola.error('sqsProcessingError')
   }
 }

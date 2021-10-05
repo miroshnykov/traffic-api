@@ -4,6 +4,7 @@ import {getCampaign} from '../Models/campaignsModel'
 import DeviceDetector from "device-detector-js";
 import * as QueryString from "querystring";
 import {resolveIP} from "../Utils/geo";
+import {influxdb} from "../Utils/metrics";
 import consola from "consola";
 import {decrypt} from "../Utils/decrypt";
 import {createLidOffer} from "../Utils/dynamoDb"
@@ -31,11 +32,13 @@ interface IGeo {
 // http://localhost:5000/ad?offer=953f0918f3c5927377954e0a9feae40d:b067aca287f4fe9991276dd1bfaa9e7ad2defdcbc8cb69d6c9d3153523933762ed2027e4ad6eac3a1a2a8ab1e6d41ef8&debugging=debugging
 export const offersServices = async (req: Request) => {
   try {
+    influxdb(200, 'offers_all_request')
     let params = await getParams(req)
     if (params.offerInfo.type === 'aggregated') {
-      // http://localhost:5000/offer?ad=f9c57171977587f093370d3289ae6ad9:0ee91f0de08ae5099a1efc0e22933b549cca6ce96d3ec39123963fad79e4b5500b5fa843459a83796d951daae99bfab0&debug=debug
+      // http://localhost:5000/ad?offer=f9c57171977587f093370d3289ae6ad9:0ee91f0de08ae5099a1efc0e22933b549cca6ce96d3ec39123963fad79e4b5500b5fa843459a83796d951daae99bfab0&debugging=debugging
       const offerAggregatedRes = await offerAggregatedCalculations(params)
       if (offerAggregatedRes) {
+        influxdb(200, 'offer_aggregated')
         consola.info(` **** info aggregated lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
@@ -47,6 +50,7 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.startEndDateSetup) {
       const offersStartEndDateSetupRes = await offersStartEndDateSetupCalculations(params)
       if (offersStartEndDateSetupRes) {
+        influxdb(200, 'offer_start_end_date_setup')
         consola.info(` **** info startEndDateSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
@@ -58,6 +62,7 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.geoRules) {
       const offersGeoRestrictionsRes = await offersGeoRestrictions(params)
       if (offersGeoRestrictionsRes) {
+        influxdb(200, 'offer_geo_rules')
         consola.info(` **** info geoRules lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
@@ -70,6 +75,7 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.customLpRules) {
       const offersCustomLpRulesRes = await offersCustomLpRules(params)
       if (offersCustomLpRulesRes) {
+        influxdb(200, 'offer_custom_lp_rules')
         consola.info(` **** info customLpRules lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
@@ -94,6 +100,7 @@ export const offersServices = async (req: Request) => {
     if (params.campaignInfo.targetRules) {
       let campaignsTargetRulesRes = await campaignsTargetRules(params)
       if (campaignsTargetRulesRes) {
+        influxdb(200, 'offer_target_rules')
         consola.info(` **** info targetRules lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
@@ -103,6 +110,7 @@ export const offersServices = async (req: Request) => {
     }
 
     let resOffer = await offersDefaultRedirection(params)
+    influxdb(200, 'offer_default_redirection')
     consola.info(`Info default lid { ${params.lid} } data ${JSON.stringify(params)}`)
     return {
       success: true,
@@ -111,6 +119,7 @@ export const offersServices = async (req: Request) => {
 
   } catch (e) {
     consola.error('Service offer error:', e)
+    influxdb(500, 'offer_ad_error')
     return {
       errors: e
     }
@@ -134,10 +143,12 @@ const getParams = async (req: Request) => {
     const {offerId, campaignId} = decodedObj
     let offer = await getOffer(offerId)
     if (!offer) {
+      influxdb(500, `offer_${offerId}_recipe_error`)
       throw Error(`no offerId ${offerId} in recipe`)
     }
     let campaign = await getCampaign(campaignId)
     if (!campaign) {
+      influxdb(500, `campaign_${campaignId}_recipe_error`)
       throw Error(`no campaignId-${campaignId} in recipe`)
     }
     let offerInfo = JSON.parse(offer!)
@@ -227,6 +238,7 @@ const getParams = async (req: Request) => {
     };
 
   } catch (e) {
+    influxdb(500, `get_params_error`)
     consola.error('getParamsError:', e)
     throw Error(e)
   }

@@ -6,6 +6,7 @@ import consola from "consola";
 
 import * as dotenv from "dotenv";
 import os from "os"
+import {influxdb} from "../Utils/metrics";
 const computerName = os.hostname()
 
 dotenv.config();
@@ -28,6 +29,7 @@ export const setCampaignsToRedis = async () => {
     })
 
   } catch (e) {
+    influxdb(500, `set_campaigns_to_redis_error`)
     consola.error('setCampaignsToRedisError:', e)
   }
 

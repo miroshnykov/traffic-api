@@ -3,6 +3,7 @@ import {redirectUrl} from "../../../Utils/redirectUrl"
 import consola from "consola";
 import {lidOffer} from "../../../Utils/lid"
 import {createLidOffer} from "../../../Utils/dynamoDb"
+import {influxdb} from "../../../Utils/metrics";
 
 export const capsChecking = async (params: any) => {
   let pass = false
@@ -41,7 +42,7 @@ export const capsChecking = async (params: any) => {
       params.redirectType = 'capsSalesUnderLimit'
       params.redirectReason = 'useDefaultOfferLandingPage'
     }
-
+    influxdb(200,`offer_cap_${params.redirectType}`)
     let lidObj = lidOffer(params)
     await createLidOffer(lidObj)
     params.lidObj = lidObj

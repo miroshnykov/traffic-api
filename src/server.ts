@@ -8,16 +8,14 @@ import * as bodyParser from 'body-parser';
 // import {offer} from './routing'
 // import {offer} from './Routes/offer'
 import routes from './Routes/index';
-import {setOffersToRedis} from './Crons/offersToRedisCron'
-import {setCampaignsToRedis} from "./Crons/campaignsToRedisCron";
+import {setOffersToRedis, setCampaignsToRedis} from './Crons/setRecipeToRedisCron'
 import {io} from "socket.io-client";
 
 const app: Application = express();
 
 let coreThread: CpuInfo[] = cpus();
 import 'dotenv/config';
-import {getOffersFileFromBucket} from "./Crons/offersReceipS3Cron";
-import {getCampaignsFileFromBucket} from "./Crons/campaignsReceipS3Cron";
+import {getOffersFileFromBucket, getCampaignsFileFromBucket} from "./Crons/getReceipS3Cron";
 import {sendToAggrOffer} from "./Utils/aggregator";
 import {setSqsDataToRedis} from "./Utils/cache";
 import {redis} from "./redis";

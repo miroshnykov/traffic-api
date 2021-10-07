@@ -193,7 +193,7 @@ const getParams = async (req: Request) => {
     const advertiserName: string = offerInfo.advertiserName
     const advertiserManagerId: number = offerInfo.advertiserManagerId
     const payin: number = offerInfo.payin
-    const payout: number = offerInfo.payout
+    const payout: number = campaignInfo.payout && campaignInfo.payout || offerInfo.payout
     const isCpmOptionEnabled: boolean = offerInfo.isCpmOptionEnabled
 
     return {

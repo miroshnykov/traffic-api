@@ -1,10 +1,10 @@
 import {OffersController} from './OffersController';
-import {RecipeOffersController} from './RecipeOffersController';
+import {RecipeController} from './RecipeController';
 
 const offerController = new OffersController();
-const recipeOfferController = new RecipeOffersController();
+const recipeController = new RecipeController();
 
 export {
   offerController,
-  recipeOfferController
+  recipeController
 };

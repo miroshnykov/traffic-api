@@ -28,7 +28,7 @@ RUN npm install
 RUN cp /var/run/secrets/environment /home/app/.env || echo "Coldn't copy env from /run/secrets";
 
 RUN npm run build
-EXPOSE 5000
+EXPOSE 3002
 
 
 # Required to push into different branchs.

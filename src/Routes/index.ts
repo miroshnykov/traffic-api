@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import offersRouter from './offersRoute';
-import recipeOffersRoute from './recipeOffersRoute';
+import recipeRoute from './recipeRoute';
 
 const routes = Router();
 
@@ -11,6 +11,6 @@ routes.use('/ad', offersRouter);
 
 // http://localhost:5000/getRecipeData?debugging=debugging&offerId=35784
 // https://co-traffic.jatun.systems/getRecipeData?debugging=debugging&offerId=35784
-routes.use('/getRecipeData', recipeOffersRoute);
+routes.use('/getRecipeData', recipeRoute);
 
 export default routes;

@@ -10,6 +10,8 @@ import * as bodyParser from 'body-parser';
 import routes from './Routes/index';
 import {setOffersToRedis, setCampaignsToRedis} from './Crons/setRecipeToRedisCron'
 import {io} from "socket.io-client";
+import os from "os"
+const computerName = os.hostname()
 
 const app: Application = express();
 
@@ -54,7 +56,7 @@ if (cluster.isMaster) {
 
     try {
       consola.warn(`Size offers from recipe and from engine is different, offersSize:${offersSize} Re-download new recipe offers from S3, Set offersSize to redis:${offersSize}`)
-      await redis.set(`offersSize_`,offersSize)
+      await redis.set(`offersSize_`, offersSize)
       setTimeout(getOffersFileFromBucket, 6000)
       setTimeout(setOffersToRedis, 20000)
     } catch (e) {
@@ -101,6 +103,13 @@ if (cluster.isMaster) {
     }
   }
   setInterval(setCampaignsCheckSize, 20000)
+
+  const checkRedisSize = async () => {
+    let redisSize: number = await redis.dbsize()
+    influxdb(200, `redis_size_${computerName}_${redisSize}`)
+    // consola.info(`redis_size_${computerName}_${redisSize}`)
+  }
+  setInterval(checkRedisSize, 300000) // 300000 every 5 min
 
   const aggregatorData = async () => {
 

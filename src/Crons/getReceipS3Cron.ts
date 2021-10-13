@@ -34,10 +34,10 @@ export const getOffersFileFromBucket = async () => {
         consola.error('File Stream:', err);
       })
       .on('close', () => {
-        getFileSize(offerTempFileName).then(async size => {
-          consola.success(`Offer computer name ${computerName}, file size ${offerTempFileName} is { ${size} }`);
-          await redis.set(`offersSize_`, size!)
-        })
+        // getFileSize(offerTempFileName).then(async size => {
+        //   consola.success(`Offer computer name ${computerName}, file size ${offerTempFileName} is { ${size} }`);
+        //   // await redis.set(`offersSize_`, size!)
+        // })
         consola.success(`file from s3:${s3BucketName}/${s3Key}, to  ${offerTempFileName} was uploaded correctly.`);
 
       });
@@ -68,10 +68,10 @@ export const getCampaignsFileFromBucket = async () => {
         consola.error('File Stream:', err);
       })
       .on('close', () => {
-        getFileSize(campaignTempFileName).then(async size => {
-          consola.success(`Campaign computer name ${computerName} file size ${campaignTempFileName} is { ${size} }`);
-          await redis.set(`campaignsSize_`, size!)
-        })
+        // getFileSize(campaignTempFileName).then(async size => {
+        //   consola.success(`Campaign computer name ${computerName} file size ${campaignTempFileName} is { ${size} }`);
+        //   await redis.set(`campaignsSize_`, size!)
+        // })
         consola.success(`file from s3:${s3BucketName}/${s3Key}, to  ${campaignTempFileName} was uploaded correctly.`);
 
       });

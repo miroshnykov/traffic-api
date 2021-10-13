@@ -53,7 +53,8 @@ if (cluster.isMaster) {
   socket.on('fileSizeOffersCheck', async (offersSize: number) => {
 
     try {
-      consola.warn(`Size offers from recipe and from engine is different, offersSize:${offersSize} Re-download new recipe offers from S3 `)
+      consola.warn(`Size offers from recipe and from engine is different, offersSize:${offersSize} Re-download new recipe offers from S3, Set offersSize to redis:${offersSize}`)
+      await redis.set(`offersSize_`,offersSize)
       setTimeout(getOffersFileFromBucket, 6000)
       setTimeout(setOffersToRedis, 20000)
     } catch (e) {
@@ -66,6 +67,7 @@ if (cluster.isMaster) {
 
     try {
       consola.warn(`Size campaigns from recipe and from engine is different, campaignsSize:${campaignsSize}, Re-download new recipe campaigns from S3  `)
+      await redis.set(`campaignsSize_`, campaignsSize!)
       setTimeout(getCampaignsFileFromBucket, 6000)
       setTimeout(setCampaignsToRedis, 20000)
     } catch (e) {

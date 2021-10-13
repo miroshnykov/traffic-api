@@ -107,7 +107,7 @@ if (cluster.isMaster) {
   const checkRedisSize = async () => {
     let redisSize: number = await redis.dbsize()
     influxdb(200, `redis_size_${computerName}_${redisSize}`)
-    // consola.info(`redis_size_${computerName}_${redisSize}`)
+    consola.info(`redis_size_${computerName}_${redisSize}`)
   }
   setInterval(checkRedisSize, 300000) // 300000 every 5 min
 

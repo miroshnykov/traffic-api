@@ -1,6 +1,6 @@
 import {IParams} from "../../Interfaces/params";
 
-const exitTrafficDefaultUrl: string = 'https://exitTrafficDefaultUrl.com'
+const exitTrafficDefaultUrl: string = 'https://exitTrafficEmptyUrl___willTakeDefaultUrl.com'
 import consola from "consola";
 import {getOffer} from '../../Models/offersModel'
 import {lidOffer} from "../../Utils/lid"

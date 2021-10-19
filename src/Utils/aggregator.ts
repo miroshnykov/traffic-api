@@ -3,6 +3,7 @@ import consola from "consola";
 import * as dotenv from "dotenv";
 import Base64 from "js-base64"
 import {influxdb} from "./metrics";
+import {IRedshiftData} from "../Interfaces/redshiftData";
 
 dotenv.config();
 
@@ -10,11 +11,11 @@ const aggrRequest = axios.create({
   baseURL: process.env.AGGREGATOR_API,
 })
 
-export const sendToAggrOffer = async (stats: any) => {
+export const sendToAggrOffer = async (stats: IRedshiftData) => {
 
   try {
     let eventType: string = String(stats.event_type)
-    let statsClone: object = Object.assign({}, stats)
+    let statsClone: IRedshiftData = Object.assign({}, stats)
     let timeCurrent: number = new Date().getTime()
 
     let params: object = {

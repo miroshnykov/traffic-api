@@ -23,9 +23,10 @@ import {getParams} from "./params";
 export const offersServices = async (req: Request) => {
   try {
     influxdb(200, 'offers_all_request')
-    let params: IParams = await getParams(req)
+    const params: IParams = await getParams(req)
+
     if (params.offerInfo.type === 'aggregated') {
-      const offerAggregatedRes = await offerAggregatedCalculations(params)
+      const offerAggregatedRes: boolean = await offerAggregatedCalculations(params)
       if (offerAggregatedRes) {
         influxdb(200, 'offer_aggregated')
         consola.info(` **** info aggregated lid { ${params.lid} } ${JSON.stringify(params)}`)
@@ -37,7 +38,7 @@ export const offersServices = async (req: Request) => {
     }
 
     if (params.offerInfo.startEndDateSetup) {
-      const offersStartEndDateSetupRes = await offersStartEndDateSetupCalculations(params)
+      const offersStartEndDateSetupRes: boolean = await offersStartEndDateSetupCalculations(params)
       if (offersStartEndDateSetupRes) {
         influxdb(200, 'offer_start_end_date_setup')
         consola.info(` **** info startEndDateSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
@@ -49,7 +50,7 @@ export const offersServices = async (req: Request) => {
     }
 
     if (params.offerInfo.geoRules) {
-      const offersGeoRestrictionsRes = await offersGeoRestrictions(params)
+      const offersGeoRestrictionsRes: boolean = await offersGeoRestrictions(params)
       if (offersGeoRestrictionsRes) {
         influxdb(200, 'offer_geo_rules')
         consola.info(` **** info geoRules lid { ${params.lid} } ${JSON.stringify(params)}`)
@@ -58,13 +59,12 @@ export const offersServices = async (req: Request) => {
           data: params
         }
       }
-
     }
 
     if (params.offerInfo.customPayOutPerGeo) {
-      const customPayOutPerGeoRes = await customPayOutPerGeo(params)
+      const customPayOutPerGeoRes: boolean = await customPayOutPerGeo(params)
       if (customPayOutPerGeoRes) {
-        influxdb(200, 'custom_pay_put_per_geo')
+        influxdb(200, 'offer_custom_pay_out_per_geo')
         consola.info(` **** info customPayOutPerGeo lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
@@ -74,7 +74,7 @@ export const offersServices = async (req: Request) => {
     }
 
     if (params.offerInfo.customLpRules) {
-      const offersCustomLpRulesRes = await offersCustomLpRules(params)
+      const offersCustomLpRulesRes: boolean = await offersCustomLpRules(params)
       if (offersCustomLpRulesRes) {
         influxdb(200, 'offer_custom_lp_rules')
         consola.info(` **** info customLpRules lid { ${params.lid} } ${JSON.stringify(params)}`)
@@ -83,11 +83,10 @@ export const offersServices = async (req: Request) => {
           data: params
         }
       }
-
     }
-    // http://localhost:5000/offer?ad=44669c38ea032aa63b94b904804131c8:2aad25bba4a84235956c7d8884fc53b85f9f5c3f3468544ae69880a225115c5dc9822ae051f70559d674a439ca272cac&debug=debug
+
     if (params.offerInfo.capSetup) {
-      let capsCheckingRes = await capsChecking(params)
+      let capsCheckingRes: boolean = await capsChecking(params)
       if (capsCheckingRes) {
         consola.info(` **** info capSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
@@ -99,7 +98,7 @@ export const offersServices = async (req: Request) => {
     }
 
     if (params.campaignInfo.targetRules) {
-      let campaignsTargetRulesRes = await campaignsTargetRules(params)
+      let campaignsTargetRulesRes: boolean = await campaignsTargetRules(params)
       if (campaignsTargetRulesRes) {
         influxdb(200, 'offer_target_rules')
         consola.info(` **** info targetRules lid { ${params.lid} } ${JSON.stringify(params)}`)
@@ -110,7 +109,7 @@ export const offersServices = async (req: Request) => {
       }
     }
 
-    let resOffer = await offersDefaultRedirection(params)
+    let resOffer: IParams = await offersDefaultRedirection(params)
     influxdb(200, 'offer_default_redirection')
     consola.info(`Info default lid { ${params.lid} } data ${JSON.stringify(params)}`)
     return {

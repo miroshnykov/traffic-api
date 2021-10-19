@@ -9,7 +9,7 @@ export const offersDefaultRedirection = async (params: IParams) => {
     params.redirectType = 'defaultRedirection'
     params.redirectReason = `defaultRedirection-no-rules`
 
-    let lidObj = lidOffer(params)
+    const lidObj = lidOffer(params)
     await createLidOffer(lidObj)
     params.lid = lidObj.lid
     params.lidObj = lidObj

@@ -59,5 +59,6 @@ export const capsChecking = async (params: IParams) => {
     return pass
   } catch (e) {
     consola.error('capsCheckingError:', e)
+    return false
   }
 }

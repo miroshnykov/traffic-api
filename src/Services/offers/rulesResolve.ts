@@ -1,8 +1,9 @@
 import consola from "consola";
+import {IParams} from "../../Interfaces/params";
 
-export const resolveRules = async (params: any) => {
+export const resolveRules = async (params: IParams) => {
 
-  if (! params.campaignInfo.targetRules) return
+  if (!params.campaignInfo.targetRules) return
   try {
     let findConditions: any = []
     params.campaignInfo.targetRules.forEach((rules: any) => {

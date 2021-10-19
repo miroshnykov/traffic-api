@@ -1,18 +1,21 @@
-import  {geoRestrictions} from "./geoRestrictions"
-import  {customLP} from "./customLp"
+import {geoRestrictions} from "./geoRestrictions"
+import {customLP} from "./customLp"
 import {getOffer} from '../../Models/offersModel'
 import {redirectUrl} from "../../Utils/redirectUrl"
 import {override} from "./override"
 
 import consola from "consola";
+import {IParams} from "../../Interfaces/params";
+import {IOffer} from "../../Interfaces/offers";
 
-export const offerAggregatedCalculations = async (params:any) => {
+export const offerAggregatedCalculations = async (params: IParams) => {
   try {
     let pass = false
     params.groupOffer = true
     // Object.keys(offerInfo.offersAggregatedIds).length
-    if (params.offerInfo.offersAggregatedIds.length !== 0) {
-      let offersAggregatedIds = params.offerInfo.offersAggregatedIds
+
+    if (params.offerInfo?.offersAggregatedIds?.length !== 0) {
+      let offersAggregatedIds = params.offerInfo?.offersAggregatedIds || []
 
       params.offersAggregatedIds = offersAggregatedIds
       let offersAggregatedIdsToRedirect = []
@@ -42,46 +45,46 @@ export const offerAggregatedCalculations = async (params:any) => {
     return pass
 
   } catch (e) {
-    consola.error('offerAggregatedCalculationsError:',e)
+    consola.error('offerAggregatedCalculationsError:', e)
   }
 
 }
-interface IOfferInfo {
-  offerId: number
-  campaignId: number
-}
 
-const checkRestrictionsByOffer = async (offerId:number, params:any) => {
-  let offer = await getOffer(offerId)
-  if (!offer) return
-  let offerInfo:any = JSON.parse(offer)
-  let pass = false
-  if (offerInfo.startEndDateSetup) {
-    if (!offerInfo.startEndDateSetting.dateRangePass) {
+const checkRestrictionsByOffer = async (offerId: number, params: IParams) => {
+  try {
+    let offer = await getOffer(offerId)
+    if (!offer) return
+    let offerInfo: IOffer = JSON.parse(offer)
+    let pass = false
+    if (offerInfo.startEndDateSetup) {
+      if (!offerInfo.startEndDateSetting.dateRangePass) {
+        pass = true
+      }
+    }
+    if (offerInfo.geoRules) {
+      let geoRules = JSON.parse(offerInfo.geoRules)
+      let resolveGeo = await geoRestrictions(params.country, geoRules.geo)
+      if (resolveGeo.length !== 0) {
+        pass = true
+      }
+    }
+
+    if (offerInfo.customLpRules) {
+
+      let customLPRules = JSON.parse(offerInfo.customLpRules)
+      let resolveCustomLP = await customLP(params.country, customLPRules.customLPRules)
+      if (resolveCustomLP.length !== 0) {
+        pass = true
+      }
+    }
+
+    if (offerInfo.capInfo?.capsClicksOverLimit || offerInfo.capInfo?.capsSalesOverLimit) {
       pass = true
     }
-  }
-  if (offerInfo.geoRules) {
-    let geoRules = JSON.parse(offerInfo.geoRules)
-    let resolveGeo = await geoRestrictions(params.country, geoRules.geo)
-    if (resolveGeo.length !== 0) {
-      pass = true
-    }
-  }
 
-  if (offerInfo.customLpRules) {
-
-    let customLPRules = JSON.parse(offerInfo.customLpRules)
-    let resolveCustomLP = await customLP(params.country, customLPRules.customLPRules)
-    if (resolveCustomLP.length !== 0) {
-      pass = true
-    }
+    return pass
+  } catch (e) {
+    consola.error('checkRestrictionsByOffer:', e)
   }
-
-  if (offerInfo.capsClicksOverLimit || offerInfo.capsSalesOverLimit) {
-    pass = true
-  }
-
-  return pass
 
 }

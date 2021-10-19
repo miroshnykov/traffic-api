@@ -1,10 +1,10 @@
 import {override} from "../override"
 import {redirectUrl} from "../../../Utils/redirectUrl"
 import consola from "consola";
+import {IParams} from "../../../Interfaces/params";
 
-export const offersStartEndDateSetupCalculations = async (params:any) => {
+export const offersStartEndDateSetupCalculations = async (params: IParams) => {
   try {
-    params.startEndDateSetup = true
     let pass = false
     if (!params.offerInfo.startEndDateSetting.dateRangePass) {
       params.redirectReason = `Offers not active by date range settings: ${JSON.stringify(params.offerInfo.startEndDateSetting)}`

@@ -2,8 +2,9 @@ import consola from "consola";
 import {redirectUrl} from "../../Utils/redirectUrl"
 import {lidOffer} from "../../Utils/lid"
 import {createLidOffer} from "../../Utils/dynamoDb"
+import {IParams} from "../../Interfaces/params";
 
-export const offersDefaultRedirection = async (params: any) => {
+export const offersDefaultRedirection = async (params: IParams) => {
   try {
     params.redirectType = 'defaultRedirection'
     params.redirectReason = `defaultRedirection-no-rules`

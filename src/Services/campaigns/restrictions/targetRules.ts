@@ -2,8 +2,9 @@ import {override} from "../../offers/override"
 import {redirectUrl} from "../../../Utils/redirectUrl"
 import consola from "consola";
 import {resolveRules} from "../../offers/rulesResolve"
+import {IParams} from "../../../Interfaces/params";
 
-export const campaignsTargetRules = async (params: any) => {
+export const campaignsTargetRules = async (params: IParams) => {
   try {
     let pass = false
     let resolveCampaignRules = await resolveRules(params)
@@ -11,7 +12,7 @@ export const campaignsTargetRules = async (params: any) => {
       params.redirectType = 'campaignTargetRules'
       params.redirectReason = `campaignTargetRules-${JSON.stringify(resolveCampaignRules)}`
 
-      await override(params.offerInfo, params.offerInfo.offerIdRedirectExitTraffic)
+      await override(params, params.offerInfo.offerIdRedirectExitTraffic)
       params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
 
       pass = true

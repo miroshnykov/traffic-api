@@ -1,10 +1,10 @@
-
 import {override} from "../override"
 import {redirectUrl} from "../../../Utils/redirectUrl"
 import consola from "consola";
-import  {geoRestrictions} from "../geoRestrictions"
+import {geoRestrictions} from "../geoRestrictions"
+import {IParams} from "../../../Interfaces/params";
 
-export const offersGeoRestrictions = async (params:any) => {
+export const offersGeoRestrictions = async (params: IParams) => {
   try {
     let pass = false
     let geoRules = JSON.parse(params.offerInfo.geoRules)

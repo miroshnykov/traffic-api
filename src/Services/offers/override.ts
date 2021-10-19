@@ -1,28 +1,31 @@
+import {IParams} from "../../Interfaces/params";
+
 const exitTrafficDefaultUrl: string = 'https://exitTrafficDefaultUrl.com'
 import consola from "consola";
 import {getOffer} from '../../Models/offersModel'
 import {lidOffer} from "../../Utils/lid"
 import {createLidOffer} from "../../Utils/dynamoDb"
+import {IOffer} from "../../Interfaces/offers";
 
-export const override = async (params: any, offerIdRedirectExitTraffic: number) => {
+export const override = async (params: IParams, offerIdRedirectExitTraffic: number) => {
 
   const offerExitTraffic: any = await getOffer(offerIdRedirectExitTraffic)
-  const offerExitTrafficInfo: any = JSON.parse(offerExitTraffic)
+  const offerExitTrafficInfo: IOffer = JSON.parse(offerExitTraffic)
 
   try {
 
-    params.referredPayIn = params.offerInfo?.payin || 0
-    params.referredPayOut = params.offerInfo?.payout || 0
+    params.referredPayIn = Number(params.offerInfo?.payin)
+    params.referredPayOut = Number(params.offerInfo?.payout)
     params.referredAdvertiserId = params.offerInfo?.advertiserId || 0
-    params.referredAdvertiserName = params.offerInfo?.advertiserName || 0
-    params.referredConversionType = params.offerInfo?.conversionType || 0
+    params.referredAdvertiserName = params.offerInfo?.advertiserName || ''
+    params.referredConversionType = params.offerInfo?.conversionType || ''
     params.referredIsCpmOptionEnabled = params.offerInfo?.isCpmOptionEnabled || 0
     params.referredOfferId = params.offerInfo?.offerId || 0
     params.referredVerticalId = params.offerInfo?.verticalId || 0
-    params.referredVerticalName = params.offerInfo?.verticalName || 0
+    params.referredVerticalName = params.offerInfo?.verticalName || ''
 
     params.landingPageIdOrigin = params.offerInfo?.landingPageId || 0
-    params.landingPageUrlOrigin = params.offerInfo?.landingPageUrl
+    params.landingPageUrlOrigin = params.offerInfo?.landingPageUrl || ''
     params.offerIdRedirectExitTraffic = params.offerInfo?.offerIdRedirectExitTraffic || 0
 
     params.landingPageUrl = offerExitTrafficInfo?.landingPageUrl || exitTrafficDefaultUrl
@@ -32,7 +35,7 @@ export const override = async (params: any, offerIdRedirectExitTraffic: number) 
     params.isCpmOptionEnabled = offerExitTrafficInfo?.isCpmOptionEnabled || 0
     params.offerId = offerExitTrafficInfo?.offerId || 0
     params.verticalId = offerExitTrafficInfo?.verticalId || 0
-    params.verticalName = offerExitTrafficInfo?.verticalName || 0
+    params.verticalName = offerExitTrafficInfo?.verticalName || ''
 
     params.payin = offerExitTrafficInfo && offerExitTrafficInfo?.payin || 0
     params.payout = offerExitTrafficInfo && offerExitTrafficInfo?.payout || 0

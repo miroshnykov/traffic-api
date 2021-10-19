@@ -1,10 +1,11 @@
 import consola from "consola";
+import {IGeoRule} from "../../Interfaces/geo";
 
-export const geoRestrictions = async (country:string, geoRules:any) => {
+export const geoRestrictions = async (country: string, geoRules: any) => {
 
   try {
-    let findConditions:any = []
-    geoRules.forEach((rule: any) => {
+    let findConditions: any = []
+    geoRules.forEach((rule: IGeoRule) => {
       let rCountry = resolveCountry(country, rule)
       if (rCountry) {
         findConditions.push(rule)
@@ -14,12 +15,12 @@ export const geoRestrictions = async (country:string, geoRules:any) => {
     return findConditions
 
   } catch (e) {
-    consola.error('geoRestrictionsError:',e)
+    consola.error('geoRestrictionsError:', e)
     return []
   }
 }
 
-const resolveCountry = (country:string, rule:any) => {
+const resolveCountry = (country: string, rule: IGeoRule) => {
   if (country.toString() === rule.country.toString()) {
     if (rule.include) {
       return rule

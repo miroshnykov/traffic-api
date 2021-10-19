@@ -2,8 +2,9 @@ import url from "url";
 import consola from "consola";
 import {sendMessageToQueue} from "./sqs";
 import {influxdb} from "./metrics";
+import {IParams} from "../Interfaces/params";
 
-export const redirectUrl = async (lp: string, params: any) => {
+export const redirectUrl = async (lp: string, params: IParams) => {
 
   lp = lp && lp || 'defaultRedirectUrl.com' + params.redirectType
   let query = url.format({
@@ -31,14 +32,14 @@ export const redirectUrl = async (lp: string, params: any) => {
   return urlToRedirect
 }
 
-const sqsConversionTypeCmpOrHybrid = async (params: any) => {
+const sqsConversionTypeCmpOrHybrid = async (params: IParams) => {
 
   try {
     let conversionTypeBody = {
       lid: params.lid,
       offerId: params.offerInfo.offerId,
       name: params.offerInfo.name,
-      advertiser: params.offerInfo.advertiser,
+      advertiser: params.offerInfo.advertiserId,
       verticals: params.offerInfo.verticalId,
       conversionType: params.offerInfo.conversionType,
       status: params.offerInfo.status,
@@ -64,9 +65,9 @@ const sqsConversionTypeCmpOrHybrid = async (params: any) => {
     let sqsData = await sendMessageToQueue(sendObj)
 
     influxdb(200, `send_sqs_type_cmp_or_hybrid`)
-    params.sendTOSQS = sqsData
-    params.sendTOSQSBody = sendObj
-    params.sqsUrl = process.env.AWS_SQS_QUEUE_URL || ''
+    // params.sendTOSQS = sqsData
+    // params.sendTOSQSBody = sendObj
+    // params.sqsUrl = process.env.AWS_SQS_QUEUE_URL || ''
   } catch (e) {
     consola.error('sqs err:', e)
   }

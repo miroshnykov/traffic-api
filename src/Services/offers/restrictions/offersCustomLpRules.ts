@@ -1,9 +1,10 @@
 import {override} from "../override"
 import {redirectUrl} from "../../../Utils/redirectUrl"
 import consola from "consola";
-import  {customLP} from "../customLp"
+import {customLP} from "../customLp"
+import {IParams} from "../../../Interfaces/params";
 
-export const offersCustomLpRules = async (params:any) => {
+export const offersCustomLpRules = async (params: IParams) => {
   try {
 
     let pass = false
@@ -14,7 +15,7 @@ export const offersCustomLpRules = async (params:any) => {
       params.redirectType = 'customLandingPages'
       params.redirectReason = `customLpRules-${JSON.stringify(resolveCustomLP)}`
 
-      await override(params, params.offerInfo.offerIdRedirectExitTraffic )
+      await override(params, params.offerInfo.offerIdRedirectExitTraffic)
 
       params.redirectUrl = await redirectUrl(resolveCustomLP[0].lpUrl, params)
 

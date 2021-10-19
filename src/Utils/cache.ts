@@ -1,10 +1,10 @@
 import consola from "consola";
 import {redis} from "../redis";
 import {influxdb} from "./metrics";
+import {ISqsMessage} from "../Interfaces/sqsMessage";
 
-export const setSqsDataToRedis = async (message: any) => {
+export const setSqsDataToRedis = async (message: ISqsMessage) => {
 
-  // consola.info(`got SQS message: ${JSON.stringify(message)} `)
   try {
     if (message.action === 'updateOrCreate') {
       await redis.set(`${message.type}_${message.id}`, message.body)

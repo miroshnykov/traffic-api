@@ -1,10 +1,11 @@
 import consola from "consola";
+import {ICustomLP, ICustomLPRules} from "../../Interfaces/customLPRules";
 
 export const customLP = async (country: string, rules: any) => {
 
   try {
     let findConditions: any = []
-    rules.forEach((rule: any) => {
+    rules.forEach((rule: ICustomLP) => {
       let rCountry = resolveCountry(country, rule)
       if (rCountry) {
         findConditions.push(rule)
@@ -19,7 +20,7 @@ export const customLP = async (country: string, rules: any) => {
   }
 }
 
-const resolveCountry = (country: string, rule: any) => {
+const resolveCountry = (country: string, rule: ICustomLP) => {
   if (country.toString() === rule.country.toString()) {
     return rule
   }

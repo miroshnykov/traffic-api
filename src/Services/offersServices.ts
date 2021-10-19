@@ -62,9 +62,14 @@ export const offersServices = async (req: Request) => {
     }
 
     if (params.offerInfo.customPayOutPerGeo) {
-      const customPayOutPerGeoRes = customPayOutPerGeo(params)
+      const customPayOutPerGeoRes = await customPayOutPerGeo(params)
       if (customPayOutPerGeoRes) {
-        consola.info('customPayOutPerGeo pass')
+        influxdb(200, 'custom_pay_put_per_geo')
+        consola.info(` **** info customPayOutPerGeo lid { ${params.lid} } ${JSON.stringify(params)}`)
+        return {
+          success: true,
+          data: params
+        }
       }
     }
 

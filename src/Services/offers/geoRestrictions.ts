@@ -1,7 +1,7 @@
 import consola from "consola";
 import {IGeoRule} from "../../Interfaces/geo";
 
-export const geoRestrictions = async (country: string, geoRules: any) => {
+export const geoRestrictions = async (country: string, geoRules: IGeoRule[]) => {
 
   try {
     let findConditions: any = []

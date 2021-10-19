@@ -3,13 +3,16 @@ import {redirectUrl} from "../../../Utils/redirectUrl"
 import consola from "consola";
 import {customLP} from "../customLp"
 import {IParams} from "../../../Interfaces/params";
+import {ICustomLP} from "../../../Interfaces/customLPRules";
 
 export const offersCustomLpRules = async (params: IParams) => {
   try {
 
     let pass = false
     let customLPRules = JSON.parse(params.offerInfo.customLpRules)
-    let resolveCustomLP = await customLP(params.country, customLPRules.customLPRules)
+
+    let customLPRules_: ICustomLP[] = customLPRules.customLPRules
+    let resolveCustomLP = await customLP(params.country, customLPRules_)
     if (resolveCustomLP.length !== 0) {
 
       params.redirectType = 'customLandingPages'
@@ -26,5 +29,6 @@ export const offersCustomLpRules = async (params: IParams) => {
 
   } catch (e) {
     consola.error('offersCustomLpRulesError:', e)
+    return false
   }
 }

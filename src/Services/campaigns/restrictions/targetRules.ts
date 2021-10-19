@@ -22,5 +22,6 @@ export const campaignsTargetRules = async (params: IParams) => {
 
   } catch (e) {
     consola.error('campaignsTargetRulesError:', e)
+    return false
   }
 }

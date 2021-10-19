@@ -46,6 +46,7 @@ export const offerAggregatedCalculations = async (params: IParams) => {
 
   } catch (e) {
     consola.error('offerAggregatedCalculationsError:', e)
+    return false
   }
 
 }

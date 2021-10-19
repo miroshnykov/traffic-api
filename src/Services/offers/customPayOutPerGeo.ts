@@ -4,11 +4,12 @@ import consola from "consola";
 import {IParams} from "../../Interfaces/params";
 import {lidOffer} from "../../Utils/lid";
 import {createLidOffer} from "../../Utils/dynamoDb";
+import {ICustomPayOutPerGeo} from "../../Interfaces/customPayOutPerGeo";
 
-export const customPayOutPerGeo = async (params:IParams) => {
+export const customPayOutPerGeo = async (params: IParams) => {
   try {
     let pass = false
-    let customPayOutPerGeoData = JSON.parse(params.offerInfo?.customPayOutPerGeo!)
+    let customPayOutPerGeoData: ICustomPayOutPerGeo[] = JSON.parse(params.offerInfo?.customPayOutPerGeo!)
     let checkCustomPerGeo = customPayOutPerGeoData.filter((i: any) => (i.geo === params.country))
     if (checkCustomPerGeo.length > 0) {
       params.customPayOutPerGeo = checkCustomPerGeo[0]
@@ -28,5 +29,6 @@ export const customPayOutPerGeo = async (params:IParams) => {
     return pass
   } catch (e) {
     consola.error('customPayOutPerGeoError:', e)
+    return false
   }
 }

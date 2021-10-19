@@ -22,6 +22,7 @@ import {sendToAggrOffer} from "./Utils/aggregator";
 import {setSqsDataToRedis} from "./Utils/cache";
 import {redis} from "./redis";
 import {influxdb} from "./Utils/metrics";
+import {IRedshiftData} from "./Interfaces/redshiftData";
 
 let logBufferOffer: { [index: string]: any } = {}
 
@@ -123,7 +124,7 @@ if (cluster.isMaster) {
         if (logBufferOffer[index].length === 0) return
 
         for (const j in logBufferOffer[index]) {
-          let statsData: object = logBufferOffer[index][j]
+          let statsData: IRedshiftData = logBufferOffer[index][j]
           await sendToAggrOffer(statsData)
 
         }

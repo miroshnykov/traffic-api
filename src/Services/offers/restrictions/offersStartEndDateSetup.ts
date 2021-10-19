@@ -19,5 +19,6 @@ export const offersStartEndDateSetupCalculations = async (params: IParams) => {
 
   } catch (e) {
     consola.error('offersStartEndDateSetupCalculationsError:', e)
+    return false
   }
 }

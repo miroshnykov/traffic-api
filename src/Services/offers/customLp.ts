@@ -1,7 +1,7 @@
 import consola from "consola";
-import {ICustomLP, ICustomLPRules} from "../../Interfaces/customLPRules";
+import {ICustomLP} from "../../Interfaces/customLPRules";
 
-export const customLP = async (country: string, rules: any) => {
+export const customLP = async (country: string, rules: ICustomLP[]) => {
 
   try {
     let findConditions: any = []

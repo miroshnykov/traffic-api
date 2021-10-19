@@ -1,5 +1,6 @@
-import {IAggregatedOfferList, IOffer} from "./offers"
+import {IOffer} from "./offers"
 import {ICampaign} from "./campaigns";
+import {ICustomPayOutPerGeo} from "./customPayOutPerGeo";
 
 export interface IGeo {
   country: string
@@ -49,7 +50,7 @@ export interface IParams {
   region: string
   offerHash: any
   startTime: number
-  customPayOutPerGeo?: object[]
+  customPayOutPerGeo?: ICustomPayOutPerGeo
   referer?: string | undefined
   redirectReason?: string | undefined
   redirectType?: string | undefined

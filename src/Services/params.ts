@@ -20,24 +20,24 @@ export const getParams = async (req: Request) => {
     const decodedObj: IDecodedUrl = JSON.parse(decodedString!)
     const offerId: number = Number(decodedObj.offerId)
     const campaignId: number = Number(decodedObj.campaignId)
-    let offer = await getOffer(offerId)
+    const offer = await getOffer(offerId)
     if (!offer) {
       influxdb(500, `offer_${offerId}_recipe_error`)
       throw Error(`no offerId ${offerId} in recipe`)
     }
-    let campaign = await getCampaign(campaignId)
+    const campaign = await getCampaign(campaignId)
     if (!campaign) {
       influxdb(500, `campaign_${campaignId}_recipe_error`)
       throw Error(`no campaignId-${campaignId} in recipe`)
     }
-    let offerInfo: IOffer = JSON.parse(offer!)
-    let campaignInfo: ICampaign = JSON.parse(campaign!)
+    const offerInfo: IOffer = JSON.parse(offer!)
+    const campaignInfo: ICampaign = JSON.parse(campaign!)
 
     let startTime: number = new Date().getTime()
 
     const deviceDetector = new DeviceDetector();
     const userAgent = req.headers['user-agent'] || ''
-    let deviceInfo = deviceDetector.parse(userAgent)
+    const deviceInfo = deviceDetector.parse(userAgent)
 
     const deviceType: string = deviceInfo?.device?.type!
 

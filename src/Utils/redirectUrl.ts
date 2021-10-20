@@ -3,10 +3,12 @@ import consola from "consola";
 import {sendMessageToQueue} from "./sqs";
 import {influxdb} from "./metrics";
 import {IParams} from "../Interfaces/params";
+import {ISqsMessage} from "../Interfaces/sqsMessage";
+import {REDIRECT_URLS} from "./defaultRedirectUrls";
 
 export const redirectUrl = async (lp: string, params: IParams) => {
 
-  lp = lp && lp || 'defaultRedirectUrl.com' + params.redirectType
+  lp = lp && lp || REDIRECT_URLS.DEFAULT + params.redirectType
   let query = url.format({
     query: {
       'offer_id': params.offerId || 0,
@@ -52,8 +54,8 @@ const sqsConversionTypeCmpOrHybrid = async (params: IParams) => {
       isCpmOptionEnabled: params.isCpmOptionEnabled
     }
 
-    let sendObj = {
-      _comments: `conversion type ${params.conversionType}`,
+    let sendObj: ISqsMessage = {
+      comments: `conversion type ${params.conversionType}`,
       conversion_type: params.conversionType,
       id: params.offerInfo.offerId,
       action: 'update',

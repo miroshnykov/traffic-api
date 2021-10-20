@@ -33,7 +33,8 @@ export const getParams = async (req: Request) => {
     const offerInfo: IOffer = JSON.parse(offer!)
     const campaignInfo: ICampaign = JSON.parse(campaign!)
 
-    let startTime: number = new Date().getTime()
+    const startTime: number = new Date().getTime()
+    const speedTime: number = 0
 
     const deviceDetector = new DeviceDetector();
     const userAgent = req.headers['user-agent'] || ''
@@ -121,6 +122,7 @@ export const getParams = async (req: Request) => {
       region,
       offerHash,
       startTime,
+      speedTime,
       redirectUrl
     };
 

@@ -4,6 +4,7 @@ import AWS from 'aws-sdk'
 import * as dotenv from "dotenv";
 dotenv.config();
 import {influxdb} from "./metrics";
+import {ISqsMessage} from "../Interfaces/sqsMessage";
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -16,7 +17,7 @@ let sqs = new AWS.SQS()
 const queueUrl: string = process.env.AWS_SQS_QUEUE_URL || ''
 consola.info(`queueUrl:${queueUrl}`)
 
-export const sendMessageToQueue = async (body: any) => {
+export const sendMessageToQueue = async (body: ISqsMessage) => {
 
   let params = {
     MessageBody: JSON.stringify(body),

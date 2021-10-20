@@ -91,6 +91,7 @@ let params = {
   "region": "CA",
   "offerHash": "603debdecf27b405d7d60e2b6e3bd9bf:48ffc642c5f377a2616e053e76bab93a586d215818fc088646ecee9f9086fc207441b5cdb784e04786b9227214b05ef8",
   "startTime": 1634673464210,
+  "speedTime": 1634673464310,
   "redirectUrl": ""
 }
 

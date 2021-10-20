@@ -1,11 +1,11 @@
 import {IParams} from "../../Interfaces/params";
 
-const exitTrafficDefaultUrl: string = 'https://exitTrafficEmptyUrl___willTakeDefaultUrl.com'
 import consola from "consola";
 import {getOffer} from '../../Models/offersModel'
 import {lidOffer} from "../../Utils/lid"
 import {createLidOffer} from "../../Utils/dynamoDb"
 import {IOffer} from "../../Interfaces/offers";
+import {REDIRECT_URLS} from "../../Utils/defaultRedirectUrls";
 
 export const override = async (params: IParams, offerIdRedirectExitTraffic: number) => {
 
@@ -28,7 +28,7 @@ export const override = async (params: IParams, offerIdRedirectExitTraffic: numb
     params.landingPageUrlOrigin = params.offerInfo?.landingPageUrl || ''
     params.offerIdRedirectExitTraffic = params.offerInfo?.offerIdRedirectExitTraffic || 0
 
-    params.landingPageUrl = offerExitTrafficInfo?.landingPageUrl || exitTrafficDefaultUrl
+    params.landingPageUrl = offerExitTrafficInfo?.landingPageUrl || REDIRECT_URLS.EXIT_TRAFFIC
     params.advertiserId = offerExitTrafficInfo?.advertiserId || 0
     params.advertiserName = offerExitTrafficInfo?.advertiserName || ''
     params.conversionType = offerExitTrafficInfo?.conversionType || ''

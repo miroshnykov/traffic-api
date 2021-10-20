@@ -17,12 +17,15 @@ const app: Application = express();
 
 let coreThread: CpuInfo[] = cpus();
 import 'dotenv/config';
-import {getOffersFileFromBucket, getCampaignsFileFromBucket} from "./Crons/getReceipS3Cron";
+import {
+  getFileFromBucket
+} from "./Crons/getReceipS3Cron";
 import {sendToAggrOffer} from "./Utils/aggregator";
 import {setSqsDataToRedis} from "./Utils/cache";
 import {redis} from "./redis";
 import {influxdb} from "./Utils/metrics";
 import {IRedshiftData} from "./Interfaces/redshiftData";
+import {IRecipeType} from "./Interfaces/recipeTypes";
 
 let logBufferOffer: { [index: string]: any } = {}
 
@@ -58,7 +61,7 @@ if (cluster.isMaster) {
     try {
       consola.warn(`Size offers from recipe and from engine is different, offersSize:${offersSize} Re-download new recipe offers from S3, Set offersSize to redis:${offersSize}`)
       await redis.set(`offersSize_`, offersSize)
-      setTimeout(getOffersFileFromBucket, 6000)
+      setTimeout(getFileFromBucket, 6000, IRecipeType.OFFER)
       setTimeout(setOffersToRedis, 20000)
     } catch (e) {
       influxdb(500, `file_size_offers_check_error`)
@@ -71,7 +74,7 @@ if (cluster.isMaster) {
     try {
       consola.warn(`Size campaigns from recipe and from engine is different, campaignsSize:${campaignsSize}, Re-download new recipe campaigns from S3  `)
       await redis.set(`campaignsSize_`, campaignsSize!)
-      setTimeout(getCampaignsFileFromBucket, 6000)
+      setTimeout(getFileFromBucket, 6000, IRecipeType.CAMPAIGN)
       setTimeout(setCampaignsToRedis, 20000)
     } catch (e) {
       influxdb(500, `file_size_campaigns_check_error`)
@@ -178,10 +181,10 @@ if (cluster.isMaster) {
     cluster.fork()
   })
   // }
-  setTimeout(getOffersFileFromBucket, 6000)
+  setTimeout(getFileFromBucket, 6000, IRecipeType.OFFER)
   setTimeout(setOffersToRedis, 12000)
 
-  setTimeout(getCampaignsFileFromBucket, 13000)
+  setTimeout(getFileFromBucket, 13000, IRecipeType.CAMPAIGN)
   setTimeout(setCampaignsToRedis, 20000)
 
 } else {

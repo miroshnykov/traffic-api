@@ -4,10 +4,12 @@ import {offersServices} from '../Services/offersServices'
 import consola from 'consola'
 import {rangeSpeed} from "../Utils/rangeSpped";
 import {influxdb} from "../Utils/metrics";
+import {IParams} from "../Interfaces/params";
+import {REDIRECT_URLS} from "../Utils/defaultRedirectUrls";
 
 interface IResOffer {
   success: boolean;
-  data?: any;
+  data?: IParams;
   errors?: any;
 }
 
@@ -34,7 +36,7 @@ export class OffersController extends BaseController {
       res.status(400).json({
         error: `Recipe is not ready or broken url ${responseOffer.errors.toString()}`,
         data: responseOffer.data,
-        redirect: "defaultRedirect.com"
+        redirect: REDIRECT_URLS.ERRORS || ''
       })
       return next()
     }
@@ -48,7 +50,7 @@ export class OffersController extends BaseController {
     }
 
     if (responseOffer?.success) {
-      let redirectUrl = responseOffer.data.redirectUrl
+      const redirectUrl: string = responseOffer.data?.redirectUrl || REDIRECT_URLS.DEFAULT || ''
       consola.info(`redirect to ${redirectUrl}`)
       res.redirect(redirectUrl)
       return next()

@@ -50,6 +50,7 @@ export interface IParams {
   region: string
   offerHash: any
   startTime: number
+  speedTime: number
   customPayOutPerGeo?: ICustomPayOutPerGeo
   referer?: string | undefined
   redirectReason?: string | undefined

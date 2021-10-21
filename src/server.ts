@@ -113,7 +113,7 @@ if (cluster.isMaster) {
     influxdb(200, `redis_size_${computerName}_${redisSize}`)
     // consola.info(`redis_size_${computerName}_${redisSize}`)
   }
-  // setInterval(checkRedisSize, 600000) // 600000 every 10 min
+  setInterval(checkRedisSize, 600000) // 600000 every 10 min
 
   const aggregatorData = async () => {
 

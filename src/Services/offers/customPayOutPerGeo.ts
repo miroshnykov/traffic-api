@@ -17,6 +17,7 @@ export const customPayOutPerGeo = async (params: IParams) => {
       params.redirectReason = `customPayoutByGeo-${JSON.stringify(checkCustomPerGeo[0])}`
       params.redirectType = 'customPayOutPerGeo'
       params.payout = checkCustomPerGeo[0].payOut
+      params.payin = checkCustomPerGeo[0].payIn
       let lidObj = lidOffer(params)
       await createLidOffer(lidObj)
       params.lid = lidObj.lid

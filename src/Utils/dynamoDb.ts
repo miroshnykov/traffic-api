@@ -39,8 +39,7 @@ export const createLidOffer = async (lidInfo: any) => {
       if (!lidInfo[key]) {
         if (key === 'isCpmOptionEnabled'
           || key === 'referredIsCpmOptionEnabled'
-          || key === 'referredPayIn'
-          || key === 'referredPayOut') {
+        ) {
           continue
         }
         delete lidInfo[key]

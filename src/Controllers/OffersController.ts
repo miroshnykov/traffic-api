@@ -30,6 +30,8 @@ export class OffersController extends BaseController {
         influxdb(200, `speed_time_less_${speedTime}_ms`)
       }
       influxdb(200, `country_${responseOffer.data.country}`)
+      influxdb(200, `offerId_${responseOffer.data.offerId}`)
+      influxdb(200, `campaignId_${responseOffer.data.campaignId}`)
     }
 
     if (!responseOffer.success) {

@@ -6,6 +6,7 @@ import {createLidOffer} from "../../../Utils/dynamoDb"
 import {influxdb} from "../../../Utils/metrics";
 import {IParams} from "../../../Interfaces/params";
 import {IOffer} from "../../../Interfaces/offers";
+import {ICapsType, IRedirectType} from "../../../Interfaces/recipeTypes";
 
 export const capsChecking = async (params: IParams) => {
   let pass = false
@@ -16,9 +17,9 @@ export const capsChecking = async (params: IParams) => {
       && !params.offerInfo?.capInfo?.dateRangePass
     ) {
       params.dateRangeSetUp = ` Caps DATA range setup  but not Pass  capInfo:${JSON.stringify(params.offerInfo.capInfo)}`
-      params.capsType = 'CapsDataRangeNotPass'
-      params.redirectType = 'CapsDataRangeNotPass'
-      params.redirectReason = 'useDefaultOfferLandingPage'
+      params.capsType = ICapsType.CAPS_DATA_RANGE_NOT_PASS
+      params.redirectType = IRedirectType.CAPS_DATA_RANGE_NOT_PASS
+      params.redirectReason = 'capsUseDefaultOfferLandingPage'
     }
 
     if (params.offerInfo?.capInfo?.capsSalesOverLimit
@@ -30,6 +31,7 @@ export const capsChecking = async (params: IParams) => {
 
       params.redirectType = params.offerInfo?.redirectType
       params.redirectReason = params.offerInfo?.redirectReason
+      params.capsType = ICapsType.CAPS_OVER_LIMIT
       params.capOverrideOfferId = params.offerInfo?.referredOfferId
       params.referredAdvertiserId = referredOfferInfo?.advertiserId
       params.referredAdvertiserName = referredOfferInfo?.advertiserName
@@ -42,13 +44,15 @@ export const capsChecking = async (params: IParams) => {
     }
 
     if (params.offerInfo?.capInfo?.capsClicksUnderLimit) {
-      params.redirectType = 'capsClicksUnderLimit'
-      params.redirectReason = 'useDefaultOfferLandingPage'
+      params.capsType = ICapsType.CAPS_UNDER_LIMIT
+      params.redirectType = IRedirectType.CAPS_CLICKS_UNDER_LIMIT
+      params.redirectReason = 'CapsUseDefaultOfferLandingPage'
     }
 
     if (params.offerInfo?.capInfo?.capsSalesUnderLimit) {
-      params.redirectType = 'capsSalesUnderLimit'
-      params.redirectReason = 'useDefaultOfferLandingPage'
+      params.capsType = ICapsType.CAPS_UNDER_LIMIT
+      params.redirectType = IRedirectType.CAPS_SALES_UNDER_LIMIT
+      params.redirectReason = 'CapsUseDefaultOfferLandingPage'
     }
     influxdb(200, `offer_cap_${params.redirectType}`)
     let lidObj = lidOffer(params)

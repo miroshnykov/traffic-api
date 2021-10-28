@@ -1,4 +1,5 @@
 import {ICapInfo} from "./caps"
+import {IRedirectType} from "./recipeTypes";
 
 export interface IAggregatedOfferList {
   aggregatedOfferId: number,
@@ -42,7 +43,7 @@ export interface IOffer {
   landingPageUrlOrigin?: string | undefined
   offerIdOrigin?: number | undefined
   referredOfferId?: number | undefined
-  redirectType?: string | undefined
+  redirectType?: IRedirectType
   redirectReason?: string | undefined
 }
 

@@ -1,6 +1,7 @@
 import {IOffer} from "./offers"
 import {ICampaign} from "./campaigns";
 import {ICustomPayOutPerGeo} from "./customPayOutPerGeo";
+import {ICapsType, IRedirectType} from "./recipeTypes";
 
 export interface IGeo {
   country: string
@@ -54,7 +55,7 @@ export interface IParams {
   customPayOutPerGeo?: ICustomPayOutPerGeo
   referer?: string | undefined
   redirectReason?: string | undefined
-  redirectType?: string | undefined
+  redirectType?: IRedirectType
   redirectUrl: string
   geoRules?: string
   groupOffer?: boolean
@@ -64,7 +65,7 @@ export interface IParams {
   startEndDateSetup?: boolean
   capSetup?: boolean
   dateRangeSetUp?: string
-  capsType?: string
+  capsType?: ICapsType
   capOverrideOfferId?: number
   referredAdvertiserId?: number
   referredAdvertiserName?: string

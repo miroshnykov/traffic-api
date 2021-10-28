@@ -7,6 +7,7 @@ import {override} from "./override"
 import consola from "consola";
 import {IParams} from "../../Interfaces/params";
 import {IOffer} from "../../Interfaces/offers";
+import {IRedirectType} from "../../Interfaces/recipeTypes";
 
 export const offerAggregatedCalculations = async (params: IParams) => {
   try {
@@ -34,7 +35,7 @@ export const offerAggregatedCalculations = async (params: IParams) => {
         let bestOfferId = offersAggregatedIdsToRedirect[0]
 
         params.redirectReason = `Offers Aggregated`
-        params.redirectType = 'OfferAggregatedBestOffer'
+        params.redirectType = IRedirectType.OFFER_AGGREGATED_BEST_OFFER
         await override(params, bestOfferId)
         params.groupBestOffer = bestOfferId
         params.redirectUrl = await redirectUrl(params.landingPageUrl, params)

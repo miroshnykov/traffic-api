@@ -3,10 +3,11 @@ import {redirectUrl} from "../../Utils/redirectUrl"
 import {lidOffer} from "../../Utils/lid"
 import {createLidOffer} from "../../Utils/dynamoDb"
 import {IParams} from "../../Interfaces/params";
+import {IRedirectType} from "../../Interfaces/recipeTypes";
 
 export const offersDefaultRedirection = async (params: IParams) => {
   try {
-    params.redirectType = 'defaultRedirection'
+    params.redirectType = IRedirectType.DEFAULT_REDIRECTION
     params.redirectReason = `defaultRedirection-no-rules`
 
     const lidObj = lidOffer(params)

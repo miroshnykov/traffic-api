@@ -1,7 +1,7 @@
 import {IOffer} from "./offers"
 import {ICampaign} from "./campaigns";
 import {ICustomPayOutPerGeo} from "./customPayOutPerGeo";
-import {ICapsType, IRedirectType} from "./recipeTypes";
+import {IRedirectType} from "./recipeTypes";
 
 export interface IGeo {
   country: string
@@ -65,7 +65,7 @@ export interface IParams {
   startEndDateSetup?: boolean
   capSetup?: boolean
   dateRangeSetUp?: string
-  capsType?: ICapsType
+  capsType?: string
   capOverrideOfferId?: number
   referredAdvertiserId?: number
   referredAdvertiserName?: string

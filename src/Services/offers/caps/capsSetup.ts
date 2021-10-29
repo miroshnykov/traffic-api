@@ -6,7 +6,7 @@ import {createLidOffer} from "../../../Utils/dynamoDb"
 import {influxdb} from "../../../Utils/metrics";
 import {IParams} from "../../../Interfaces/params";
 import {IOffer} from "../../../Interfaces/offers";
-import {ICapsType, IRedirectType} from "../../../Interfaces/recipeTypes";
+import {IRedirectType} from "../../../Interfaces/recipeTypes";
 
 export const capsChecking = async (params: IParams) => {
   let pass = false
@@ -17,21 +17,19 @@ export const capsChecking = async (params: IParams) => {
       && !params.offerInfo?.capInfo?.dateRangePass
     ) {
       params.dateRangeSetUp = ` Caps DATA range setup  but not Pass  capInfo:${JSON.stringify(params.offerInfo.capInfo)}`
-      params.capsType = ICapsType.CAPS_DATA_RANGE_NOT_PASS
       params.redirectType = IRedirectType.CAPS_DATA_RANGE_NOT_PASS
-      params.redirectReason = 'capsUseDefaultOfferLandingPage'
-    }
-
-    if (params.offerInfo?.capInfo?.capsSalesOverLimit
+      params.capsType = params.offerInfo?.capInfo?.capsType!
+      params.redirectReason = 'capsDataRangeNotPass'
+    } else if (
+      params.offerInfo?.capInfo?.capsSalesOverLimit
       || params.offerInfo?.capInfo?.capsClicksOverLimit
     ) {
-
       const referredOffer: any = await getOffer(params.offerInfo?.referredOfferId!)
       const referredOfferInfo: IOffer = JSON.parse(referredOffer)
 
       params.redirectType = params.offerInfo?.redirectType
       params.redirectReason = params.offerInfo?.redirectReason
-      params.capsType = ICapsType.CAPS_OVER_LIMIT
+      params.capsType = params.offerInfo?.capInfo?.capsType!
       params.capOverrideOfferId = params.offerInfo?.referredOfferId
       params.referredAdvertiserId = referredOfferInfo?.advertiserId
       params.referredAdvertiserName = referredOfferInfo?.advertiserName
@@ -41,19 +39,15 @@ export const capsChecking = async (params: IParams) => {
       params.referredVerticalId = referredOfferInfo?.verticalId
       params.referredVerticalName = referredOfferInfo?.verticalName
       params.landingPageUrl = referredOfferInfo?.landingPageUrl
+    } else if (
+      params.offerInfo?.capInfo?.capsSalesUnderLimit
+      || params.offerInfo?.capInfo?.capsClicksUnderLimit
+    ) {
+      params.redirectType = IRedirectType.CAPS_UNDER_LIMIT
+      params.redirectReason = `caps sales or clicks under limit `
+      params.capsType = params.offerInfo?.capInfo?.capsType!
     }
 
-    if (params.offerInfo?.capInfo?.capsClicksUnderLimit) {
-      params.capsType = ICapsType.CAPS_UNDER_LIMIT
-      params.redirectType = IRedirectType.CAPS_CLICKS_UNDER_LIMIT
-      params.redirectReason = 'CapsUseDefaultOfferLandingPage'
-    }
-
-    if (params.offerInfo?.capInfo?.capsSalesUnderLimit) {
-      params.capsType = ICapsType.CAPS_UNDER_LIMIT
-      params.redirectType = IRedirectType.CAPS_SALES_UNDER_LIMIT
-      params.redirectReason = 'CapsUseDefaultOfferLandingPage'
-    }
     influxdb(200, `offer_cap_${params.redirectType}`)
     let lidObj = lidOffer(params)
     await createLidOffer(lidObj)

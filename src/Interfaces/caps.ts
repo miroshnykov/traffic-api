@@ -26,4 +26,5 @@ export interface ICapInfo {
   dateEnd: string | null
   dateRangePass: boolean | null
   dateRangeNotPassDescriptions: string | null
+  capsType: string | null
 }

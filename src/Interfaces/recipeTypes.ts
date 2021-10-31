@@ -19,5 +19,5 @@ export enum IRedirectType {
   CAPS_CAMPAIGNS_OVER_LIMIT = 'capsCampaignsOverLimit',
   CAPS_CAMPAIGNS_DATA_RANGE_NOT_PASS = 'capsCampaignsDataRangeNotPass',
   CAPS_CAMPAIGN_OVER_LIMIT_SALES = 'capsCampaignOverLimitSales',
-  CAPS_CAMPAIGN_UNDER_LIMIT_ClICKS = 'CapsCampaignUnderLimitClicks',
+  CAPS_CAMPAIGN_UNDER_LIMIT_ClICKS = 'capsCampaignUnderLimitClicks',
 }

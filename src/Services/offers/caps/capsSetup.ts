@@ -9,9 +9,7 @@ import {IOffer} from "../../../Interfaces/offers";
 import {IRedirectType} from "../../../Interfaces/recipeTypes";
 
 export const capsChecking = async (params: IParams) => {
-  let pass = false
   try {
-    params.capSetup = true
 
     if (params.offerInfo?.capInfo?.dateRangeSetUp
       && !params.offerInfo?.capInfo?.dateRangePass
@@ -20,7 +18,10 @@ export const capsChecking = async (params: IParams) => {
       params.redirectType = IRedirectType.CAPS_DATA_RANGE_NOT_PASS
       params.capsType = params.offerInfo?.capInfo?.capsType!
       params.redirectReason = 'capsDataRangeNotPass'
-    } else if (
+      return false
+    }
+
+    if (
       params.offerInfo?.capInfo?.capsSalesOverLimit
       || params.offerInfo?.capInfo?.capsClicksOverLimit
     ) {
@@ -53,8 +54,7 @@ export const capsChecking = async (params: IParams) => {
     await createLidOffer(lidObj)
     params.lidObj = lidObj
     params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
-    pass = true
-    return pass
+    return true
   } catch (e) {
     consola.error('capsCheckingError:', e)
     return false

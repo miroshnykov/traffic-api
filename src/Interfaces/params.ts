@@ -63,7 +63,6 @@ export interface IParams {
   offersAggregatedIdsToRedirect?: any
   groupBestOffer?: number
   startEndDateSetup?: boolean
-  capSetup?: boolean
   dateRangeSetUp?: string
   capsType?: string
   capOverrideOfferId?: number

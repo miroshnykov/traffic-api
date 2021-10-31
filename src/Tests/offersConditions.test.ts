@@ -62,6 +62,7 @@ let params = {
     "name": "customLP",
     "offerId": 35896,
     "affiliateId": 5,
+    "capSetup": false,
     "payout": 4,
     "payoutPercent": 1,
     "affiliateManagerId": 2

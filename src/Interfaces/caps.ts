@@ -27,4 +27,5 @@ export interface ICapInfo {
   dateRangePass: boolean | null
   dateRangeNotPassDescriptions: string | null
   capsType: string | null
+  campaignCapsOfferIdRedirect?: number | null
 }

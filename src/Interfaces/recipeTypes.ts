@@ -15,4 +15,9 @@ export enum IRedirectType {
   CUSTOM_PAY_OUT_PER_GEO = 'customPayOutPerGeo',
   CUSTOM_LANDING_PAGES = 'customLandingPages',
   OFFER_GEO_RESTRICTION = 'offerGeoRestriction',
+  CAPS_CAMPAIGNS_UNDER_LIMIT = 'capsCampaignsUnderLimit',
+  CAPS_CAMPAIGNS_OVER_LIMIT = 'capsCampaignsOverLimit',
+  CAPS_CAMPAIGNS_DATA_RANGE_NOT_PASS = 'capsCampaignsDataRangeNotPass',
+  CAPS_CAMPAIGN_OVER_LIMIT_SALES = 'campaignOverLimitSales',
+  CAPS_CAMPAIGN_UNDER_LIMIT_ClICKS = 'campaignUnderLimitClicks',
 }

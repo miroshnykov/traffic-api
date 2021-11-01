@@ -14,10 +14,11 @@ export const capsCampaignChecking = async (params: IParams) => {
     if (params.campaignInfo?.capInfo?.dateRangeSetUp
       && !params.campaignInfo?.capInfo?.dateRangePass
     ) {
-      params.dateRangeSetUp = ` Caps Campaign DATA range setup  but not Pass  capInfo:${JSON.stringify(params.campaignInfo.capInfo)}`
-      params.redirectType = IRedirectType.CAPS_CAMPAIGNS_DATA_RANGE_NOT_PASS
-      params.capsType = params.campaignInfo?.capInfo?.capsType!
+      params.capsResult.dataRange = `caps campaign data range setup  but not Pass  capInfo:${JSON.stringify(params.campaignInfo.capInfo)}`
+      params.redirectType = IRedirectType.CAPS_CAMPAIGN_DATA_RANGE_NOT_PASS
+      params.capsResult.capsType = params.campaignInfo?.capInfo?.capsType!
       params.redirectReason = 'capsCampaignDataRangeNotPass'
+      params.capsResult.info = `campaign dateRangeSetUp=${params.campaignInfo?.capInfo?.dateRangeSetUp}, dateRangePass=${params.campaignInfo?.capInfo?.dateRangePass} `
       return false
     }
 
@@ -28,9 +29,9 @@ export const capsCampaignChecking = async (params: IParams) => {
       const referredOffer: any = await getOffer(params.campaignInfo?.capInfo.campaignCapsOfferIdRedirect!)
       const referredOfferInfo: IOffer = JSON.parse(referredOffer)
 
-      params.redirectType = IRedirectType.CAPS_CAMPAIGNS_OVER_LIMIT
+      params.redirectType = IRedirectType.CAPS_CAMPAIGN_OVER_LIMIT
       params.redirectReason = 'caps campaign over limit sales or clicks '
-      params.capsType = params.campaignInfo?.capInfo?.capsType!
+      params.capsResult.capsType = params.campaignInfo?.capInfo?.capsType!
       // params.capOverrideOfferId = params.campaignInfo?.referredOfferId
       // params.referredAdvertiserId = referredOfferInfo?.advertiserId
       // params.referredAdvertiserName = referredOfferInfo?.advertiserName
@@ -40,6 +41,7 @@ export const capsCampaignChecking = async (params: IParams) => {
       // params.referredVerticalId = referredOfferInfo?.verticalId
       // params.referredVerticalName = referredOfferInfo?.verticalName
       params.landingPageUrl = referredOfferInfo?.landingPageUrl
+      params.capsResult.info = `campaign caps, capsSalesOverLimit=${params.offerInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${params.offerInfo?.capInfo?.capsClicksOverLimit}`
     } else if (
       params.campaignInfo?.capInfo?.capsSalesUnderLimit
       || params.campaignInfo?.capInfo?.capsClicksUnderLimit
@@ -47,10 +49,11 @@ export const capsCampaignChecking = async (params: IParams) => {
       const referredOffer: any = await getOffer(params.offerInfo?.offerIdRedirectExitTraffic!)
       const referredOfferInfo: IOffer = JSON.parse(referredOffer)
 
-      params.redirectType = IRedirectType.CAPS_CAMPAIGNS_UNDER_LIMIT
+      params.redirectType = IRedirectType.CAPS_CAMPAIGN_UNDER_LIMIT
       params.redirectReason = `caps campaigns sales or clicks under limit `
-      params.capsType = params.campaignInfo?.capInfo?.capsType!
+      params.capsResult.capsType = params.campaignInfo?.capInfo?.capsType!
       params.landingPageUrl = referredOfferInfo?.landingPageUrl
+      params.capsResult.info = `campaign caps capsSalesUnderLimit=${params.offerInfo?.capInfo?.capsSalesUnderLimit}, capsClicksUnderLimit=${params.offerInfo?.capInfo?.capsClicksUnderLimit}`
     }
 
     influxdb(200, `offer_cap_campaign_${params.redirectType}`)

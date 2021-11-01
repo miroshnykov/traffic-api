@@ -63,8 +63,6 @@ export interface IParams {
   offersAggregatedIdsToRedirect?: any
   groupBestOffer?: number
   startEndDateSetup?: boolean
-  dateRangeSetUp?: string
-  capsType?: string
   capOverrideOfferId?: number
   referredAdvertiserId?: number
   referredAdvertiserName?: string
@@ -80,6 +78,13 @@ export interface IParams {
   landingPageUrlOrigin?: string
   offerIdRedirectExitTraffic?: number
   eventType?: string
+  capsResult?: ICapsResult | any
+}
+
+export interface ICapsResult {
+  capsType?: string
+  dataRange?: string
+  info?: string
 }
 
 export interface IDecodedUrl {

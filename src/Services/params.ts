@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {decrypt} from "../Utils/decrypt";
-import {IDecodedUrl, IGeo} from "../Interfaces/params";
+import {ICapsResult, IDecodedUrl, IGeo} from "../Interfaces/params";
 import {getOffer} from "../Models/offersModel";
 import {influxdb} from "../Utils/metrics";
 import {getCampaign} from "../Models/campaignsModel";
@@ -80,6 +80,7 @@ export const getParams = async (req: Request) => {
     const payout: number = Number(campaignInfo.payout && campaignInfo.payout || offerInfo.payout)
     const isCpmOptionEnabled: boolean | number = offerInfo.isCpmOptionEnabled
     const redirectUrl: string = ''
+    const capsResult: ICapsResult = {}
 
     return {
       offerId,
@@ -123,7 +124,8 @@ export const getParams = async (req: Request) => {
       offerHash,
       startTime,
       speedTime,
-      redirectUrl
+      redirectUrl,
+      capsResult
     };
 
   } catch (e) {

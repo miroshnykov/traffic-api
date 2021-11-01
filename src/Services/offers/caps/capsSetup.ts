@@ -9,18 +9,20 @@ import {IOffer} from "../../../Interfaces/offers";
 import {IRedirectType} from "../../../Interfaces/recipeTypes";
 
 export const capsChecking = async (params: IParams) => {
-  let pass = false
   try {
-    params.capSetup = true
 
     if (params.offerInfo?.capInfo?.dateRangeSetUp
       && !params.offerInfo?.capInfo?.dateRangePass
     ) {
-      params.dateRangeSetUp = ` Caps DATA range setup  but not Pass  capInfo:${JSON.stringify(params.offerInfo.capInfo)}`
-      params.redirectType = IRedirectType.CAPS_DATA_RANGE_NOT_PASS
-      params.capsType = params.offerInfo?.capInfo?.capsType!
-      params.redirectReason = 'capsDataRangeNotPass'
-    } else if (
+      params.capsResult.dataRange = `caps offer data range setup  but not Pass  capInfo:${JSON.stringify(params.offerInfo.capInfo)}`
+      params.redirectType = IRedirectType.CAPS_OFFER_DATA_RANGE_NOT_PASS
+      params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!
+      params.redirectReason = 'offerCapsDataRangeNotPass'
+      params.capsResult.info =`offer dateRangeSetUp=${params.offerInfo?.capInfo?.dateRangeSetUp}, dateRangePass=${params.offerInfo?.capInfo?.dateRangePass}`
+      return false
+    }
+
+    if (
       params.offerInfo?.capInfo?.capsSalesOverLimit
       || params.offerInfo?.capInfo?.capsClicksOverLimit
     ) {
@@ -29,7 +31,7 @@ export const capsChecking = async (params: IParams) => {
 
       params.redirectType = params.offerInfo?.redirectType
       params.redirectReason = params.offerInfo?.redirectReason
-      params.capsType = params.offerInfo?.capInfo?.capsType!
+      params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!
       params.capOverrideOfferId = params.offerInfo?.referredOfferId
       params.referredAdvertiserId = referredOfferInfo?.advertiserId
       params.referredAdvertiserName = referredOfferInfo?.advertiserName
@@ -39,13 +41,15 @@ export const capsChecking = async (params: IParams) => {
       params.referredVerticalId = referredOfferInfo?.verticalId
       params.referredVerticalName = referredOfferInfo?.verticalName
       params.landingPageUrl = referredOfferInfo?.landingPageUrl
+      params.capsResult.info = `offers caps capsSalesOverLimit=${params.offerInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${params.offerInfo?.capInfo?.capsClicksOverLimit}`
     } else if (
       params.offerInfo?.capInfo?.capsSalesUnderLimit
       || params.offerInfo?.capInfo?.capsClicksUnderLimit
     ) {
-      params.redirectType = IRedirectType.CAPS_UNDER_LIMIT
-      params.redirectReason = `caps sales or clicks under limit `
-      params.capsType = params.offerInfo?.capInfo?.capsType!
+      params.redirectType = IRedirectType.CAPS_OFFER_UNDER_LIMIT
+      params.redirectReason = `offer caps sales or clicks under limit `
+      params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!
+      params.capsResult.info = `offers caps capsSalesUnderLimit=${params.offerInfo?.capInfo?.capsSalesUnderLimit}, capsClicksUnderLimit=${params.offerInfo?.capInfo?.capsClicksUnderLimit}`
     }
 
     influxdb(200, `offer_cap_${params.redirectType}`)
@@ -53,8 +57,7 @@ export const capsChecking = async (params: IParams) => {
     await createLidOffer(lidObj)
     params.lidObj = lidObj
     params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
-    pass = true
-    return pass
+    return true
   } catch (e) {
     consola.error('capsCheckingError:', e)
     return false

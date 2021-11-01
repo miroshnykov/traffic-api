@@ -47,7 +47,7 @@ export const lidOffer = (params: IParams) => (
     'offerIdRedirectExitTraffic': params.offerIdRedirectExitTraffic || null,
     'redirectType': params.redirectType || null,
     'redirectReason': params.redirectReason || null,
-    'capsType': params.capsType || null,
+    'capsType': params?.capsResult?.capsType || null,
     'country': params.country || null,
     'platform': params.platform || null,
     'eventType': 'click',

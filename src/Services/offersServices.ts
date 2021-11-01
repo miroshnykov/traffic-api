@@ -19,6 +19,7 @@ import {v4} from "uuid"
 import {customPayOutPerGeo} from "./offers/customPayOutPerGeo";
 import {IParams} from "../Interfaces/params"
 import {getParams} from "./params";
+import {capsCampaignChecking} from "./campaigns/caps/capsSetup";
 
 export const offersServices = async (req: Request) => {
   try {
@@ -78,6 +79,17 @@ export const offersServices = async (req: Request) => {
       if (offersCustomLpRulesRes) {
         influxdb(200, 'offer_custom_lp_rules')
         consola.info(` **** info customLpRules lid { ${params.lid} } ${JSON.stringify(params)}`)
+        return {
+          success: true,
+          data: params
+        }
+      }
+    }
+
+    if (params.campaignInfo.capSetup) {
+      let capsCheckingRes: boolean = await capsCampaignChecking(params)
+      if (capsCheckingRes) {
+        consola.info(` **** info capCampaignsSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
           data: params

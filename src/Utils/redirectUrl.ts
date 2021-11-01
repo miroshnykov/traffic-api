@@ -14,6 +14,7 @@ export const redirectUrl = async (lp: string, params: IParams) => {
       'offer_id': params.offerId || 0,
       'campaign_id': params.campaignId || 0,
       'lid': params.lid || '',
+      'ap': 2, // network_id (1-Crystads , 2-Ad-Firm )
     }
   })
 

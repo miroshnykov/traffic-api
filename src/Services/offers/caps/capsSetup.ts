@@ -40,6 +40,8 @@ export const capsChecking = async (params: IParams) => {
       params.referredOfferId = referredOfferInfo?.offerId
       params.referredVerticalId = referredOfferInfo?.verticalId
       params.referredVerticalName = referredOfferInfo?.verticalName
+      params.referredPayIn = Number(referredOfferInfo?.payin)
+      params.referredPayOut = Number(referredOfferInfo?.payout)
       params.landingPageUrl = referredOfferInfo?.landingPageUrl
       params.capsResult.info = `offers caps capsSalesOverLimit=${params.offerInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${params.offerInfo?.capInfo?.capsClicksOverLimit}`
     } else if (

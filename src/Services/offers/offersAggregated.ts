@@ -31,8 +31,17 @@ export const offerAggregatedCalculations = async (params: IParams) => {
       params.offersAggregatedIdsToRedirect = offersAggregatedIdsToRedirect
       if (offersAggregatedIdsToRedirect.length !== 0) {
 
-        // Math.floor(Math.random() * (2 + 1));
         let bestOfferId = offersAggregatedIdsToRedirect[0]
+
+        //PH-38
+        const checkMargin = offersAggregatedIds.filter(i => i.aggregatedOfferId === bestOfferId)[0]
+        const checkDuplicateMargin = offersAggregatedIds.filter(i => i.margin === checkMargin.margin)
+
+        if (checkDuplicateMargin.length > 1) {
+          const duplicateMarinIds = checkDuplicateMargin.map(i => i.aggregatedOfferId)
+          const randomId = Math.floor(Math.random() * duplicateMarinIds.length);
+          bestOfferId = duplicateMarinIds[randomId]
+        }
 
         params.redirectReason = `Offers Aggregated`
         params.redirectType = IRedirectType.OFFER_AGGREGATED_BEST_OFFER

@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {decrypt} from "../Utils/decrypt";
-import {ICapsResult, IDecodedUrl, IGeo} from "../Interfaces/params";
+import {IDecodedUrl} from "../Interfaces/params";
 import {getOffer} from "../Models/offersModel";
 import {influxdb} from "../Utils/metrics";
 import {getCampaign} from "../Models/campaignsModel";
@@ -10,6 +10,8 @@ import {v4} from "uuid";
 import consola from "consola";
 import {IOffer} from "../Interfaces/offers";
 import {ICampaign} from "../Interfaces/campaigns";
+import {IGeo} from "../Interfaces/geo";
+import {ICapsResult} from "../Interfaces/caps";
 
 export const getParams = async (req: Request) => {
   try {

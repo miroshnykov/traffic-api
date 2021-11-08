@@ -2,14 +2,7 @@ import {IOffer} from "./offers"
 import {ICampaign} from "./campaigns";
 import {ICustomPayOutPerGeo} from "./customPayOutPerGeo";
 import {IRedirectType} from "./recipeTypes";
-
-export interface IGeo {
-  country: string
-  region: string
-  city: string
-  isp: string
-  ll: Array<string>
-}
+import {ICapsResult} from "./caps";
 
 export interface IParams {
   offerId: number
@@ -79,12 +72,6 @@ export interface IParams {
   offerIdRedirectExitTraffic?: number
   eventType?: string
   capsResult?: ICapsResult | any
-}
-
-export interface ICapsResult {
-  capsType?: string
-  dataRange?: string
-  info?: string
 }
 
 export interface IDecodedUrl {

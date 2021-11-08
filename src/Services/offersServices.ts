@@ -13,7 +13,7 @@ import {offerAggregatedCalculations} from "./offers/offersAggregated"
 import {offersStartEndDateSetupCalculations} from "./offers/restrictions/offersStartEndDateSetup"
 import {offersGeoRestrictions} from "./offers/restrictions/offersGeoRestrictions"
 import {offersCustomLpRules} from "./offers/restrictions/offersCustomLpRules"
-import {capsChecking} from "./offers/caps/capsSetup"
+import {capsOfferChecking} from "./offers/caps/capsSetup"
 import {campaignsTargetRules} from "./campaigns/restrictions/targetRules"
 import {v4} from "uuid"
 import {customPayOutPerGeo} from "./offers/customPayOutPerGeo";
@@ -98,7 +98,7 @@ export const offersServices = async (req: Request) => {
     }
 
     if (params.offerInfo.capSetup) {
-      let capsCheckingRes: boolean = await capsChecking(params)
+      let capsCheckingRes: boolean = await capsOfferChecking(params)
       if (capsCheckingRes) {
         consola.info(` **** info capSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {

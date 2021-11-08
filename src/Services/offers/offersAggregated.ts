@@ -50,6 +50,12 @@ export const offerAggregatedCalculations = async (params: IParams) => {
         params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
         pass = true
 
+      } else {
+        params.redirectReason = `Offers Aggregated exit traffic`
+        params.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC
+        await override(params, params.offerInfo?.offerIdRedirectExitTraffic)
+        params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
+        pass = true
       }
     }
     return pass

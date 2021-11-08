@@ -8,7 +8,7 @@ import {IParams} from "../../../Interfaces/params";
 import {IOffer} from "../../../Interfaces/offers";
 import {IRedirectType} from "../../../Interfaces/recipeTypes";
 
-export const capsChecking = async (params: IParams) => {
+export const capsOfferChecking = async (params: IParams) => {
   try {
 
     if (params.offerInfo?.capInfo?.dateRangeSetUp
@@ -61,7 +61,7 @@ export const capsChecking = async (params: IParams) => {
     params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
     return true
   } catch (e) {
-    consola.error('capsCheckingError:', e)
+    consola.error('capsOfferCheckingError:', e)
     return false
   }
 }

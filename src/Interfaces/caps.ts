@@ -29,3 +29,9 @@ export interface ICapInfo {
   capsType: string | null
   campaignCapsOfferIdRedirect?: number | null
 }
+
+export interface ICapsResult {
+  capsType?: string
+  dataRange?: string
+  info?: string
+}

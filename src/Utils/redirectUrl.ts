@@ -5,10 +5,15 @@ import {influxdb} from "./metrics";
 import {IParams} from "../Interfaces/params";
 import {ISqsMessage} from "../Interfaces/sqsMessage";
 import {REDIRECT_URLS} from "./defaultRedirectUrls";
+import {getDefaultOfferUrl} from "./defaultOffer";
 
 export const redirectUrl = async (lp: string, params: IParams) => {
 
-  lp = lp && lp || REDIRECT_URLS.DEFAULT + params.redirectType
+  if (!lp) {
+    influxdb(200, `default_offer_url_for_offer_id_${params.offerId}`)
+    lp = await getDefaultOfferUrl() || REDIRECT_URLS.DEFAULT
+  }
+
   let query = url.format({
     query: {
       'offer_id': params.offerId || 0,

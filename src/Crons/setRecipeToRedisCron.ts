@@ -18,6 +18,10 @@ export const setOffersToRedis = async () => {
     let stream = fs.createReadStream(file)
     let jsonStream = JSONStream.parse('*')
     stream.pipe(gunzip).pipe(jsonStream)
+    const offersRedisKeys = await redis.keys(`offer_*`)
+    for (const offerKey of offersRedisKeys) {
+      await redis.del(offerKey)
+    }
     consola.info(`Set offers to Local Redis computerName:${computerName}`)
     jsonStream.on('data', async (item: any) => {
       if (!item.offerId) {

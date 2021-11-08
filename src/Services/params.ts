@@ -56,7 +56,6 @@ export const getParams = async (req: Request) => {
     const originalUrl: string = req?.originalUrl!
     // let adDomain: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[];
     const adDomain = req?.query?.ad_domain!;
-    const debug: boolean = req?.query?.debugging! === 'debugging';
     const referer = req.headers['referer'];
     const geoInfo: IGeo = await resolveIP(req)
     const country: string = geoInfo?.country
@@ -117,7 +116,6 @@ export const getParams = async (req: Request) => {
       browserVersion,
       os,
       platform,
-      debug,
       geoInfo,
       country,
       city,

@@ -36,7 +36,6 @@ export interface IParams {
   browserVersion: string
   os: string
   platform: string
-  debug: boolean
   geoInfo: object
   country: string
   city: string

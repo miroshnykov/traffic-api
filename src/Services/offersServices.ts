@@ -22,6 +22,8 @@ import {getParams} from "./params";
 import {capsCampaignChecking} from "./campaigns/caps/capsSetup";
 
 export const offersServices = async (req: Request) => {
+
+  const debug: boolean = req?.query?.debugging! === 'debugging';
   try {
     influxdb(200, 'offers_all_request')
     const params: IParams = await getParams(req)
@@ -33,7 +35,8 @@ export const offersServices = async (req: Request) => {
         consola.info(` **** info aggregated lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
-          data: params
+          data: params,
+          debug: debug
         }
       }
     }
@@ -45,7 +48,8 @@ export const offersServices = async (req: Request) => {
         consola.info(` **** info startEndDateSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
-          data: params
+          data: params,
+          debug: debug
         }
       }
     }
@@ -57,7 +61,8 @@ export const offersServices = async (req: Request) => {
         consola.info(` **** info geoRules lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
-          data: params
+          data: params,
+          debug: debug
         }
       }
     }
@@ -69,7 +74,8 @@ export const offersServices = async (req: Request) => {
         consola.info(` **** info customPayOutPerGeo lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
-          data: params
+          data: params,
+          debug: debug
         }
       }
     }
@@ -81,7 +87,8 @@ export const offersServices = async (req: Request) => {
         consola.info(` **** info customLpRules lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
-          data: params
+          data: params,
+          debug: debug
         }
       }
     }
@@ -92,7 +99,8 @@ export const offersServices = async (req: Request) => {
         consola.info(` **** info capCampaignsSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
-          data: params
+          data: params,
+          debug: debug
         }
       }
     }
@@ -103,7 +111,8 @@ export const offersServices = async (req: Request) => {
         consola.info(` **** info capSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
-          data: params
+          data: params,
+          debug: debug
         }
       }
 
@@ -116,7 +125,8 @@ export const offersServices = async (req: Request) => {
         consola.info(` **** info targetRules lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
-          data: params
+          data: params,
+          debug: debug
         }
       }
     }
@@ -126,7 +136,8 @@ export const offersServices = async (req: Request) => {
     consola.info(`Info default lid { ${params.lid} } data ${JSON.stringify(params)}`)
     return {
       success: true,
-      data: resOffer
+      data: resOffer,
+      debug: debug
     }
 
   } catch (e) {
@@ -134,7 +145,8 @@ export const offersServices = async (req: Request) => {
     influxdb(500, 'offer_ad_error')
     return {
       success: false,
-      errors: e
+      errors: e,
+      debug: debug
     }
   }
 };

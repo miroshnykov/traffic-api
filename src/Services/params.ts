@@ -18,7 +18,8 @@ export const getParams = async (req: Request) => {
     // const offerId: number = +req.query.offerId! || 0
     // const campaignId: number = +req.query.campaignId! || 0
     const offerEncoded: string = String(req.query.offer! || '')
-    const decodedString: string = decrypt(offerEncoded)
+    const encKey: string = process.env.ENCRIPTION_KEY || ''
+    const decodedString: string = decrypt(offerEncoded, encKey)
     const decodedObj: IDecodedUrl = JSON.parse(decodedString!)
     const offerId: number = Number(decodedObj.offerId)
     const campaignId: number = Number(decodedObj.campaignId)

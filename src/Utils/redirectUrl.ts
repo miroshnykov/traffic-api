@@ -6,6 +6,11 @@ import {IParams} from "../Interfaces/params";
 import {ISqsMessage} from "../Interfaces/sqsMessage";
 import {REDIRECT_URLS} from "./defaultRedirectUrls";
 import {getDefaultOfferUrl} from "./defaultOffer";
+import {encrypt} from "./encrypt";
+import {decrypt} from "./decrypt";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 export const redirectUrl = async (lp: string, params: IParams) => {
 
@@ -13,7 +18,6 @@ export const redirectUrl = async (lp: string, params: IParams) => {
     influxdb(200, `default_offer_url_for_offer_id_${params.offerId}`)
     lp = await getDefaultOfferUrl() || REDIRECT_URLS.DEFAULT
   }
-
   let query = url.format({
     query: {
       'offer_id': params.offerId || 0,
@@ -31,6 +35,12 @@ export const redirectUrl = async (lp: string, params: IParams) => {
   if (urlToRedirect.substr(0, prefix.length) !== prefix) {
     urlToRedirect = prefix + '://' + urlToRedirect
   }
+  const hash = redirectUrlHashGenerator(urlToRedirect) || ''
+  urlToRedirect = `${urlToRedirect}&hash=${hash}`
+  const decKey: string = process.env.ENCRIPTION_REDIRECT_URL_KEY || ''
+  const decodedString: string = decrypt(hash, decKey)
+  const decryptedObj = JSON.parse(decodedString!)
+  consola.info('Test decryptedObj:', decryptedObj)
   if (params.conversionType === 'cpm'
     || (params.conversionType === 'hybrid/multistep' && params.isCpmOptionEnabled)
   ) {
@@ -38,6 +48,22 @@ export const redirectUrl = async (lp: string, params: IParams) => {
   }
 
   return urlToRedirect
+}
+
+const redirectUrlHashGenerator = (lp: string) => {
+  try {
+    let timestamp = Date.now()
+    let obj = {
+      lp,
+      timestamp
+    }
+    let encodesUrl: string = JSON.stringify(obj);
+    let encKey: string = process.env.ENCRIPTION_REDIRECT_URL_KEY || ''
+    return encrypt(encodesUrl, encKey)
+  } catch (e) {
+    consola.error('redirectIrlHashGeneratorError:', e)
+  }
+
 }
 
 const sqsConversionTypeCmpOrHybrid = async (params: IParams) => {

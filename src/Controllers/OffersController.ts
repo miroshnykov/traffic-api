@@ -38,6 +38,7 @@ export class OffersController extends BaseController {
 
     if (!responseOffer.success && responseOffer?.debug) {
       let defaultOfferUrl = await getDefaultOfferUrl()
+      influxdb(200, `default_offer_url`)
       res.status(400).json({
         error: `Recipe is inactive or not ready or broken  ${responseOffer.errors.toString()}, will redirect to default offer:${defaultOfferUrl}`,
         data: responseOffer.data,

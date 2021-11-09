@@ -7,23 +7,29 @@ import consola from "consola";
 import * as dotenv from "dotenv";
 import os from "os"
 import {influxdb} from "../Utils/metrics";
+import {IOffer} from "../Interfaces/offers";
+
 const computerName = os.hostname()
 dotenv.config();
 
 export const setOffersToRedis = async () => {
 
   try {
+
+    const offersRedisKeys = await redis.keys(`offer_*`)
+    consola.info(`offersRedisKeysForDeleteCount:${offersRedisKeys.length}`)
+    for (const offerKey of offersRedisKeys) {
+      await redis.del(offerKey)
+    }
+
     let gunzip = zlib.createGunzip();
     let file = process.env.OFFERS_RECIPE_PATH || ''
     let stream = fs.createReadStream(file)
     let jsonStream = JSONStream.parse('*')
     stream.pipe(gunzip).pipe(jsonStream)
-    const offersRedisKeys = await redis.keys(`offer_*`)
-    for (const offerKey of offersRedisKeys) {
-      await redis.del(offerKey)
-    }
+
     consola.info(`Set offers to Local Redis computerName:${computerName}`)
-    jsonStream.on('data', async (item: any) => {
+    jsonStream.on('data', async (item: IOffer) => {
       if (!item.offerId) {
         return
       }

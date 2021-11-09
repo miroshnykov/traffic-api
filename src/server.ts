@@ -115,6 +115,12 @@ if (cluster.isMaster) {
   }
   setInterval(checkRedisSize, 600000) // 600000 every 10 min
 
+  const checkRedisSizeOffers = async () => {
+    const offersRedisKeys = await redis.keys(`offer_*`)
+    influxdb(200, `redis_size_offers_${offersRedisKeys.length}_for_${computerName}`)
+  }
+  setInterval(checkRedisSizeOffers, 720000) // 720000 every 12 min
+
   const aggregatorData = async () => {
 
     let timer = new Date();

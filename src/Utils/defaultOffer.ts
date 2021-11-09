@@ -5,7 +5,7 @@ import {IOffer} from "../Interfaces/offers";
 import {REDIRECT_URLS} from "./defaultRedirectUrls";
 
 export enum OFFER_DEFAULT {
-  OFFER_ID = 36288
+  OFFER_ID = 36303
   //OFFER_ID = 35910 // dev
 }
 

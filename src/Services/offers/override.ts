@@ -28,7 +28,7 @@ export const override = async (params: IParams, offerIdRedirectExitTraffic: numb
     params.landingPageUrlOrigin = params.offerInfo?.landingPageUrl || ''
     params.offerIdRedirectExitTraffic = params.offerInfo?.offerIdRedirectExitTraffic || 0
 
-    params.landingPageUrl = offerExitTrafficInfo?.landingPageUrl || REDIRECT_URLS.DEFAULT
+    params.landingPageUrl = offerExitTrafficInfo?.landingPageUrl
     params.advertiserId = offerExitTrafficInfo?.advertiserId || 0
     params.advertiserName = offerExitTrafficInfo?.advertiserName || ''
     params.conversionType = offerExitTrafficInfo?.conversionType || ''

@@ -22,8 +22,8 @@ export const offerAggregatedCalculations = async (params: IParams) => {
       let offersAggregatedIdsToRedirect = []
       for (const offer of offersAggregatedIds) {
 
-        let offerRestriction = await checkRestrictionsByOffer(offer.aggregatedOfferId, params)
-        if (!offerRestriction) {
+        let offerRestrictionPass = await checkRestrictionsByOffer(offer.aggregatedOfferId, params)
+        if (offerRestrictionPass) {
           offersAggregatedIdsToRedirect.push(+offer.aggregatedOfferId)
         }
       }
@@ -70,19 +70,22 @@ export const offerAggregatedCalculations = async (params: IParams) => {
 const checkRestrictionsByOffer = async (offerId: number, params: IParams) => {
   try {
     let offer = await getOffer(offerId)
-    if (!offer) return
+    if (!offer) {
+      return false
+    }
     let offerInfo: IOffer = JSON.parse(offer)
-    let pass = false
     if (offerInfo.startEndDateSetup) {
       if (!offerInfo.startEndDateSetting.dateRangePass) {
-        pass = true
+        return false
       }
     }
+
     if (offerInfo.geoRules) {
       let geoRules = JSON.parse(offerInfo.geoRules)
       let resolveGeo = await geoRestrictions(params.country, geoRules.geo)
+      // consola.info(`offerID:${offerId} resolveGeo:`, resolveGeo, 'params.country:', params.country, 'geoRules.geo:', geoRules.geo)
       if (resolveGeo.length !== 0) {
-        pass = true
+        return false
       }
     }
 
@@ -91,15 +94,17 @@ const checkRestrictionsByOffer = async (offerId: number, params: IParams) => {
       let customLPRules = JSON.parse(offerInfo.customLpRules)
       let resolveCustomLP = await customLP(params.country, customLPRules.customLPRules)
       if (resolveCustomLP.length !== 0) {
-        pass = true
+        return false
       }
     }
 
-    if (offerInfo.capInfo?.capsClicksOverLimit || offerInfo.capInfo?.capsSalesOverLimit) {
-      pass = true
+    if (offerInfo.capInfo?.capsClicksOverLimit
+      || offerInfo.capInfo?.capsSalesOverLimit
+    ) {
+      return false
     }
 
-    return pass
+    return true
   } catch (e) {
     consola.error('checkRestrictionsByOffer:', e)
   }

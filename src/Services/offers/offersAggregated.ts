@@ -11,18 +11,17 @@ import {IRedirectType} from "../../Interfaces/recipeTypes";
 
 export const offerAggregatedCalculations = async (params: IParams) => {
   try {
-    let pass = false
-    params.groupOffer = true
-    // Object.keys(offerInfo.offersAggregatedIds).length
+    let pass: boolean = false
 
     if (params.offerInfo?.offersAggregatedIds?.length !== 0) {
+      params.groupOffer = true
       let offersAggregatedIds = params.offerInfo?.offersAggregatedIds || []
 
       params.offersAggregatedIds = offersAggregatedIds
-      let offersAggregatedIdsToRedirect = []
+      let offersAggregatedIdsToRedirect: number[] = []
       for (const offer of offersAggregatedIds) {
 
-        let offerRestrictionPass = await checkRestrictionsByOffer(offer.aggregatedOfferId, params)
+        const offerRestrictionPass: boolean = await checkRestrictionsByOffer(offer.aggregatedOfferId, params)
         if (offerRestrictionPass) {
           offersAggregatedIdsToRedirect.push(+offer.aggregatedOfferId)
         }
@@ -31,7 +30,7 @@ export const offerAggregatedCalculations = async (params: IParams) => {
       params.offersAggregatedIdsToRedirect = offersAggregatedIdsToRedirect
       if (offersAggregatedIdsToRedirect.length !== 0) {
 
-        let bestOfferId = offersAggregatedIdsToRedirect[0]
+        let bestOfferId: number = offersAggregatedIdsToRedirect[0]
 
         //PH-38
         const checkMargin = offersAggregatedIds.filter(i => i.aggregatedOfferId === bestOfferId)[0]
@@ -74,6 +73,13 @@ const checkRestrictionsByOffer = async (offerId: number, params: IParams) => {
       return false
     }
     let offerInfo: IOffer = JSON.parse(offer)
+
+    if (offerInfo.capInfo?.capsClicksOverLimit
+      || offerInfo.capInfo?.capsSalesOverLimit
+    ) {
+      return false
+    }
+
     if (offerInfo.startEndDateSetup) {
       if (!offerInfo.startEndDateSetting.dateRangePass) {
         return false
@@ -98,15 +104,11 @@ const checkRestrictionsByOffer = async (offerId: number, params: IParams) => {
       }
     }
 
-    if (offerInfo.capInfo?.capsClicksOverLimit
-      || offerInfo.capInfo?.capsSalesOverLimit
-    ) {
-      return false
-    }
-
     return true
+
   } catch (e) {
     consola.error('checkRestrictionsByOffer:', e)
+    return false
   }
 
 }

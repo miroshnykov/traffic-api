@@ -26,7 +26,7 @@ export const capsCampaignChecking = async (params: IParams) => {
       params.campaignInfo?.capInfo?.capsSalesOverLimit
       || params.campaignInfo?.capInfo?.capsClicksOverLimit
     ) {
-      const referredOffer: any = await getOffer(params.campaignInfo?.capInfo.campaignCapsOfferIdRedirect!)
+      const referredOffer: any = await getOffer(params.offerInfo?.offerIdRedirectExitTraffic!)
       const referredOfferInfo: IOffer = JSON.parse(referredOffer)
 
       params.redirectType = IRedirectType.CAPS_CAMPAIGN_OVER_LIMIT
@@ -41,19 +41,19 @@ export const capsCampaignChecking = async (params: IParams) => {
       // params.referredVerticalId = referredOfferInfo?.verticalId
       // params.referredVerticalName = referredOfferInfo?.verticalName
       params.landingPageUrl = referredOfferInfo?.landingPageUrl
-      params.capsResult.info = `campaign caps, capsSalesOverLimit=${params.offerInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${params.offerInfo?.capInfo?.capsClicksOverLimit}`
+      params.capsResult.info = `campaign caps, capsSalesOverLimit=${params.campaignInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${params.campaignInfo?.capInfo?.capsClicksOverLimit}`
     } else if (
       params.campaignInfo?.capInfo?.capsSalesUnderLimit
       || params.campaignInfo?.capInfo?.capsClicksUnderLimit
     ) {
-      const referredOffer: any = await getOffer(params.offerInfo?.offerIdRedirectExitTraffic!)
+      const referredOffer: any = await getOffer(params.campaignInfo?.capInfo.campaignCapsOfferIdRedirect!)
       const referredOfferInfo: IOffer = JSON.parse(referredOffer)
 
       params.redirectType = IRedirectType.CAPS_CAMPAIGN_UNDER_LIMIT
       params.redirectReason = `caps campaigns sales or clicks under limit `
       params.capsResult.capsType = params.campaignInfo?.capInfo?.capsType!
       params.landingPageUrl = referredOfferInfo?.landingPageUrl
-      params.capsResult.info = `campaign caps capsSalesUnderLimit=${params.offerInfo?.capInfo?.capsSalesUnderLimit}, capsClicksUnderLimit=${params.offerInfo?.capInfo?.capsClicksUnderLimit}`
+      params.capsResult.info = `campaign caps capsSalesUnderLimit=${params.campaignInfo?.capInfo?.capsSalesUnderLimit}, capsClicksUnderLimit=${params.campaignInfo?.capInfo?.capsClicksUnderLimit}`
     }
 
     influxdb(200, `offer_cap_campaign_${params.redirectType}`)

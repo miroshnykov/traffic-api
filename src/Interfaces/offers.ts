@@ -4,6 +4,11 @@ import {IRedirectType} from "./recipeTypes";
 export interface IAggregatedOfferList {
   aggregatedOfferId: number,
   margin: number
+  countriesRestrictions?: string
+  customLpCountriesRestrictions?: string
+  capsOverLimitClicks?: boolean
+  capsOverLimitSales?: boolean
+  dateRangeNotPass?: boolean
 }
 
 export interface IOffer {

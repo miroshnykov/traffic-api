@@ -6,7 +6,7 @@ import {override} from "./override"
 
 import consola from "consola";
 import {IParams} from "../../Interfaces/params";
-import {IOffer} from "../../Interfaces/offers";
+import {IAggregatedOfferList, IOffer} from "../../Interfaces/offers";
 import {IRedirectType} from "../../Interfaces/recipeTypes";
 
 export const offerAggregatedCalculations = async (params: IParams) => {
@@ -21,7 +21,7 @@ export const offerAggregatedCalculations = async (params: IParams) => {
       let offersAggregatedIdsToRedirect: number[] = []
       for (const offer of offersAggregatedIds) {
 
-        const offerRestrictionPass: boolean = await checkRestrictionsByOffer(offer.aggregatedOfferId, params)
+        const offerRestrictionPass: boolean = await checkRestrictionsByOffer(offer, params)
         if (offerRestrictionPass) {
           offersAggregatedIdsToRedirect.push(+offer.aggregatedOfferId)
         }
@@ -66,45 +66,15 @@ export const offerAggregatedCalculations = async (params: IParams) => {
 
 }
 
-const checkRestrictionsByOffer = async (offerId: number, params: IParams) => {
+const checkRestrictionsByOffer = async (offer: IAggregatedOfferList, params: IParams) => {
   try {
-    let offer = await getOffer(offerId)
-    if (!offer) {
-      return false
-    }
-    let offerInfo: IOffer = JSON.parse(offer)
 
-    if (offerInfo.capInfo?.capsClicksOverLimit
-      || offerInfo.capInfo?.capsSalesOverLimit
-    ) {
-      return false
-    }
+    return !(offer?.capsOverLimitClicks
+      || offer?.capsOverLimitSales
+      || offer?.dateRangeNotPass
+      || offer?.countriesRestrictions && offer?.countriesRestrictions.includes(params.country)
+      || offer?.customLpCountriesRestrictions && offer?.customLpCountriesRestrictions.includes(params.country))
 
-    if (offerInfo.startEndDateSetup) {
-      if (!offerInfo.startEndDateSetting.dateRangePass) {
-        return false
-      }
-    }
-
-    if (offerInfo.geoRules) {
-      let geoRules = JSON.parse(offerInfo.geoRules)
-      let resolveGeo = await geoRestrictions(params.country, geoRules.geo)
-      // consola.info(`offerID:${offerId} resolveGeo:`, resolveGeo, 'params.country:', params.country, 'geoRules.geo:', geoRules.geo)
-      if (resolveGeo.length !== 0) {
-        return false
-      }
-    }
-
-    if (offerInfo.customLpRules) {
-
-      let customLPRules = JSON.parse(offerInfo.customLpRules)
-      let resolveCustomLP = await customLP(params.country, customLPRules.customLPRules)
-      if (resolveCustomLP.length !== 0) {
-        return false
-      }
-    }
-
-    return true
 
   } catch (e) {
     consola.error('checkRestrictionsByOffer:', e)

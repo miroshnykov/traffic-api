@@ -82,8 +82,8 @@
 
 ## docker build
 
-	docker build -t co-traffic .
-   	docker run -it -p 5000:5000 --rm --name co-traffic-  co-traffic
+	docker build -t traffic-api .
+   	docker run -it -p 5000:5000 --rm --name traffic-api-  traffic-api
 
 # diagram
 

@@ -7,7 +7,7 @@
     "dev": "ts-node-dev --files --respawn src/server.ts",
     "build": "tsc",
     "test": "jest",
-    "prod": "NODE_ENV=production node -r dotenv/config ./dist/server.js dotenv_config_path=/var/run/secrets/environment",
+    "start": "node -r dotenv/config ./dist/server.js dotenv_config_path=/var/run/secrets/environment",
     "clean": "rimraf ./dist"
   },
   "repository": {

@@ -115,7 +115,6 @@ export const offersServices = async (req: Request) => {
           debug: debug
         }
       }
-
     }
 
     if (params.campaignInfo.targetRules) {

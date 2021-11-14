@@ -56,7 +56,7 @@ export const capsOfferChecking = async (params: IParams) => {
 
     influxdb(200, `offer_cap_${params.redirectType}`)
     let lidObj = lidOffer(params)
-    await createLidOffer(lidObj)
+    createLidOffer(lidObj)
     params.lidObj = lidObj
     params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
     return true

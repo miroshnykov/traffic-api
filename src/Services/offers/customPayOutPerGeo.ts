@@ -19,7 +19,7 @@ export const customPayOutPerGeo = async (params: IParams) => {
       params.payout = checkCustomPerGeo[0].payOut
       params.payin = checkCustomPerGeo[0].payIn
       let lidObj = lidOffer(params)
-      await createLidOffer(lidObj)
+      createLidOffer(lidObj)
       params.lid = lidObj.lid
       params.lidObj = lidObj
 

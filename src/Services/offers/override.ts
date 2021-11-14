@@ -42,7 +42,7 @@ export const override = async (params: IParams, offerIdRedirectExitTraffic: numb
 
     let lidObj = lidOffer(params)
 
-    await createLidOffer(lidObj)
+    createLidOffer(lidObj)
     params.lidObj = lidObj
   } catch (e) {
     consola.error('override fields error', e)

@@ -67,19 +67,6 @@ export const offersServices = async (req: Request) => {
       }
     }
 
-    if (params.offerInfo.customPayOutPerGeo) {
-      const customPayOutPerGeoRes: boolean = await customPayOutPerGeo(params)
-      if (customPayOutPerGeoRes) {
-        influxdb(200, 'offer_custom_pay_out_per_geo')
-        consola.info(` **** info customPayOutPerGeo lid { ${params.lid} } ${JSON.stringify(params)}`)
-        return {
-          success: true,
-          data: params,
-          debug: debug
-        }
-      }
-    }
-
     if (params.offerInfo.customLpRules) {
       const offersCustomLpRulesRes: boolean = await offersCustomLpRules(params)
       if (offersCustomLpRulesRes) {
@@ -109,6 +96,19 @@ export const offersServices = async (req: Request) => {
       let capsCheckingRes: boolean = await capsOfferChecking(params)
       if (capsCheckingRes) {
         consola.info(` **** info capSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
+        return {
+          success: true,
+          data: params,
+          debug: debug
+        }
+      }
+    }
+
+    if (params.offerInfo.customPayOutPerGeo) {
+      const customPayOutPerGeoRes: boolean = await customPayOutPerGeo(params)
+      if (customPayOutPerGeoRes) {
+        influxdb(200, 'offer_custom_pay_out_per_geo')
+        consola.info(` **** info customPayOutPerGeo lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,
           data: params,

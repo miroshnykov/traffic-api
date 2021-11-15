@@ -96,7 +96,7 @@ const sqsConversionTypeCmpOrHybrid = async (params: IParams) => {
     }
 
     consola.info(`Added to SQS Conversion Type Cmp, Body:${JSON.stringify(sendObj)}`)
-    let sqsData = await sendMessageToQueue(sendObj)
+    sendMessageToQueue(sendObj)
 
     influxdb(200, `send_sqs_type_cmp_or_hybrid`)
     // params.sendTOSQS = sqsData

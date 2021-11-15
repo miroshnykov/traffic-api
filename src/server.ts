@@ -48,18 +48,18 @@ if (cluster.isMaster) {
 
   const aggregatorData = async () => {
 
-    let timer = new Date();
-    let t: number = Math.round(timer.getTime() / 1000);
+    const timer = new Date();
+    const currenTime: number = Math.round(timer.getTime() / 1000);
     if (Object.keys(logBufferOffer).length >= 5) {
       consola.info('logBufferOffer count:', Object.keys(logBufferOffer).length)
     }
     for (const index in logBufferOffer) {
-      if (Number(index) < t - 2) {
+      if (Number(index) < currenTime - 5) {
         if (logBufferOffer[index].length === 0) return
 
         for (const j in logBufferOffer[index]) {
           let statsData: IRedshiftData = logBufferOffer[index][j]
-          await sendToAggrOffer(statsData)
+          sendToAggrOffer(statsData)
 
         }
         delete logBufferOffer[index]
@@ -89,10 +89,10 @@ if (cluster.isMaster) {
     }
   )
   cluster.on('message', (worker: Worker, msg): void => {
-    let timer: Date = new Date();
-    let t: number = Math.round(timer.getTime() / 1000);
+    const timer: Date = new Date();
+    const currenTime: number = Math.round(timer.getTime() / 1000);
     if (msg.type === "clickOffer") {
-      addToBufferOffer(logBufferOffer, t, msg.stats);
+      addToBufferOffer(logBufferOffer, currenTime, msg.stats);
     }
   })
 

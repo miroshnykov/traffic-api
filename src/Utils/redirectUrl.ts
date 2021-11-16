@@ -37,10 +37,10 @@ export const redirectUrl = async (lp: string, params: IParams) => {
   }
   const hash = redirectUrlHashGenerator(urlToRedirect) || ''
   urlToRedirect = `${urlToRedirect}&hash=${hash}`
-  const decKey: string = process.env.ENCRIPTION_REDIRECT_URL_KEY || ''
-  const decodedString: string = decrypt(hash, decKey)
-  const decryptedObj = JSON.parse(decodedString!)
-  consola.info('Test decryptedObj:', decryptedObj)
+  // const decKey: string = process.env.ENCRIPTION_REDIRECT_URL_KEY || ''
+  // const decodedString: string = decrypt(hash, decKey)
+  // const decryptedObj = JSON.parse(decodedString!)
+  // consola.info('Test decryptedObj:', decryptedObj)
   if (params.conversionType === 'cpm'
     || (params.conversionType === 'hybrid/multistep' && params.isCpmOptionEnabled)
   ) {

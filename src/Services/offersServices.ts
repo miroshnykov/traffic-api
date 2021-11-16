@@ -44,7 +44,7 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.startEndDateSetup) {
       const offersStartEndDateSetupRes: boolean = await offersStartEndDateSetupCalculations(params)
       if (offersStartEndDateSetupRes) {
-        influxdb(200, 'offer_start_end_date_setup')
+        influxdb(200, 'offer_start_end_date_setup') //
         consola.info(` **** info startEndDateSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
         return {
           success: true,

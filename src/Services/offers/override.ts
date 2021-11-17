@@ -6,10 +6,13 @@ import {lidOffer} from "../../Utils/lid"
 import {createLidOffer} from "../../Utils/dynamoDb"
 import {IOffer} from "../../Interfaces/offers";
 import {REDIRECT_URLS} from "../../Utils/defaultRedirectUrls";
+import {OFFER_DEFAULT} from "../../Utils/defaultOffer";
 
 export const override = async (params: IParams, offerIdRedirectExitTraffic: number) => {
 
-  const offerExitTraffic: any = await getOffer(offerIdRedirectExitTraffic)
+  const overrideOfferId = offerIdRedirectExitTraffic ? offerIdRedirectExitTraffic : OFFER_DEFAULT.OFFER_ID
+
+  const offerExitTraffic: any = await getOffer(overrideOfferId)
   const offerExitTrafficInfo: IOffer = JSON.parse(offerExitTraffic)
 
   try {

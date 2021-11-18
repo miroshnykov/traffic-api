@@ -47,10 +47,11 @@
     offer
         http://localhost:5000/getRecipeData?debugging=debugging&offerId=35784
         https://co-traffic.jatun.systems/getRecipeData?debugging=debugging&offerId=35784
+        https://co-traffic.jatun.systems/getRecipeData?debugging=debugging&offerId=35784
 
     campaign
         http://localhost:5000/getRecipeData?debugging=debugging&campaignId=40
-        https://co-traffic.jatun.systems/getRecipeData?debugging=debugging&campaignId=40
+        https://traffic.aezai.com/getRecipeData?debugging=debugging&campaignId=40
 
 ## build
 

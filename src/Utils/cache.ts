@@ -5,6 +5,7 @@ import {ISqsMessage} from "../Interfaces/sqsMessage";
 
 export const setSqsDataToRedis = async (message: ISqsMessage) => {
 
+  consola.info(`Getting from recipe-api update, Set to redis ${message.type}ID:${message.id}, action:${message.action}, comments:${message.comments} `)
   try {
     if (message.action === 'updateOrCreate') {
       await redis.set(`${message.type}_${message.id}`, message.body)

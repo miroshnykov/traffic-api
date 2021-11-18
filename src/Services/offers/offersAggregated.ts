@@ -34,8 +34,10 @@ export const offerAggregatedCalculations = async (params: IParams) => {
 
         //PH-38
         const checkMargin = offersAggregatedIds.filter(i => i.aggregatedOfferId === bestOfferId)[0]
-        const checkDuplicateMargin = offersAggregatedIds.filter(i => i.margin === checkMargin.margin)
-
+        const checkDuplicateMargin = offersAggregatedIds.filter(i => i.margin === checkMargin.margin
+            && offersAggregatedIdsToRedirect.includes(i.aggregatedOfferId)
+        )
+        params.offersAggregatedIdsMargin = checkDuplicateMargin
         if (checkDuplicateMargin.length > 1) {
           const duplicateMarginIds = checkDuplicateMargin.map(i => i.aggregatedOfferId)
           const randomId = Math.floor(Math.random() * duplicateMarginIds.length);

@@ -32,7 +32,7 @@ export const offersServices = async (req: Request) => {
       const offerAggregatedRes: boolean = await offerAggregatedCalculations(params)
       if (offerAggregatedRes) {
         influxdb(200, 'offer_aggregated')
-        consola.info(` **** info aggregated lid { ${params.lid} } ${JSON.stringify(params)}`)
+        consola.info(`Redirect type { offer aggregated } lid { ${params.lid} }`)
         return {
           success: true,
           data: params,
@@ -45,7 +45,7 @@ export const offersServices = async (req: Request) => {
       const offersStartEndDateSetupRes: boolean = await offersStartEndDateSetupCalculations(params)
       if (offersStartEndDateSetupRes) {
         influxdb(200, 'offer_start_end_date_setup') //
-        consola.info(` **** info startEndDateSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
+        consola.info(`Redirect type { offer startEndDateSetup } lid { ${params.lid} }`)
         return {
           success: true,
           data: params,
@@ -58,7 +58,7 @@ export const offersServices = async (req: Request) => {
       const offersGeoRestrictionsRes: boolean = await offersGeoRestrictions(params)
       if (offersGeoRestrictionsRes) {
         influxdb(200, 'offer_geo_rules')
-        consola.info(` **** info geoRules lid { ${params.lid} } ${JSON.stringify(params)}`)
+        consola.info(`Redirect type { offer geoRules } lid { ${params.lid} } `)
         return {
           success: true,
           data: params,
@@ -71,7 +71,7 @@ export const offersServices = async (req: Request) => {
       const offersCustomLpRulesRes: boolean = await offersCustomLpRules(params)
       if (offersCustomLpRulesRes) {
         influxdb(200, 'offer_custom_lp_rules')
-        consola.info(` **** info customLpRules lid { ${params.lid} } ${JSON.stringify(params)}`)
+        consola.info(`Redirect type { offer customLpRules } lid { ${params.lid} }`)
         return {
           success: true,
           data: params,
@@ -83,7 +83,7 @@ export const offersServices = async (req: Request) => {
     if (params.campaignInfo.capSetup) {
       let capsCheckingRes: boolean = await capsCampaignChecking(params)
       if (capsCheckingRes) {
-        consola.info(` **** info capCampaignsSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
+        consola.info(`Redirect type { campaign caps } lid { ${params.lid} }`)
         return {
           success: true,
           data: params,
@@ -95,7 +95,7 @@ export const offersServices = async (req: Request) => {
     if (params.offerInfo.capSetup) {
       let capsCheckingRes: boolean = await capsOfferChecking(params)
       if (capsCheckingRes) {
-        consola.info(` **** info capSetup lid { ${params.lid} } ${JSON.stringify(params)}`)
+        consola.info(`Redirect type { offer caps } lid { ${params.lid} }`)
         return {
           success: true,
           data: params,
@@ -108,7 +108,7 @@ export const offersServices = async (req: Request) => {
       const customPayOutPerGeoRes: boolean = await customPayOutPerGeo(params)
       if (customPayOutPerGeoRes) {
         influxdb(200, 'offer_custom_pay_out_per_geo')
-        consola.info(` **** info customPayOutPerGeo lid { ${params.lid} } ${JSON.stringify(params)}`)
+        consola.info(`Redirect type { offer customPayOutPerGeo } lid { ${params.lid} }`)
         return {
           success: true,
           data: params,
@@ -121,7 +121,7 @@ export const offersServices = async (req: Request) => {
       let campaignsTargetRulesRes: boolean = await campaignsTargetRules(params)
       if (campaignsTargetRulesRes) {
         influxdb(200, 'offer_target_rules')
-        consola.info(` **** info targetRules lid { ${params.lid} } ${JSON.stringify(params)}`)
+        consola.info(`Redirect type { campaign targetRules } lid { ${params.lid} }`)
         return {
           success: true,
           data: params,
@@ -132,7 +132,7 @@ export const offersServices = async (req: Request) => {
 
     let resOffer: IParams = await offersDefaultRedirection(params)
     influxdb(200, 'offer_default_redirection')
-    consola.info(`Info default lid { ${params.lid} } data ${JSON.stringify(params)}`)
+    consola.info(`Redirect type { offer default }  lid { ${params.lid} }`)
     return {
       success: true,
       data: resOffer,

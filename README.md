@@ -45,9 +45,9 @@
 
 ## check recipe
     offer
-        http://localhost:5000/getRecipeData?debugging=debugging&offerId=35784
-        https://co-traffic.jatun.systems/getRecipeData?debugging=debugging&offerId=35784
-        https://co-traffic.jatun.systems/getRecipeData?debugging=debugging&offerId=35784
+        http://localhost:5000/getRecipeData?debugging=debugging&offerId=36336
+        https://mghkpg.com/getRecipeData?debugging=debugging&offerId=35784
+        https://mghkpg.com/getRecipeData?debugging=debugging&offerId=36515
 
     campaign
         http://localhost:5000/getRecipeData?debugging=debugging&campaignId=40

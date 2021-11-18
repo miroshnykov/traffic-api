@@ -29,7 +29,7 @@ export const sendToAggrOffer = async (stats: IRedshiftData) => {
       }
     }
 
-    consola.info(`send to aggregator before send, data: ${JSON.stringify(params)}`)
+    // consola.info(`send to aggregator before send, data: ${JSON.stringify(params)}`)
     // consola.info('process.env.AGGREGATOR_API:',process.env.AGGREGATOR_API)
     // @ts-ignore
     const {data} = await aggrRequest(params)

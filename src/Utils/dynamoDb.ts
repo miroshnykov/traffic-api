@@ -53,7 +53,7 @@ export const createLidOffer = async (lidInfo: any) => {
     const data = await ddbClient.send(new PutCommand(leadParams));
     // consola.info("AWS_DYNAMODB_TABLE_NAME config:", process.env.AWS_DYNAMODB_TABLE_NAME);
     // consola.info("AWS_DYNAMODB_REGION config:", process.env.AWS_DYNAMODB_REGION);
-    consola.info("Dynamo Db Success res:", JSON.stringify(data));
+    // consola.info("Dynamo Db Success res:", JSON.stringify(data));
   } catch (e) {
     influxdb(500, 'create_lid_offer_error')
     consola.error('createLidOfferError:', e)

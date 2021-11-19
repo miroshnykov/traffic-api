@@ -41,13 +41,14 @@
 ## ex link
 
     http://localhost:5000/ad?offer=44669c38ea032aa63b94b904804131c8:2aad25bba4a84235956c7d8884fc53b85f9f5c3f3468544ae69880a225115c5dc9822ae051f70559d674a439ca272cac&debugging=debugging
-    https://co-traffic.jatun.systems/ad?offer=e3afc1dbfa2982b015f6b6fcb3e81fda:02ef3d97347b27d00f5435378160cfec31e292b63dea316ac3dd50c9c53ede65c3cfd206cc3717e60edab20a65de13d6&debugging=debugging
+    https://traffic.aezai.com/ad?offer=b00a799d7cae9430b034fed4097080c3:c364290026fe9f5c6e7195d2b90dc7e12c778337aefbb0ba09b64172f21d875b1379754e52b9d5a8b1ad8452c4fe8a7e&debugging=debugging
+    
 
 ## check recipe
     offer
         http://localhost:5000/getRecipeData?debugging=debugging&offerId=36336
         https://mghkpg.com/getRecipeData?debugging=debugging&offerId=35784
-        https://mghkpg.com/getRecipeData?debugging=debugging&offerId=36515
+        https://traffic.aezai.com/getRecipeData?debugging=debugging&offerId=36520
 
     campaign
         http://localhost:5000/getRecipeData?debugging=debugging&campaignId=40

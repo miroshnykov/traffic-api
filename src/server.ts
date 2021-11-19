@@ -51,7 +51,7 @@ if (cluster.isMaster) {
     const timer = new Date();
     const currenTime: number = Math.round(timer.getTime() / 1000);
     if (Object.keys(logBufferOffer).length >= 5) {
-      consola.info('logBufferOffer count:', Object.keys(logBufferOffer).length)
+      consola.info(`aggregator logBufferOffer count:${Object.keys(logBufferOffer).length}` )
     }
     for (const index in logBufferOffer) {
       if (Number(index) < currenTime - 5) {

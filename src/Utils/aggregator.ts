@@ -11,7 +11,7 @@ const aggrRequest = axios.create({
   baseURL: process.env.AGGREGATOR_API,
 })
 
-export const sendToAggrOffer = async (stats: IRedshiftData) => {
+export const sendToAggregator = (stats: IRedshiftData) => {
 
   try {
     let eventType: string = String(stats.event_type)
@@ -29,14 +29,13 @@ export const sendToAggrOffer = async (stats: IRedshiftData) => {
       }
     }
 
-    // consola.info(`send to aggregator before send, data: ${JSON.stringify(params)}`)
-    // consola.info('process.env.AGGREGATOR_API:',process.env.AGGREGATOR_API)
-    // @ts-ignore
-    const {data} = await aggrRequest(params)
-    return data
+    aggrRequest(params).then().catch(e => {
+      influxdb(500, 'send_to_aggregator_error')
+      consola.error('send to aggregator data got error:', e)
+    })
 
   } catch (e) {
     influxdb(500, 'send_to_aggregator_error')
-    consola.error('sendToAggrOfferError:', e)
+    consola.error('sendToAggregatorError:', e)
   }
 }

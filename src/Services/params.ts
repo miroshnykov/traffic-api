@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {decrypt} from "../Utils/decrypt";
-import {IDecodedUrl} from "../Interfaces/params";
+import {IDecodedUrl, IParams} from "../Interfaces/params";
 import {getOffer} from "../Models/offersModel";
 import {influxdb} from "../Utils/metrics";
 import {getCampaign} from "../Models/campaignsModel";
@@ -13,7 +13,7 @@ import {ICampaign} from "../Interfaces/campaigns";
 import {IGeo} from "../Interfaces/geo";
 import {ICapsResult} from "../Interfaces/caps";
 
-export const getParams = async (req: Request) => {
+export const getParams = async (req: Request): Promise<IParams> => {
   try {
     // const offerId: number = +req.query.offerId! || 0
     // const campaignId: number = +req.query.campaignId! || 0
@@ -48,21 +48,20 @@ export const getParams = async (req: Request) => {
     // @ts-ignore
     const browserEngine = deviceInfo?.client?.engine || ''
 
-    const browserVersion = deviceInfo?.client?.version!
+    const browserVersion = String(deviceInfo?.client?.version!)
     const offerHash = req.query.offer
-    const browser: string = deviceInfo?.client?.name!
-    const os: string = deviceInfo?.os?.name!
-    const platform: string = deviceInfo?.os?.platform!
-    const host: string = req?.headers?.host!
-    const originalUrl: string = req?.originalUrl!
-    // let adDomain: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[];
-    const adDomain = req?.query?.ad_domain!;
-    const referer = req.headers['referer'];
+    const browser: string = String(deviceInfo?.client?.name!)
+    const os: string = String(deviceInfo?.os?.name!)
+    const platform: string = String(deviceInfo?.os?.platform!)
+    const host: string = String(req?.headers?.host!)
+    const originalUrl: string = String(req?.originalUrl!)
+    const adDomain: string = String(req?.query?.ad_domain!)
+    const referer = String(req.headers['referer'])
     const geoInfo: IGeo = await resolveIP(req)
-    const country: string = geoInfo?.country
-    const region: string = geoInfo?.region
-    const city: string = geoInfo?.city
-    const isp: string = geoInfo?.isp
+    const country: string = String(geoInfo?.country)
+    const region: string = String(geoInfo?.region)
+    const city: string = String(geoInfo?.city)
+    const isp: string = String(geoInfo?.isp)
     const lid: string = v4()
 
     const affiliateId: number = Number(campaignInfo.affiliateId)

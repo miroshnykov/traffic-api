@@ -8,7 +8,7 @@ import {IOffer} from "../../Interfaces/offers";
 import {REDIRECT_URLS} from "../../Utils/defaultRedirectUrls";
 import {OFFER_DEFAULT} from "../../Utils/defaultOffer";
 
-export const override = async (params: IParams, offerIdRedirectExitTraffic: number) => {
+export const override = async (params: IParams, offerIdRedirectExitTraffic: number): Promise<void> => {
 
   const overrideOfferId = offerIdRedirectExitTraffic ? offerIdRedirectExitTraffic : OFFER_DEFAULT.OFFER_ID
 

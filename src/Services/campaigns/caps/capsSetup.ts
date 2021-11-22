@@ -8,7 +8,7 @@ import {IParams} from "../../../Interfaces/params";
 import {IOffer} from "../../../Interfaces/offers";
 import {IRedirectType} from "../../../Interfaces/recipeTypes";
 
-export const capsCampaignChecking = async (params: IParams) => {
+export const capsCampaignChecking = async (params: IParams): Promise<boolean> => {
   try {
 
     if (params.campaignInfo?.capInfo?.dateRangeSetUp

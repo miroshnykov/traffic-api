@@ -16,7 +16,7 @@ AWS.config.update({
 });
 const s3 = new AWS.S3();
 
-export const getFileFromBucket = async (type: IRecipeType) => {
+export const getFileFromBucket = async (type: IRecipeType): Promise<void> => {
   try {
     let tempFileName: string = ''
     let s3Key: string = ''

@@ -8,7 +8,7 @@ import {IRedshiftData} from "../Interfaces/redshiftData";
 
 dotenv.config();
 
-export const createLidOffer = async (lidInfo: any) => {
+export const createLidOffer = (lidInfo: any): void => {
   try {
     // const dynamoDbConf = {
     //   region: process.env.AWS_DYNAMODB_REGION,
@@ -26,7 +26,7 @@ export const createLidOffer = async (lidInfo: any) => {
     let YearPlusOne = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
     lidInfo['ttl'] = YearPlusOne.getTime()
 
-    let stats:IRedshiftData = redshiftOffer(lidInfo)
+    let stats: IRedshiftData = redshiftOffer(lidInfo)
 
     // @ts-ignore
     process.send({
@@ -50,7 +50,10 @@ export const createLidOffer = async (lidInfo: any) => {
       TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
       Item: lidInfo
     }
-    const data = await ddbClient.send(new PutCommand(leadParams));
+    ddbClient.send(new PutCommand(leadParams)).then().catch(e => {
+      influxdb(500, 'dynamo_db_create_lid_error')
+      consola.error('DynamoDb create Lid Error:', e)
+    })
     // consola.info("AWS_DYNAMODB_TABLE_NAME config:", process.env.AWS_DYNAMODB_TABLE_NAME);
     // consola.info("AWS_DYNAMODB_REGION config:", process.env.AWS_DYNAMODB_REGION);
     // consola.info("Dynamo Db Success res:", JSON.stringify(data));

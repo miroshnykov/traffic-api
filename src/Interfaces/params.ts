@@ -34,6 +34,7 @@ export interface IParams {
   userAgent: string
   browserEngine: string
   browserVersion: string
+  adDomain?: string
   os: string
   platform: string
   geoInfo: object
@@ -45,7 +46,7 @@ export interface IParams {
   startTime: number
   speedTime: number
   customPayOutPerGeo?: ICustomPayOutPerGeo
-  referer?: string | undefined
+  referer?: string
   redirectReason?: string | undefined
   redirectType?: IRedirectType
   redirectUrl: string
@@ -77,4 +78,11 @@ export interface IParams {
 export interface IDecodedUrl {
   offerId: number
   campaignId: number
+}
+
+export interface IResponse {
+  success: boolean;
+  data?: IParams;
+  errors?: any;
+  debug?: boolean;
 }

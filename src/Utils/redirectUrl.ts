@@ -12,7 +12,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-export const redirectUrl = async (lp: string, params: IParams) => {
+export const redirectUrl = async (lp: string, params: IParams): Promise<string> => {
 
   if (!lp) {
     influxdb(200, `default_offer_url_for_offer_id_${params.offerId}`)
@@ -30,12 +30,12 @@ export const redirectUrl = async (lp: string, params: IParams) => {
   query = lp.includes('?') ? query.replace('?', '&') : query;
   let urlToRedirect = lp + query;
 
-  let prefix = 'http'
+  const prefix = 'http'
 
   if (urlToRedirect.substr(0, prefix.length) !== prefix) {
     urlToRedirect = prefix + '://' + urlToRedirect
   }
-  const hash = redirectUrlHashGenerator(urlToRedirect) || ''
+  const hash: string = redirectUrlHashGenerator(urlToRedirect) || ''
   urlToRedirect = `${urlToRedirect}&hash=${hash}`
   // const decKey: string = process.env.ENCRIPTION_REDIRECT_URL_KEY || ''
   // const decodedString: string = decrypt(hash, decKey)
@@ -50,7 +50,7 @@ export const redirectUrl = async (lp: string, params: IParams) => {
   return urlToRedirect
 }
 
-const redirectUrlHashGenerator = (lp: string) => {
+const redirectUrlHashGenerator = (lp: string): string | undefined => {
   try {
     let timestamp = Date.now()
     let obj = {
@@ -66,7 +66,7 @@ const redirectUrlHashGenerator = (lp: string) => {
 
 }
 
-const sqsConversionTypeCmpOrHybrid = async (params: IParams) => {
+const sqsConversionTypeCmpOrHybrid = async (params: IParams): Promise<void> => {
 
   try {
     let conversionTypeBody = {
@@ -97,6 +97,9 @@ const sqsConversionTypeCmpOrHybrid = async (params: IParams) => {
 
     consola.info(`Added to SQS Conversion Type Cmp, Body:${JSON.stringify(sendObj)}`)
     sendMessageToQueue(sendObj)
+    // sendMessageToQueue(sendObj).then().catch(e=>{
+    //   consola.error('send message')
+    // })
 
     influxdb(200, `send_sqs_type_cmp_or_hybrid`)
     // params.sendTOSQS = sqsData

@@ -4,7 +4,7 @@ import consola from "consola";
 import {IParams} from "../../../Interfaces/params";
 import {IRedirectType} from "../../../Interfaces/recipeTypes";
 
-export const offersStartEndDateSetupCalculations = async (params: IParams) => {
+export const offersStartEndDateSetupCalculations = async (params: IParams): Promise<boolean> => {
   try {
     let pass = false
     if (!params.offerInfo.startEndDateSetting.dateRangePass) {

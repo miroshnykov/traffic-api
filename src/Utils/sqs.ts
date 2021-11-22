@@ -17,7 +17,7 @@ let sqs = new AWS.SQS()
 const queueUrl: string = process.env.AWS_SQS_QUEUE_URL || ''
 consola.info(`queueUrl:${queueUrl}`)
 
-export const sendMessageToQueue = async (body: ISqsMessage) => {
+export const sendMessageToQueue = (body: ISqsMessage) => {
 
   let params = {
     MessageBody: JSON.stringify(body),
@@ -26,7 +26,7 @@ export const sendMessageToQueue = async (body: ISqsMessage) => {
   };
 
   consola.info('SendMessageToQueue PARAMS:', JSON.stringify(params))
-  return sqs.sendMessage(params).promise()
+  sqs.sendMessage(params).promise()
     .then(data => {
       return data
     })

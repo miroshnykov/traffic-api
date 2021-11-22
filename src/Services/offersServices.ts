@@ -20,8 +20,9 @@ import {customPayOutPerGeo} from "./offers/customPayOutPerGeo";
 import {IParams} from "../Interfaces/params"
 import {getParams} from "./params";
 import {capsCampaignChecking} from "./campaigns/caps/capsSetup";
+import {IResponse} from "../Interfaces/params";
 
-export const offersServices = async (req: Request) => {
+export const offersServices = async (req: Request): Promise<IResponse> => {
 
   const debug: boolean = req?.query?.debugging! === 'debugging';
   try {
@@ -54,7 +55,7 @@ export const offersServices = async (req: Request) => {
       }
     }
 
-    if (params.offerInfo.geoRules) {
+    if (params.offerInfo.countriesRestrictions) {
       const offersGeoRestrictionsRes: boolean = await offersGeoRestrictions(params)
       if (offersGeoRestrictionsRes) {
         influxdb(200, 'offer_geo_rules')

@@ -8,7 +8,7 @@ import {IParams} from "../../../Interfaces/params";
 import {IOffer} from "../../../Interfaces/offers";
 import {IRedirectType} from "../../../Interfaces/recipeTypes";
 
-export const capsOfferChecking = async (params: IParams) => {
+export const capsOfferChecking = async (params: IParams): Promise<boolean> => {
   try {
 
     if (params.offerInfo?.capInfo?.dateRangeSetUp
@@ -18,7 +18,7 @@ export const capsOfferChecking = async (params: IParams) => {
       params.redirectType = IRedirectType.CAPS_OFFER_DATA_RANGE_NOT_PASS
       params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!
       params.redirectReason = 'offerCapsDataRangeNotPass'
-      params.capsResult.info =`offer dateRangeSetUp=${params.offerInfo?.capInfo?.dateRangeSetUp}, dateRangePass=${params.offerInfo?.capInfo?.dateRangePass}`
+      params.capsResult.info = `offer dateRangeSetUp=${params.offerInfo?.capInfo?.dateRangeSetUp}, dateRangePass=${params.offerInfo?.capInfo?.dateRangePass}`
       return false
     }
 

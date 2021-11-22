@@ -87,6 +87,11 @@
 	docker build -t traffic-api .
    	docker run -it -p 5000:5000 --rm --name traffic-api-  traffic-api
 
+## autocannon
+    set the load of 300 connections for 15 seconds
+    autocannon -c 300 -d 15 http://localhost:5000/getRecipeData?debugging=debugging&offerId=36336
+    autocannon -c 10 -d 15 http://localhost:5000/ad?offer=881c7670e2d2228459a3e6ee1f1e181d:2a79b868d55c64bed2636f145e0c017109e3d851d67fdff2a202d2e9409e295258cb0f3cd06bc7c1a33d9f4045675371&debugging=debugging
+
 # diagram
 
 ![](diagram-co-traffic.png)

@@ -1,5 +1,5 @@
 {
-  "name": "co-traffic",
+  "name": "traffic-api",
   "version": "1.0.0",
   "description": "Traffic server",
   "main": "server.ts",
@@ -27,6 +27,7 @@
     "@aws-sdk/util-dynamodb": "^3.31.0",
     "@types/ioredis": "^4.26.7",
     "@types/request-ip": "^0.0.37",
+    "autocannon": "^7.5.0",
     "aws-sdk": "^2.973.0",
     "axios": "^0.21.1",
     "chalk": "^4.1.2",

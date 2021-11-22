@@ -11,7 +11,7 @@ import routes from './Routes/index';
 import {setCampaignsToRedis, setOffersToRedis} from './Crons/setRecipeToRedisCron'
 import 'dotenv/config';
 import {getFileFromBucket} from "./Crons/getReceipS3Cron";
-import {sendToAggrOffer} from "./Utils/aggregator";
+import {sendToAggregator} from "./Utils/aggregator";
 import {influxdb} from "./Utils/metrics";
 import {IRedshiftData} from "./Interfaces/redshiftData";
 import {IRecipeType} from "./Interfaces/recipeTypes";
@@ -44,7 +44,7 @@ consola.info(`Cores number:${coreThread.length}`)
 if (cluster.isMaster) {
 
   socketConnection(ISocketType.MASTER)
-  // socketConnection(ISocketType.SLAVE)
+  socketConnection(ISocketType.SLAVE)
 
   const aggregatorData = async () => {
 
@@ -59,7 +59,7 @@ if (cluster.isMaster) {
 
         for (const j in logBufferOffer[index]) {
           let statsData: IRedshiftData = logBufferOffer[index][j]
-          sendToAggrOffer(statsData)
+          sendToAggregator(statsData)
 
         }
         delete logBufferOffer[index]

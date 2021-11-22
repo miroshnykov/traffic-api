@@ -30,6 +30,7 @@ export interface IOffer {
   landingPageUrl: string
   sflOfferGeoId: number
   geoRules: string
+  countriesRestrictions?: string
   geoOfferId: number
   customLpRules: string
   offerIdRedirectExitTraffic: number
@@ -51,4 +52,3 @@ export interface IOffer {
   redirectType?: IRedirectType
   redirectReason?: string | undefined
 }
-

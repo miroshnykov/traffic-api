@@ -1,6 +1,6 @@
 import {IParams} from "../Interfaces/params";
 
-export const lidOffer = (params: IParams) => (
+export const lidOffer = (params: IParams): object => (
   {
     'lid': params.lid || '',
     'adDomain': params.host || null,

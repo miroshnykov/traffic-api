@@ -9,7 +9,7 @@ export enum OFFER_DEFAULT {
   //OFFER_ID = 35910 // dev
 }
 
-export const getDefaultOfferUrl = async () => {
+export const getDefaultOfferUrl = async (): Promise<string> => {
   try {
     const offerDefault: any = await getOffer(OFFER_DEFAULT.OFFER_ID)
     const offerDefaultInfo: IOffer = JSON.parse(offerDefault)

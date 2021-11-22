@@ -9,7 +9,7 @@ import {IParams} from "../../Interfaces/params";
 import {IAggregatedOfferList, IOffer} from "../../Interfaces/offers";
 import {IRedirectType} from "../../Interfaces/recipeTypes";
 
-export const offerAggregatedCalculations = async (params: IParams) => {
+export const offerAggregatedCalculations = async (params: IParams): Promise<boolean> => {
   try {
     let pass: boolean = false
 
@@ -35,7 +35,7 @@ export const offerAggregatedCalculations = async (params: IParams) => {
         //PH-38
         const checkMargin = offersAggregatedIds.filter(i => i.aggregatedOfferId === bestOfferId)[0]
         const checkDuplicateMargin = offersAggregatedIds.filter(i => i.margin === checkMargin.margin
-            && offersAggregatedIdsToRedirect.includes(i.aggregatedOfferId)
+          && offersAggregatedIdsToRedirect.includes(i.aggregatedOfferId)
         )
         params.offersAggregatedIdsMargin = checkDuplicateMargin
         if (checkDuplicateMargin.length > 1) {
@@ -68,7 +68,7 @@ export const offerAggregatedCalculations = async (params: IParams) => {
 
 }
 
-const checkRestrictionsByOffer = async (offer: IAggregatedOfferList, params: IParams) => {
+const checkRestrictionsByOffer = async (offer: IAggregatedOfferList, params: IParams): Promise<boolean> => {
   try {
 
     return !(offer?.capsOverLimitClicks

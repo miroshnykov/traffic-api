@@ -7,25 +7,17 @@ import {influxdb} from "../Utils/metrics";
 import {IParams} from "../Interfaces/params";
 import {REDIRECT_URLS} from "../Utils/defaultRedirectUrls";
 import {getDefaultOfferUrl} from "../Utils/defaultOffer";
-
-interface IResOffer {
-  success: boolean;
-  data?: IParams;
-  errors?: any;
-  debug?: boolean;
-}
+import {IResponse} from "../Interfaces/params";
 
 export class OffersController extends BaseController {
 
-  public async read(req: Request, res: Response, next: NextFunction): Promise<any> {
-    let responseOffer: IResOffer = await offersServices(req)
-    // consola.info('responseOffer:', responseOffer)
-    // consola.info(req.query)
+  public async read(req: Request, res: Response, next: NextFunction): Promise<IParams | void> {
+    const responseOffer: IResponse = await offersServices(req)
 
-    let timeCurrent: number = new Date().getTime()
+    const timeCurrent: number = new Date().getTime()
     if (responseOffer.data) {
       responseOffer.data.speedTime = timeCurrent - responseOffer.data?.startTime
-      let speedTime = rangeSpeed(responseOffer.data.speedTime)
+      let speedTime: number = rangeSpeed(responseOffer.data.speedTime)
       if (speedTime >= 2500) {
         influxdb(200, `speed_time_more_${speedTime}_ms_country_${responseOffer.data.country}`)
       } else {
@@ -37,7 +29,7 @@ export class OffersController extends BaseController {
     }
 
     if (!responseOffer.success && responseOffer?.debug) {
-      let defaultOfferUrl = await getDefaultOfferUrl()
+      let defaultOfferUrl: string = await getDefaultOfferUrl()
       influxdb(200, `default_offer_url`)
       res.status(400).json({
         error: `Recipe is inactive or not ready or broken  ${responseOffer.errors.toString()}, will redirect to default offer:${defaultOfferUrl}`,
@@ -48,8 +40,7 @@ export class OffersController extends BaseController {
     }
 
     if (!responseOffer?.success) {
-      // some errors redirect to default offer url
-      const defaultOfferUrl:string = await getDefaultOfferUrl()
+      const defaultOfferUrl: string = await getDefaultOfferUrl()
       influxdb(200, `default_offer_url`)
       res.redirect(defaultOfferUrl)
       return next()
@@ -69,6 +60,5 @@ export class OffersController extends BaseController {
       res.redirect(redirectUrl)
       return next()
     }
-
   }
 }

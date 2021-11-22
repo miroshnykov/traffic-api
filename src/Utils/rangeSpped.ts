@@ -1,4 +1,4 @@
-export const rangeSpeed = (time: number) => {
+export const rangeSpeed = (time: number): number => {
   switch (true) {
     case time < 500 :
       return 500

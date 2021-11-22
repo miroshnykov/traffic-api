@@ -6,7 +6,7 @@ import {createLidOffer} from "../../Utils/dynamoDb";
 import {ICustomPayOutPerGeo} from "../../Interfaces/customPayOutPerGeo";
 import {IRedirectType} from "../../Interfaces/recipeTypes";
 
-export const customPayOutPerGeo = async (params: IParams) => {
+export const customPayOutPerGeo = async (params: IParams): Promise<boolean> => {
   try {
     let pass = false
     let customPayOutPerGeoData: ICustomPayOutPerGeo[] = JSON.parse(params.offerInfo?.customPayOutPerGeo!)
@@ -20,7 +20,6 @@ export const customPayOutPerGeo = async (params: IParams) => {
       params.payin = checkCustomPerGeo[0].payIn
       let lidObj = lidOffer(params)
       createLidOffer(lidObj)
-      params.lid = lidObj.lid
       params.lidObj = lidObj
 
       params.redirectUrl = await redirectUrl(params.landingPageUrl, params)

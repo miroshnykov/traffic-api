@@ -18,6 +18,7 @@ export const lidOffer = (params: IParams): object => (
     'offerId': +params.offerId || null,
     'region': params.region,
     'isp': params.isp,
+    'IP': params.IP || '',
     'sflServer': params.host,
     'userAgent': params.userAgent || null,
     'browser': params.browser || null,

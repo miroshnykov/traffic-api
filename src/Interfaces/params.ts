@@ -73,6 +73,7 @@ export interface IParams {
   offerIdRedirectExitTraffic?: number
   eventType?: string
   capsResult?: ICapsResult | any
+  IP?: string
 }
 
 export interface IDecodedUrl {

@@ -56,7 +56,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const host: string = String(req?.headers?.host!)
     const originalUrl: string = String(req?.originalUrl!)
     const adDomain: string = String(req?.query?.ad_domain!)
-    const referer = String(req.headers['referer'])
+    const referer = req.headers['referer'] || ''
     const geoInfo: IGeo = await resolveIP(req)
     const country: string = String(geoInfo?.country)
     const region: string = String(geoInfo?.region)

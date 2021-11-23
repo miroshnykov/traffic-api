@@ -131,6 +131,6 @@ if (cluster.isMaster) {
   const port: number = parseInt(process.env.PORT || '5000')
 
   server.listen(port, host, (): void => {
-    consola.success(`Server is running on host http://${host}:${port}, env:${process.env.NODE_ENV} `)
+    consola.success(`Server is running on host http://${host}:${port}, env:${process.env.NODE_ENV} Using node - { ${process.version} } `)
   })
 }

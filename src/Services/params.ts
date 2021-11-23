@@ -62,6 +62,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const region: string = String(geoInfo?.region)
     const city: string = String(geoInfo?.city)
     const isp: string = String(geoInfo?.isp)
+    const IP: string = String(geoInfo?.IP)
     const lid: string = v4()
 
     const affiliateId: number = Number(campaignInfo.affiliateId)
@@ -125,7 +126,8 @@ export const getParams = async (req: Request): Promise<IParams> => {
       startTime,
       speedTime,
       redirectUrl,
-      capsResult
+      capsResult,
+      IP
     };
 
   } catch (e) {

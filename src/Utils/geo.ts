@@ -9,6 +9,8 @@ import {influxdb} from "./metrics";
 dotenv.config();
 let ipData: CityResponse | null
 let ISP: IspResponse | null
+let IP: string = ''
+
 export const resolveIP = async (req: Request) => {
   try {
     // consola.info('process.env.MAXMIND_PATH:',process.env.MAXMIND_PATH)
@@ -23,16 +25,16 @@ export const resolveIP = async (req: Request) => {
     consola.info(`IP address:${ip}`)
     ipData = lookup.get(ip)
     ISP = lookupIPR.get(ip)
-
+    IP = ip
   } catch (e) {
     influxdb(500, 'maxmind_error')
     consola.error(`Maxmind does not work or does not setup properly,`, e)
   } finally {
-    return resolveGeo(ipData, ISP)
+    return resolveGeo(ipData, ISP, IP)
   }
 }
 
-const resolveGeo = (ipData: any, ISP: any) => {
+const resolveGeo = (ipData: any, ISP: any, IP: string) => {
 
   const country: string = ipData?.country?.iso_code || null
   const region: string = ipData?.subdivisions[0]?.iso_code || null
@@ -45,6 +47,7 @@ const resolveGeo = (ipData: any, ISP: any) => {
     region,
     city,
     ll,
-    isp
+    isp,
+    IP
   }
 }

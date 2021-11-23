@@ -4,6 +4,7 @@ export interface IGeo {
   city: string
   isp: string
   ll: Array<string>
+  IP: string
 }
 
 export interface IGeoRule {

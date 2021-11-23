@@ -22,7 +22,7 @@ export const resolveIP = async (req: Request) => {
     if (process.env.NODE_ENV === 'development') {
       ip = '199.102.242.155'
     }
-    consola.info(`IP address:${ip}`)
+
     ipData = lookup.get(ip)
     ISP = lookupIPR.get(ip)
     IP = ip
@@ -41,7 +41,11 @@ const resolveGeo = (ipData: any, ISP: any, IP: string) => {
   const city: string = ipData?.city?.names?.en ? ipData?.city?.names?.en : ipData?.city?.names?.fr || null
   const ll: Array<string> = [ipData?.location?.latitude, ipData?.location?.longitude]
   const isp: string = ISP?.isp
-
+  consola.info(`IP address:${IP} country:${country}`)
+  if (!country) {
+    consola.info(`Country empty by IP address:${IP}`)
+    influxdb(500, `country_empty_by_ip_${IP}`)
+  }
   return {
     country,
     region,

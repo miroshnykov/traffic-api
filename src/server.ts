@@ -122,7 +122,7 @@ if (cluster.isMaster) {
   const server = http.createServer(app) as Server
   app.use(loggerMiddleware);
   app.use(bodyParser.json());
-  app.get('/health', (req: Request, res: Response, next: NextFunction) => {
+  app.get('/api/v1/health', (req: Request, res: Response, next: NextFunction) => {
     res.send('Ok')
   });
 

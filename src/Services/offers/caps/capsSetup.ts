@@ -7,6 +7,7 @@ import {influxdb} from "../../../Utils/metrics";
 import {IParams} from "../../../Interfaces/params";
 import {IOffer} from "../../../Interfaces/offers";
 import {IRedirectType} from "../../../Interfaces/recipeTypes";
+import {override} from "../override";
 
 export const capsOfferChecking = async (params: IParams): Promise<boolean> => {
   try {
@@ -26,23 +27,11 @@ export const capsOfferChecking = async (params: IParams): Promise<boolean> => {
       params.offerInfo?.capInfo?.capsSalesOverLimit
       || params.offerInfo?.capInfo?.capsClicksOverLimit
     ) {
-      const originOffer: any = await getOffer(params.offerInfo?.originOfferId!)
-      const originOfferInfo: IOffer = JSON.parse(originOffer)
 
+      await override(params, params.offerInfo?.capInfo.offerCapsOfferIdRedirect!)
       params.redirectType = params.offerInfo?.redirectType
       params.redirectReason = params.offerInfo?.redirectReason
       params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!
-      params.capOverrideOfferId = params.offerInfo?.originOfferId
-      params.originAdvertiserId = originOfferInfo?.advertiserId
-      params.originAdvertiserName = originOfferInfo?.advertiserName
-      params.originConversionType = originOfferInfo?.conversionType
-      params.originIsCpmOptionEnabled = originOfferInfo?.isCpmOptionEnabled || 0
-      params.originOfferId = originOfferInfo?.offerId
-      params.originVerticalId = originOfferInfo?.verticalId
-      params.originVerticalName = originOfferInfo?.verticalName
-      params.originPayIn = Number(originOfferInfo?.payin)
-      params.originPayOut = Number(originOfferInfo?.payout)
-      params.landingPageUrl = originOfferInfo?.landingPageUrl
       params.capsResult.info = `offers caps capsSalesOverLimit=${params.offerInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${params.offerInfo?.capInfo?.capsClicksOverLimit}`
     } else if (
       params.offerInfo?.capInfo?.capsSalesUnderLimit
@@ -52,12 +41,12 @@ export const capsOfferChecking = async (params: IParams): Promise<boolean> => {
       params.redirectReason = `offer caps sales or clicks under limit `
       params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!
       params.capsResult.info = `offers caps capsSalesUnderLimit=${params.offerInfo?.capInfo?.capsSalesUnderLimit}, capsClicksUnderLimit=${params.offerInfo?.capInfo?.capsClicksUnderLimit}`
+      let lidObj = lidOffer(params)
+      createLidOffer(lidObj)
+      params.lidObj = lidObj
     }
 
     influxdb(200, `offer_cap_${params.redirectType}`)
-    let lidObj = lidOffer(params)
-    createLidOffer(lidObj)
-    params.lidObj = lidObj
     params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
     return true
   } catch (e) {

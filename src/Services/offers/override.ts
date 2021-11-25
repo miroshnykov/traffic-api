@@ -17,15 +17,15 @@ export const override = async (params: IParams, offerIdRedirectExitTraffic: numb
 
   try {
 
-    params.referredPayIn = Number(params.offerInfo?.payin)
-    params.referredPayOut = Number(params.offerInfo?.payout)
-    params.referredAdvertiserId = params.offerInfo?.advertiserId || 0
-    params.referredAdvertiserName = params.offerInfo?.advertiserName || ''
-    params.referredConversionType = params.offerInfo?.conversionType || ''
-    params.referredIsCpmOptionEnabled = params.offerInfo?.isCpmOptionEnabled || 0
-    params.referredOfferId = params.offerInfo?.offerId || 0
-    params.referredVerticalId = params.offerInfo?.verticalId || 0
-    params.referredVerticalName = params.offerInfo?.verticalName || ''
+    params.originPayIn = Number(params.offerInfo?.payin)
+    params.originPayOut = Number(params.offerInfo?.payout)
+    params.originAdvertiserId = params.offerInfo?.advertiserId || 0
+    params.originAdvertiserName = params.offerInfo?.advertiserName || ''
+    params.originConversionType = params.offerInfo?.conversionType || ''
+    params.originIsCpmOptionEnabled = params.offerInfo?.isCpmOptionEnabled || 0
+    params.originOfferId = params.offerInfo?.offerId || 0
+    params.originVerticalId = params.offerInfo?.verticalId || 0
+    params.originVerticalName = params.offerInfo?.verticalName || ''
 
     params.landingPageIdOrigin = params.offerInfo?.landingPageId || 0
     params.landingPageUrlOrigin = params.offerInfo?.landingPageUrl || ''

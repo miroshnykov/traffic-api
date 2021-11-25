@@ -58,16 +58,16 @@ export interface IParams {
   groupBestOffer?: number
   startEndDateSetup?: boolean
   capOverrideOfferId?: number
-  referredAdvertiserId?: number
-  referredAdvertiserName?: string
-  referredConversionType?: string
-  referredIsCpmOptionEnabled?: boolean | number
-  referredOfferId?: number
-  referredVerticalId?: number
-  referredVerticalName?: string
+  originAdvertiserId?: number
+  originAdvertiserName?: string
+  originConversionType?: string
+  originIsCpmOptionEnabled?: boolean | number
+  originOfferId?: number
+  originVerticalId?: number
+  originVerticalName?: string
+  originPayIn?: number
+  originPayOut?: number
   lidObj?: object
-  referredPayIn?: number
-  referredPayOut?: number
   landingPageIdOrigin?: number
   landingPageUrlOrigin?: string
   offerIdRedirectExitTraffic?: number

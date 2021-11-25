@@ -26,23 +26,23 @@ export const capsOfferChecking = async (params: IParams): Promise<boolean> => {
       params.offerInfo?.capInfo?.capsSalesOverLimit
       || params.offerInfo?.capInfo?.capsClicksOverLimit
     ) {
-      const referredOffer: any = await getOffer(params.offerInfo?.referredOfferId!)
-      const referredOfferInfo: IOffer = JSON.parse(referredOffer)
+      const originOffer: any = await getOffer(params.offerInfo?.originOfferId!)
+      const originOfferInfo: IOffer = JSON.parse(originOffer)
 
       params.redirectType = params.offerInfo?.redirectType
       params.redirectReason = params.offerInfo?.redirectReason
       params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!
-      params.capOverrideOfferId = params.offerInfo?.referredOfferId
-      params.referredAdvertiserId = referredOfferInfo?.advertiserId
-      params.referredAdvertiserName = referredOfferInfo?.advertiserName
-      params.referredConversionType = referredOfferInfo?.conversionType
-      params.referredIsCpmOptionEnabled = referredOfferInfo?.isCpmOptionEnabled || 0
-      params.referredOfferId = referredOfferInfo?.offerId
-      params.referredVerticalId = referredOfferInfo?.verticalId
-      params.referredVerticalName = referredOfferInfo?.verticalName
-      params.referredPayIn = Number(referredOfferInfo?.payin)
-      params.referredPayOut = Number(referredOfferInfo?.payout)
-      params.landingPageUrl = referredOfferInfo?.landingPageUrl
+      params.capOverrideOfferId = params.offerInfo?.originOfferId
+      params.originAdvertiserId = originOfferInfo?.advertiserId
+      params.originAdvertiserName = originOfferInfo?.advertiserName
+      params.originConversionType = originOfferInfo?.conversionType
+      params.originIsCpmOptionEnabled = originOfferInfo?.isCpmOptionEnabled || 0
+      params.originOfferId = originOfferInfo?.offerId
+      params.originVerticalId = originOfferInfo?.verticalId
+      params.originVerticalName = originOfferInfo?.verticalName
+      params.originPayIn = Number(originOfferInfo?.payin)
+      params.originPayOut = Number(originOfferInfo?.payout)
+      params.landingPageUrl = originOfferInfo?.landingPageUrl
       params.capsResult.info = `offers caps capsSalesOverLimit=${params.offerInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${params.offerInfo?.capInfo?.capsClicksOverLimit}`
     } else if (
       params.offerInfo?.capInfo?.capsSalesUnderLimit

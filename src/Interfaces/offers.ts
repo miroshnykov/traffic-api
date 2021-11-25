@@ -48,7 +48,7 @@ export interface IOffer {
   capInfo?: ICapInfo
   landingPageUrlOrigin?: string | undefined
   offerIdOrigin?: number | undefined
-  referredOfferId?: number | undefined
+  originOfferId?: number | undefined
   redirectType?: IRedirectType
   redirectReason?: string | undefined
 }

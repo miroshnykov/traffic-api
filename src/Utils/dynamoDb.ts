@@ -38,7 +38,7 @@ export const createLidOffer = (lidInfo: any): void => {
     for (const key in lidInfo) {
       if (!lidInfo[key]) {
         if (key === 'isCpmOptionEnabled'
-          || key === 'referredIsCpmOptionEnabled'
+          || key === 'originIsCpmOptionEnabled'
         ) {
           continue
         }
@@ -81,11 +81,11 @@ const redshiftOffer = (lidObj: IParams) => (
     'advertiser_id': +lidObj.advertiserId || 0,
     'advertiser_manager_id': +lidObj.advertiserManagerId || 0,
     'affiliate_manager_id': +lidObj.affiliateManagerId || 0,
-    'referred_advertiser_id': +lidObj.referredAdvertiserId! || 0,
-    'referred_conversion_type': lidObj.referredConversionType || '',
-    'referred_is_cpm_option_enabled': lidObj.referredIsCpmOptionEnabled || 0,
-    'referred_offer_id': +lidObj.referredOfferId! || 0,
-    'referred_vertical_id': +lidObj.referredVerticalId! || 0,
+    'referred_advertiser_id': +lidObj.originAdvertiserId! || 0,
+    'referred_conversion_type': lidObj.originConversionType || '',
+    'referred_is_cpm_option_enabled': lidObj.originIsCpmOptionEnabled || 0,
+    'referred_offer_id': +lidObj.originOfferId! || 0,
+    'referred_vertical_id': +lidObj.originVerticalId! || 0,
     'verticals': lidObj.verticalId || 0,
     'conversion_type': lidObj.conversionType || '',
     'platform': lidObj.platform || '',

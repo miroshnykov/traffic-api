@@ -1,13 +1,12 @@
 import Influx from "influxdb-nodejs"
 import os from "os";
 import consola from "consola";
+import * as _ from "lodash";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 const host = process.env.GRAFANA_HOST
 const clientInfluxdb = new Influx(host)
-import * as _ from "lodash";
-
 const projectName = process.env.GRAFANA_PROJECT_NAME
 const project = (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') && `${projectName}_staging` || projectName
 const hostname = os.hostname()

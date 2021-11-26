@@ -5,8 +5,6 @@ import consola from 'consola'
 import chalk from 'chalk'
 import express, {Application, NextFunction, Request, Response} from 'express'
 import * as bodyParser from 'body-parser';
-// import {offer} from './routing'
-// import {offer} from './Routes/offer'
 import routes from './Routes/index';
 import {setCampaignsToRedis, setOffersToRedis} from './Crons/setRecipeToRedisCron'
 import 'dotenv/config';

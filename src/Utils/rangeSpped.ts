@@ -1,6 +1,8 @@
 export const rangeSpeed = (time: number): number => {
   switch (true) {
-    case time < 500 :
+    case time < 250 :
+      return 250
+    case  time > 251 && time < 500 :
       return 500
     case  time > 501 && time < 1000 :
       return 1000

@@ -1,13 +1,6 @@
 import {Request, Response, NextFunction} from 'express';
-import {getOffer} from '../Models/offersModel'
-import {getCampaign} from '../Models/campaignsModel'
-import DeviceDetector from "device-detector-js";
-import * as QueryString from "querystring";
-import {resolveIP} from "../Utils/geo";
 import {influxdb} from "../Utils/metrics";
 import consola from "consola";
-import {decrypt} from "../Utils/decrypt";
-import {createLidOffer} from "../Utils/dynamoDb"
 import {offersDefaultRedirection} from "./offers/defaultRedirection"
 import {offerAggregatedCalculations} from "./offers/offersAggregated"
 import {offersStartEndDateSetupCalculations} from "./offers/restrictions/offersStartEndDateSetup"
@@ -15,7 +8,6 @@ import {offersGeoRestrictions} from "./offers/restrictions/offersGeoRestrictions
 import {offersCustomLpRules} from "./offers/restrictions/offersCustomLpRules"
 import {capsOfferChecking} from "./offers/caps/capsSetup"
 import {campaignsTargetRules} from "./campaigns/restrictions/targetRules"
-import {v4} from "uuid"
 import {customPayOutPerGeo} from "./offers/customPayOutPerGeo";
 import {IParams} from "../Interfaces/params"
 import {getParams} from "./params";

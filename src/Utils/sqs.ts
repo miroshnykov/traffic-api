@@ -1,10 +1,10 @@
 import consola from "consola";
-
 import AWS from 'aws-sdk'
-import * as dotenv from "dotenv";
-dotenv.config();
 import {influxdb} from "./metrics";
 import {ISqsMessage} from "../Interfaces/sqsMessage";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -31,7 +31,7 @@ export const sendMessageToQueue = (body: ISqsMessage) => {
       return data
     })
     .catch(err => {
-      influxdb(500,'send_message_to_queue_error')
+      influxdb(500, 'send_message_to_queue_error')
       console.error('Error while send message to the sqs queue', err)
     })
 }

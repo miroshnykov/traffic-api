@@ -1,6 +1,4 @@
-import {Request, Response} from 'express';
 import {getOffer} from '../Models/offersModel'
-import {getCampaign} from '../Models/campaignsModel'
 
 export const recipeOffersServices = async (id: number) => {
   try {

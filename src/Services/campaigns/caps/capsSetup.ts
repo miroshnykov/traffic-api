@@ -1,8 +1,6 @@
 import {getOffer} from "../../../Models/offersModel";
 import {redirectUrl} from "../../../Utils/redirectUrl"
 import consola from "consola";
-import {lidOffer} from "../../../Utils/lid"
-import {createLidOffer} from "../../../Utils/dynamoDb"
 import {influxdb} from "../../../Utils/metrics";
 import {IParams} from "../../../Interfaces/params";
 import {IOffer} from "../../../Interfaces/offers";
@@ -57,9 +55,6 @@ export const capsCampaignChecking = async (params: IParams): Promise<boolean> =>
     }
 
     influxdb(200, `offer_cap_campaign_${params.redirectType}`)
-    let lidObj = lidOffer(params)
-    createLidOffer(lidObj)
-    params.lidObj = lidObj
     params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
     return true
   } catch (e) {

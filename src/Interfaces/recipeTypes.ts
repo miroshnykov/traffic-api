@@ -10,6 +10,7 @@ export enum IRedirectType {
   CAMPAIGN_TARGET_RULES = 'campaignTargetRules',
   OFFER_START_END_DATA_RANGE_NOT_PASS = 'OfferStartEndDataRangeNotPass',
   CUSTOM_PAY_OUT_PER_GEO = 'customPayOutPerGeo',
+  EXIT_OFFER_CUSTOM_PAY_OUT_PER_GEO = 'exitOfferCustomPayOutPerGeo',
   CUSTOM_LANDING_PAGES = 'customLandingPages',
   OFFER_GEO_RESTRICTION = 'offerGeoRestriction',
   CAPS_OFFER_UNDER_LIMIT = 'capsOfferUnderLimit',

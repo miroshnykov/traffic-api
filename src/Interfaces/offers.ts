@@ -52,3 +52,8 @@ export interface IOffer {
   redirectType?: IRedirectType
   redirectReason?: string | undefined
 }
+
+export interface IExitOfferResult {
+  type?: string
+  info?: string
+}

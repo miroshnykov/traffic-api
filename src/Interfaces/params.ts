@@ -1,4 +1,4 @@
-import {IOffer} from "./offers"
+import {IExitOfferResult, IOffer} from "./offers"
 import {ICampaign} from "./campaigns";
 import {ICustomPayOutPerGeo} from "./customPayOutPerGeo";
 import {IRedirectType} from "./recipeTypes";
@@ -74,6 +74,9 @@ export interface IParams {
   eventType?: string
   capsResult?: ICapsResult | any
   IP?: string
+  isExitOffer: boolean
+  exitOfferInfo?: IOffer
+  exitOfferResult?: IExitOfferResult | any
 }
 
 export interface IDecodedUrl {

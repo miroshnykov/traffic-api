@@ -76,6 +76,7 @@ export interface IParams {
   IP?: string
   isExitOffer: boolean
   exitOfferInfo?: IOffer
+  exitOffersNested?: IOffer[] | any
   exitOfferResult?: IExitOfferResult | any
 }
 

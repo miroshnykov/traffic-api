@@ -51,6 +51,7 @@ export interface IOffer {
   originOfferId?: number | undefined
   redirectType?: IRedirectType
   redirectReason?: string | undefined
+  exitOffersNested?: IOffer[]
 }
 
 export interface IExitOfferResult {

@@ -27,7 +27,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
   const debug: boolean = req?.query?.debugging! === 'debugging';
   try {
     influxdb(200, 'offers_all_request')
-    const offerEncoded: string = String(req.query.offer! || '')
+    const offerEncoded: string = String(req.query.o! || '')
     const encKey: string = process.env.ENCRIPTION_KEY || ''
     const decodedString: string = decrypt(offerEncoded, encKey)
     const decodedObj: IDecodedUrl = JSON.parse(decodedString!)

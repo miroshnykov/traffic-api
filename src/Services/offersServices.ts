@@ -20,6 +20,7 @@ import {ICustomPayOutPerGeo} from "../Interfaces/customPayOutPerGeo";
 import {IRedirectType} from "../Interfaces/recipeTypes";
 import {lidOffer} from "../Utils/lid";
 import {createLidOffer} from "../Utils/dynamoDb";
+import {exitOfferCustomPayout, exitOfferNested} from "./offers/exitOfferNested";
 
 export const offersServices = async (req: Request): Promise<IResponse> => {
 
@@ -36,16 +37,22 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     const params: IParams = await getParams(req, offerId, campaignId)
     const handleConditionsResponse: IResponse = await handleConditions(params, debug)
 
-    if (handleConditionsResponse?.data?.isExitOffer) {
+    if (handleConditionsResponse?.success
+      && handleConditionsResponse?.data?.isExitOffer) {
+
+      //PH-426
       if (handleConditionsResponse?.data?.exitOfferInfo?.customPayOutPerGeo!) {
-        const exitOfferCustomPayOutPerGeoData: ICustomPayOutPerGeo[] = JSON.parse(handleConditionsResponse?.data?.exitOfferInfo?.customPayOutPerGeo!)
-        const checkExitOfferCustomPerGeo = exitOfferCustomPayOutPerGeoData.filter((i: any) => (i.geo === params.country))
-        if (checkExitOfferCustomPerGeo.length > 0) {
-          influxdb(200, 'offer_exit_custom_pay_out_per_geo')
-          params.payout = checkExitOfferCustomPerGeo[0].payOut
-          params.payin = checkExitOfferCustomPerGeo[0].payIn
-          params.exitOfferResult.type = IRedirectType.EXIT_OFFER_CUSTOM_PAY_OUT_PER_GEO
-          params.exitOfferResult.info = handleConditionsResponse?.data?.exitOfferInfo?.customPayOutPerGeo!
+        exitOfferCustomPayout(params, handleConditionsResponse)
+      }
+
+      //PH-428
+      if (handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length !== 0) {
+        const lengthNestedExitOffer: number = handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length || 0
+        const exitOffersNestedArr = handleConditionsResponse?.data?.offerInfo?.exitOffersNested
+
+        if (exitOffersNestedArr) {
+          const lastExitOfferNested: IOffer = exitOffersNestedArr[lengthNestedExitOffer - 1]
+          exitOfferNested(params, lastExitOfferNested, lengthNestedExitOffer)
         }
       }
     }

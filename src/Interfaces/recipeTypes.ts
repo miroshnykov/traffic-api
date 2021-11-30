@@ -11,6 +11,7 @@ export enum IRedirectType {
   OFFER_START_END_DATA_RANGE_NOT_PASS = 'OfferStartEndDataRangeNotPass',
   CUSTOM_PAY_OUT_PER_GEO = 'customPayOutPerGeo',
   EXIT_OFFER_CUSTOM_PAY_OUT_PER_GEO = 'exitOfferCustomPayOutPerGeo',
+  EXIT_OFFER_NESTED = 'exitOfferNested',
   CUSTOM_LANDING_PAGES = 'customLandingPages',
   OFFER_GEO_RESTRICTION = 'offerGeoRestriction',
   CAPS_OFFER_UNDER_LIMIT = 'capsOfferUnderLimit',

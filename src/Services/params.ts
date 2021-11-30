@@ -41,7 +41,7 @@ export const getParams = async (req: Request, offerId: number, campaignId: numbe
     const browserEngine = deviceInfo?.client?.engine || ''
 
     const browserVersion = String(deviceInfo?.client?.version!)
-    const offerHash = req.query.offer
+    const offerHash = req.query.o
     const browser: string = String(deviceInfo?.client?.name!)
     const os: string = String(deviceInfo?.os?.name!)
     const platform: string = String(deviceInfo?.os?.platform!)

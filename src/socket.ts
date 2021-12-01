@@ -45,7 +45,7 @@ export const socketConnection = (type: ISocketType) => {
 
     try {
       consola.warn(`Socket type: { ${type} }, Size offers from co-recipe and from co-traffic is different, offersSize:${offersSize} Re-download new recipe offers from S3, Set offersSize to redis:${offersSize}`)
-      await redis.set(`offersSize_`, offersSize)
+      await redis.set(`offersSizeTraffic`, offersSize)
       setTimeout(getFileFromBucket, 6000, IRecipeType.OFFER)
       setTimeout(setOffersToRedis, 20000)
     } catch (e) {
@@ -58,7 +58,7 @@ export const socketConnection = (type: ISocketType) => {
 
     try {
       consola.warn(`Socket type: { ${type} }, Size campaigns from co-recipe and from co-traffic is different, campaignsSize:${campaignsSize}, Re-download new recipe campaigns from S3  `)
-      await redis.set(`campaignsSize_`, campaignsSize!)
+      await redis.set(`campaignsSizeTraffic`, campaignsSize!)
       setTimeout(getFileFromBucket, 6000, IRecipeType.CAMPAIGN)
       setTimeout(setCampaignsToRedis, 20000)
     } catch (e) {
@@ -97,7 +97,7 @@ export const socketConnection = (type: ISocketType) => {
 
   const socketEmitOffersRun = async (type:ISocketType) => {
     // consola.info(`fileSizeOffersCheck, Socket type: { ${type} } masterServerRunning:${masterServerRunning}, slaveServerRunning:${slaveServerRunning} `)
-    const offerSize: number = Number(await redis.get(`offersSize_`))
+    const offerSize: number = Number(await redis.get(`offersSizeTraffic`))
     socket[type].emit('fileSizeOffersCheck', offerSize)
   }
 
@@ -116,7 +116,7 @@ export const socketConnection = (type: ISocketType) => {
   }
   const socketEmitCampaignsRun = async (type: ISocketType) => {
     // consola.info(`fileSizeCampaignsCheck, Socket type: { ${type} }, masterServerRunning:${masterServerRunning}, slaveServerRunning:${slaveServerRunning} `)
-    const campaignsSize: number = Number(await redis.get(`campaignsSize_`))
+    const campaignsSize: number = Number(await redis.get(`campaignsSizeTraffic`))
     socket[type].emit('fileSizeCampaignsCheck', campaignsSize)
   }
 

@@ -41,11 +41,12 @@ export const socketConnection = (type: ISocketType) => {
     consola.info(`Socket connected, host: ${socketHost}, socket type: { ${type} }, masterServerRunning:${masterServerRunning}, slaveServerRunning:${slaveServerRunning} `)
   });
 
-  socket[type].on('fileSizeOffersCheck', async (offersSize: number) => {
+  socket[type].on('fileSizeOffersCheck', async (offersSizeRecipe: number) => {
 
     try {
-      consola.warn(`Socket type: { ${type} }, Size offers from co-recipe and from co-traffic is different, offersSize:${offersSize} Re-download new recipe offers from S3, Set offersSize to redis:${offersSize}`)
-      await redis.set(`offersSizeTraffic`, offersSize)
+      const offersSizeTraffic: number = Number(await redis.get(`offersSizeTraffic`))
+      consola.warn(`Socket type: { ${type} }.Size of { offers } from recipe-api:${offersSizeRecipe} and from traffic-api:${offersSizeTraffic} is different, Re-download new recipe offers from S3, Set offersSizeTraffic to redis:${offersSizeRecipe}`)
+      await redis.set(`offersSizeTraffic`, offersSizeRecipe)
       setTimeout(getFileFromBucket, 6000, IRecipeType.OFFER)
       setTimeout(setOffersToRedis, 20000)
     } catch (e) {
@@ -54,11 +55,12 @@ export const socketConnection = (type: ISocketType) => {
     }
   })
 
-  socket[type].on('fileSizeCampaignsCheck', async (campaignsSize: number) => {
+  socket[type].on('fileSizeCampaignsCheck', async (campaignsSizeRecipe: number) => {
 
     try {
-      consola.warn(`Socket type: { ${type} }, Size campaigns from co-recipe and from co-traffic is different, campaignsSize:${campaignsSize}, Re-download new recipe campaigns from S3  `)
-      await redis.set(`campaignsSizeTraffic`, campaignsSize!)
+      const campaignsSizeTraffic: number = Number(await redis.get(`campaignsSizeTraffic`))
+      consola.warn(`Socket type: { ${type} }.Size of { campaigns } from recipe-api:${campaignsSizeRecipe} and from co-traffic:${campaignsSizeTraffic} is different,  Re-download new recipe campaigns from S3, Set campaignsSizeTraffic to redis:${campaignsSizeRecipe} `)
+      await redis.set(`campaignsSizeTraffic`, campaignsSizeRecipe!)
       setTimeout(getFileFromBucket, 6000, IRecipeType.CAMPAIGN)
       setTimeout(setCampaignsToRedis, 20000)
     } catch (e) {
@@ -95,7 +97,7 @@ export const socketConnection = (type: ISocketType) => {
   }
   setInterval(setOffersCheckSize, 10000)
 
-  const socketEmitOffersRun = async (type:ISocketType) => {
+  const socketEmitOffersRun = async (type: ISocketType) => {
     // consola.info(`fileSizeOffersCheck, Socket type: { ${type} } masterServerRunning:${masterServerRunning}, slaveServerRunning:${slaveServerRunning} `)
     const offerSize: number = Number(await redis.get(`offersSizeTraffic`))
     socket[type].emit('fileSizeOffersCheck', offerSize)

@@ -32,7 +32,7 @@ export const lidOffer = (params: IParams): object => (
     'landingPageId': params.landingPageId || null,
     'conversionType': params.conversionType || null,
     'os': params.os || null,
-    'refererPath': params.referer || null,
+    'referer': params.referer || null,
     'originPayIn': params.originPayIn || 0,
     'originPayOut': params.originPayOut || 0,
     'originAdvertiserId': params.originAdvertiserId || null,

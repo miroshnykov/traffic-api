@@ -37,6 +37,19 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     const params: IParams = await getParams(req, offerId, campaignId)
     const handleConditionsResponse: IResponse = await handleConditions(params, debug)
 
+    //PH-459
+    if (handleConditionsResponse?.success
+      && (handleConditionsResponse?.data?.offerInfo?.capInfo?.capsSalesUnderLimit
+        || handleConditionsResponse?.data?.offerInfo?.capInfo?.capsClicksUnderLimit)
+      && params.offerInfo?.customPayOutPerGeo) {
+
+      const customPayOutPerGeoRes: boolean = await customPayOutPerGeo(params)
+      if (customPayOutPerGeoRes) {
+        influxdb(200, 'offer_custom_pay_out_per_geo_caps_under_limit')
+        consola.info(` -> additional override Redirect type { offer customPayOutPerGeo CapsUnderLimit } lid { ${params.lid} }`)
+      }
+    }
+
     if (handleConditionsResponse?.success
       && handleConditionsResponse?.data?.isExitOffer) {
 

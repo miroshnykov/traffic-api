@@ -93,6 +93,7 @@ const redshiftOffer = (lidObj: IParams) => (
     'device': lidObj.deviceType || '',
     'os': lidObj.os || '',
     'isp': lidObj.isp || '',
+    'referer': lidObj.referer || '',
     'date_added': new Date().getTime(),
     'click': 1,
     'event_type': lidObj.eventType || ''

@@ -78,7 +78,7 @@ const additionalOverride = async (handleConditionsResponse: IResponse): Promise<
       const lengthNestedExitOffer: number = handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length || 0
       const exitOffersNestedArr: IOffer[] = handleConditionsResponse?.data?.offerInfo?.exitOffersNested || []
 
-      if (exitOffersNestedArr) {
+      if (exitOffersNestedArr.length !== 0) {
         const lastExitOfferNested: IOffer = exitOffersNestedArr[lengthNestedExitOffer - 1]
         exitOfferNested(handleConditionsResponse?.data, lastExitOfferNested, lengthNestedExitOffer)
       }

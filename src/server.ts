@@ -56,7 +56,7 @@ if (cluster.isMaster) {
         if (logBufferOffer[index].length === 0) return
 
         for (const j in logBufferOffer[index]) {
-          let statsData: IRedshiftData = logBufferOffer[index][j]
+          const statsData: IRedshiftData = logBufferOffer[index][j]
           sendToAggregator(statsData)
 
         }
@@ -111,10 +111,10 @@ if (cluster.isMaster) {
   })
   // }
   setTimeout(getFileFromBucket, 6000, IRecipeType.OFFER)
-  setTimeout(setOffersToRedis, 12000)
+  // setTimeout(setOffersToRedis, 12000)
 
   setTimeout(getFileFromBucket, 13000, IRecipeType.CAMPAIGN)
-  setTimeout(setCampaignsToRedis, 20000)
+  // setTimeout(setCampaignsToRedis, 20000)
 
 } else {
   const server = http.createServer(app) as Server

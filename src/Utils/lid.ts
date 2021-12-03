@@ -1,11 +1,12 @@
 import {IParams} from "../Interfaces/params";
+import {ILid} from "../Interfaces/lid";
 
-export const lidOffer = (params: IParams): object => (
+export const lidOffer = (params: IParams): ILid => (
   {
     'lid': params.lid || '',
     'adDomain': params.host || null,
     'adPath': params.originalUrl || null,
-    'device': params.deviceType || null,
+    'deviceType': params.deviceType || null,
     'domain': params.domain || null,
     'campaignId': +params.campaignId || null,
     'payin': +params.payin || null,

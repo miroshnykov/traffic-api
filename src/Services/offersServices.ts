@@ -21,57 +21,20 @@ import {IRedirectType} from "../Interfaces/recipeTypes";
 import {lidOffer} from "../Utils/lid";
 import {createLidOffer} from "../Utils/dynamoDb";
 import {exitOfferCustomPayout, exitOfferNested} from "./offers/exitOfferNested";
+import {ILid} from "../Interfaces/lid";
 
 export const offersServices = async (req: Request): Promise<IResponse> => {
 
   const debug: boolean = req?.query?.debugging! === 'debugging';
   try {
     influxdb(200, 'offers_all_request')
-    const offerEncoded: string = String(req.query.o! || '')
-    const encKey: string = process.env.ENCRIPTION_KEY || ''
-    const decodedString: string = decrypt(offerEncoded, encKey)
-    const decodedObj: IDecodedUrl = JSON.parse(decodedString!)
-    const offerId: number = Number(decodedObj.offerId)
-    const campaignId: number = Number(decodedObj.campaignId)
+    const params: IParams = await getParams(req)
 
-    const params: IParams = await getParams(req, offerId, campaignId)
     const handleConditionsResponse: IResponse = await handleConditions(params, debug)
 
-    //PH-459
-    if (handleConditionsResponse?.success
-      && (handleConditionsResponse?.data?.offerInfo?.capInfo?.capsSalesUnderLimit
-        || handleConditionsResponse?.data?.offerInfo?.capInfo?.capsClicksUnderLimit)
-      && params.offerInfo?.customPayOutPerGeo) {
+    await additionalOverride(handleConditionsResponse)
 
-      const customPayOutPerGeoRes: boolean = await customPayOutPerGeo(params)
-      if (customPayOutPerGeoRes) {
-        influxdb(200, 'offer_custom_pay_out_per_geo_caps_under_limit')
-        consola.info(` -> additional override Redirect type { offer customPayOutPerGeo CapsUnderLimit } lid { ${params.lid} }`)
-      }
-    }
-
-    if (handleConditionsResponse?.success
-      && handleConditionsResponse?.data?.isExitOffer) {
-
-      //PH-426
-      if (handleConditionsResponse?.data?.exitOfferInfo?.customPayOutPerGeo!) {
-        exitOfferCustomPayout(params, handleConditionsResponse)
-      }
-
-      //PH-428
-      if (handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length !== 0) {
-        const lengthNestedExitOffer: number = handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length || 0
-        const exitOffersNestedArr = handleConditionsResponse?.data?.offerInfo?.exitOffersNested
-
-        if (exitOffersNestedArr) {
-          const lastExitOfferNested: IOffer = exitOffersNestedArr[lengthNestedExitOffer - 1]
-          exitOfferNested(params, lastExitOfferNested, lengthNestedExitOffer)
-        }
-      }
-    }
-
-    let lidObj = lidOffer(params)
-
+    const lidObj: ILid = lidOffer(params)
     createLidOffer(lidObj)
     params.lidObj = lidObj
 
@@ -88,7 +51,42 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
   }
 };
 
-const handleConditions = async (params: IParams, debug: boolean) => {
+const additionalOverride = async (handleConditionsResponse: IResponse): Promise<void> => {
+  //PH-459
+  if (handleConditionsResponse?.success
+    && (handleConditionsResponse?.data?.offerInfo?.capInfo?.capsSalesUnderLimit
+      || handleConditionsResponse?.data?.offerInfo?.capInfo?.capsClicksUnderLimit)
+    && handleConditionsResponse?.data.offerInfo?.customPayOutPerGeo) {
+
+    const customPayOutPerGeoRes: boolean = await customPayOutPerGeo(handleConditionsResponse?.data)
+    if (customPayOutPerGeoRes) {
+      influxdb(200, 'offer_custom_pay_out_per_geo_caps_under_limit')
+      consola.info(` -> additional override Redirect type { offer customPayOutPerGeo CapsUnderLimit } lid { ${handleConditionsResponse?.data.lid} }`)
+    }
+  }
+
+  if (handleConditionsResponse?.success
+    && handleConditionsResponse?.data?.isExitOffer) {
+
+    //PH-426
+    if (handleConditionsResponse?.data?.exitOfferInfo?.customPayOutPerGeo!) {
+      exitOfferCustomPayout(handleConditionsResponse?.data, handleConditionsResponse)
+    }
+
+    //PH-428
+    if (handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length !== 0) {
+      const lengthNestedExitOffer: number = handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length || 0
+      const exitOffersNestedArr: IOffer[] = handleConditionsResponse?.data?.offerInfo?.exitOffersNested || []
+
+      if (exitOffersNestedArr) {
+        const lastExitOfferNested: IOffer = exitOffersNestedArr[lengthNestedExitOffer - 1]
+        exitOfferNested(handleConditionsResponse?.data, lastExitOfferNested, lengthNestedExitOffer)
+      }
+    }
+  }
+}
+
+const handleConditions = async (params: IParams, debug: boolean): Promise<IResponse> => {
 
   if (params.offerInfo.type === 'aggregated') {
     const offerAggregatedRes: boolean = await offerAggregatedCalculations(params)

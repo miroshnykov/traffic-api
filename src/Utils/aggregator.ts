@@ -11,14 +11,14 @@ const aggrRequest = axios.create({
   baseURL: process.env.AGGREGATOR_API,
 })
 
-export const sendToAggregator = (stats: IRedshiftData) => {
+export const sendToAggregator = (stats: IRedshiftData): void => {
 
   try {
-    let eventType: string = String(stats.event_type)
-    let statsClone: IRedshiftData = Object.assign({}, stats)
-    let timeCurrent: number = new Date().getTime()
+    const eventType: string = String(stats.event_type)
+    const statsClone: IRedshiftData = Object.assign({}, stats)
+    const timeCurrent: number = new Date().getTime()
 
-    let params: object = {
+    const params: object = {
       method: 'POST',
       url: `offer`,
       data: {

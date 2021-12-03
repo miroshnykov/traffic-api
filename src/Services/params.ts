@@ -13,8 +13,15 @@ import {ICampaign} from "../Interfaces/campaigns";
 import {IGeo} from "../Interfaces/geo";
 import {ICapsResult} from "../Interfaces/caps";
 
-export const getParams = async (req: Request, offerId: number, campaignId: number): Promise<IParams> => {
+export const getParams = async (req: Request): Promise<IParams> => {
   try {
+    const offerEncoded: string = String(req.query.o! || '')
+    const encKey: string = process.env.ENCRIPTION_KEY || ''
+    const decodedString: string = decrypt(offerEncoded, encKey)
+    const decodedObj: IDecodedUrl = JSON.parse(decodedString!)
+    const offerId: number = Number(decodedObj.offerId)
+    const campaignId: number = Number(decodedObj.campaignId)
+
     const offer = await getOffer(offerId)
     if (!offer) {
       influxdb(500, `offer_${offerId}_recipe_error`)

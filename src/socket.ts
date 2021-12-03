@@ -48,7 +48,6 @@ export const socketConnection = (type: ISocketType) => {
       consola.warn(`Socket type: { ${type} }.Size of { offers } from recipe-api:${offersSizeRecipe} and from traffic-api:${offersSizeTraffic} is different, Re-download new recipe offers from S3, Set offersSizeTraffic to redis:${offersSizeRecipe}`)
       await redis.set(`offersSizeTraffic`, offersSizeRecipe)
       setTimeout(getFileFromBucket, 6000, IRecipeType.OFFER)
-      setTimeout(setOffersToRedis, 20000)
     } catch (e) {
       influxdb(500, `file_size_offers_check_error`)
       console.log(`fileSizeOffersInfoError:`, e)
@@ -62,7 +61,7 @@ export const socketConnection = (type: ISocketType) => {
       consola.warn(`Socket type: { ${type} }.Size of { campaigns } from recipe-api:${campaignsSizeRecipe} and from co-traffic:${campaignsSizeTraffic} is different,  Re-download new recipe campaigns from S3, Set campaignsSizeTraffic to redis:${campaignsSizeRecipe} `)
       await redis.set(`campaignsSizeTraffic`, campaignsSizeRecipe!)
       setTimeout(getFileFromBucket, 6000, IRecipeType.CAMPAIGN)
-      setTimeout(setCampaignsToRedis, 20000)
+      // setTimeout(setCampaignsToRedis, 20000)
     } catch (e) {
       influxdb(500, `file_size_campaigns_check_error`)
       console.log(`fileSizeCampaignsInfoError:`, e)

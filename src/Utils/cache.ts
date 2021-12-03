@@ -3,7 +3,7 @@ import {redis} from "../redis";
 import {influxdb} from "./metrics";
 import {ISqsMessage} from "../Interfaces/sqsMessage";
 
-export const setSqsDataToRedis = async (message: ISqsMessage) => {
+export const setSqsDataToRedis = async (message: ISqsMessage): Promise<void> => {
 
   consola.info(`Getting from recipe-api update, Set to redis ${message.type}ID:${message.id}, action:${message.action}, comments:${message.comments} `)
   try {

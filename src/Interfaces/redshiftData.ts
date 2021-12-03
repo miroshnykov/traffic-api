@@ -30,4 +30,5 @@ export interface IRedshiftData {
   date_added: number
   click: number
   event_type: string
+  referer?: string
 }

@@ -16,7 +16,7 @@ export const setOffersToRedis = async () => {
 
   try {
 
-    const offersRedisKeys = await redis.keys(`offer_*`)
+    const offersRedisKeys = await redis.keys(`offer:*`)
     consola.info(`offersRedisKeysForDeleteCount:${offersRedisKeys.length} computerName:${computerName}`)
     for (const offerKey of offersRedisKeys) {
       await redis.del(offerKey)

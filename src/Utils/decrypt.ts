@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-export const decrypt = (text: string, decKey: string) => {
+export const decrypt = (text: string, decKey: string): string => {
   let textParts: string[] = text.split(':') || ''
   let textPartsShift: string = textParts.shift() || ''
   let iv: Buffer = Buffer.from(textPartsShift, 'hex');

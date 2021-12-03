@@ -7,9 +7,9 @@
 
 ## Recipe
 
-    recipe is getting from S3 bucket "co-recipe-prod"
+    recipe is getting from S3 bucket "recipe-api"
     checking fileSizeOffersCheck && fileSizeCampaignsCheck every 20 sec 
-    to co-recipe project. 
+    to recipe-api project. 
     If size of recipe is different then download new files from s3 
     and reload the data to local redis for each instances
 
@@ -24,8 +24,8 @@
 ## Update particular record inside the recipe
 
     if the record offer or campaign was added | updated | deleted, project co-admin-back send sqs message with offerId or campaignId to co-recipe.
-    Co-recipe handle this record and send by socket to co-traffic with new data
-    Co-traffic get new record and update local redis 
+    recipe-api handle this record and send by socket to traffic-api with new data
+    traffic-api get new record and update local redis 
 
 ## Docker setup
 
@@ -41,7 +41,7 @@
 ## ex link
 
     http://localhost:5000/ad?offer=44669c38ea032aa63b94b904804131c8:2aad25bba4a84235956c7d8884fc53b85f9f5c3f3468544ae69880a225115c5dc9822ae051f70559d674a439ca272cac&debugging=debugging
-    https://traffic.aezai.com/ad?offer=b00a799d7cae9430b034fed4097080c3:c364290026fe9f5c6e7195d2b90dc7e12c778337aefbb0ba09b64172f21d875b1379754e52b9d5a8b1ad8452c4fe8a7e&debugging=debugging
+    https://traffic.aezai.com/pl?o=b00a799d7cae9430b034fed4097080c3:c364290026fe9f5c6e7195d2b90dc7e12c778337aefbb0ba09b64172f21d875b1379754e52b9d5a8b1ad8452c4fe8a7e&debugging=debugging
     
 
 ## check recipe
@@ -90,7 +90,7 @@
 ## autocannon
     set the load of 300 connections for 15 seconds
     autocannon -c 300 -d 15 http://localhost:5000/getRecipeData?debugging=debugging&offerId=36336
-    autocannon -c 10 -d 15 http://localhost:5000/ad?offer=881c7670e2d2228459a3e6ee1f1e181d:2a79b868d55c64bed2636f145e0c017109e3d851d67fdff2a202d2e9409e295258cb0f3cd06bc7c1a33d9f4045675371&debugging=debugging
+    autocannon -c 10 -d 15 http://localhost:5000/pl?o=881c7670e2d2228459a3e6ee1f1e181d:2a79b868d55c64bed2636f145e0c017109e3d851d67fdff2a202d2e9409e295258cb0f3cd06bc7c1a33d9f4045675371&debugging=debugging
 
 # diagram
 

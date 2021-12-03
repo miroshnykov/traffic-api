@@ -10,5 +10,5 @@ export interface ICampaign {
   payout: number
   payoutPercent: number
   affiliateManagerId: number
-  targetRules?:object[]
+  targetRules?: object[]
 }

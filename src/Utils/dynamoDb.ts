@@ -36,22 +36,22 @@ export const createLidOffer = (lidInfo: ILid): void => {
       stats: stats
     });
 
-    for (const key in lidInfo) {
-      // @ts-ignore
-      if (!lidInfo[key]) {
+    let lidInfoToSend: { [index: string]: any } = {}
+    lidInfoToSend = lidInfo
+    for (const key in lidInfoToSend) {
+      if (!lidInfoToSend[key]) {
         if (key === 'isCpmOptionEnabled'
           || key === 'originIsCpmOptionEnabled'
         ) {
           continue
         }
-        // @ts-ignore
-        delete lidInfo[key]
+        delete lidInfoToSend[key]
       }
     }
 
     const leadParams = {
       TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
-      Item: lidInfo
+      Item: lidInfoToSend
     }
     ddbClient.send(new PutCommand(leadParams)).then().catch(e => {
       influxdb(500, 'dynamo_db_create_lid_error')

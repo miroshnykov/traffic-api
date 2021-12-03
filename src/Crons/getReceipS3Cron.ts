@@ -22,19 +22,19 @@ export const getFileFromBucket = async (type: IRecipeType): Promise<void> => {
     let tempFileName: string = ''
     let s3Key: string = ''
     let s3BucketName: string = ''
-    let setRedisOffersOtCampaigns: any
+    let setRedisOffersOrCampaigns: any
     switch (type) {
       case 'offer':
         tempFileName = process.env.OFFERS_RECIPE_PATH || ''
         s3Key = process.env.S3_OFFERS_RECIPE_PATH || ''
         s3BucketName = process.env.S3_BUCKET_NAME || ''
-        setRedisOffersOtCampaigns = setOffersToRedis
+        setRedisOffersOrCampaigns = setOffersToRedis
         break;
       case 'campaign':
         tempFileName = process.env.CAMPAIGNS_RECIPE_PATH || ''
         s3Key = process.env.S3_CAMPAIGNS_RECIPE_PATH || ''
         s3BucketName = process.env.S3_BUCKET_NAME || ''
-        setRedisOffersOtCampaigns = setCampaignsToRedis
+        setRedisOffersOrCampaigns = setCampaignsToRedis
         break;
       default:
         throw Error(`${type} not define, not able to get file from s3 `)
@@ -56,7 +56,7 @@ export const getFileFromBucket = async (type: IRecipeType): Promise<void> => {
       .on('close', () => {
         consola.success(`file from s3:${s3BucketName}/${s3Key}, to  ${tempFileName} was uploaded correctly.Computer name ${computerName}`);
 
-        setTimeout(setRedisOffersOtCampaigns, 12000)
+        setTimeout(setRedisOffersOrCampaigns, 12000)
       });
   } catch (error) {
     influxdb(500, `get_${type}_file_from_s3_error`)

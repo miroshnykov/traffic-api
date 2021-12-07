@@ -48,6 +48,7 @@ export interface ILid {
   capsType: string | null
   country: string | null
   platform: string | null
+  nestedExitOfferSteps: string | null
   eventType: string | null
   ttl?: number | null
   _messageType: string | null

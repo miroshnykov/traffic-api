@@ -87,7 +87,7 @@ const additionalOverride = async (handleConditionsResponse: IResponse): Promise<
       exitTrafficFilter.push(handleConditionsResponse?.data?.offerInfo?.exitOfferDetected)
       const stepsNestedOffers = handleConditionsResponse?.data?.offerInfo?.offerId + ',' + exitTrafficFilter.map(i => i.offerId).join(',')
       const exitOfferDetected: IOffer = handleConditionsResponse?.data?.offerInfo?.exitOfferDetected
-      exitOfferNested(handleConditionsResponse?.data, exitOfferDetected, lengthNestedExitOffer, stepsNestedOffers)
+      await exitOfferNested(handleConditionsResponse?.data, exitOfferDetected, lengthNestedExitOffer, stepsNestedOffers)
     }
   }
 }

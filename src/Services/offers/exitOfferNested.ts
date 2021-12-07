@@ -14,6 +14,7 @@ export const exitOfferNested = async (
 ): Promise<void> => {
   try {
     influxdb(200, 'offer_exit_nested')
+    consola.info('-> exitOfferNested origin landingPageUrl:', params.landingPageUrl)
     params.landingPageUrl = exitOffer?.landingPageUrl
     params.advertiserId = exitOffer?.advertiserId || 0
     params.advertiserName = exitOffer?.advertiserName || ''
@@ -27,8 +28,9 @@ export const exitOfferNested = async (
     params.exitOfferResult.type = IRedirectType.EXIT_OFFER_NESTED
     params.exitOfferResult.info = ` -> Additional override by exitOfferId:${exitOffer?.offerId}, total nested offer:${lengthNestedExitOffer}`
     params.exitOfferResult.steps = stepsNestedOffers
-    consola.info(` -> Additional override by { exitOfferNested } lid { ${params.lid} }`)
     params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
+    consola.info(` -> Additional override by { exitOfferNested } lid { ${params.lid} } redirectUrl:${params.redirectUrl}`)
+
 
   } catch (e) {
     consola.error('exitOfferNestedError:', e)

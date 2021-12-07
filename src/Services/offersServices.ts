@@ -72,16 +72,22 @@ const additionalOverride = async (handleConditionsResponse: IResponse): Promise<
     if (handleConditionsResponse?.data?.exitOfferInfo?.customPayOutPerGeo!) {
       exitOfferCustomPayout(handleConditionsResponse?.data, handleConditionsResponse)
     }
+  }
 
-    //PH-428
-    if (handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length !== 0) {
+  //PH-428
+  if (handleConditionsResponse?.success
+    && handleConditionsResponse?.data
+    && handleConditionsResponse?.data?.offerInfo?.exitOfferDetected
+  ) {
+    const exitOffersNestedArr: IOffer[] = handleConditionsResponse?.data?.offerInfo?.exitOffersNested || []
+
+    if (exitOffersNestedArr.length !== 0) {
       const lengthNestedExitOffer: number = handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length || 0
-      const exitOffersNestedArr: IOffer[] = handleConditionsResponse?.data?.offerInfo?.exitOffersNested || []
-
-      if (exitOffersNestedArr.length !== 0) {
-        const lastExitOfferNested: IOffer = exitOffersNestedArr[lengthNestedExitOffer - 1]
-        exitOfferNested(handleConditionsResponse?.data, lastExitOfferNested, lengthNestedExitOffer)
-      }
+      const exitTrafficFilter = exitOffersNestedArr.filter(i => i.capInfo?.isExitTraffic)
+      exitTrafficFilter.push(handleConditionsResponse?.data?.offerInfo?.exitOfferDetected)
+      const stepsNestedOffers = handleConditionsResponse?.data?.offerInfo?.offerId + ',' + exitTrafficFilter.map(i => i.offerId).join(',')
+      const exitOfferDetected: IOffer = handleConditionsResponse?.data?.offerInfo?.exitOfferDetected
+      exitOfferNested(handleConditionsResponse?.data, exitOfferDetected, lengthNestedExitOffer, stepsNestedOffers)
     }
   }
 }

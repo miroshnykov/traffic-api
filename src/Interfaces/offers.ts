@@ -52,9 +52,11 @@ export interface IOffer {
   redirectType?: IRedirectType
   redirectReason?: string | undefined
   exitOffersNested?: IOffer[]
+  exitOfferDetected?: IOffer
 }
 
 export interface IExitOfferResult {
   type?: string
   info?: string
+  steps?: string
 }

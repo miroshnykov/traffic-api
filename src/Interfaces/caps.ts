@@ -29,6 +29,7 @@ export interface ICapInfo {
   capsType: string | null
   offerCapsOfferIdRedirect?: number | null
   campaignCapsOfferIdRedirect?: number | null
+  isExitTraffic?: boolean | null
 }
 
 export interface ICapsResult {

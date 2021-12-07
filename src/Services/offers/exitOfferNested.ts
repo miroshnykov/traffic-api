@@ -5,7 +5,12 @@ import {IRedirectType} from "../../Interfaces/recipeTypes";
 import {ICustomPayOutPerGeo} from "../../Interfaces/customPayOutPerGeo";
 import {influxdb} from "../../Utils/metrics";
 
-export const exitOfferNested = (params: IParams, exitOffer: IOffer, lengthNestedExitOffer: number): void => {
+export const exitOfferNested = (
+  params: IParams,
+  exitOffer: IOffer,
+  lengthNestedExitOffer: number,
+  stepsNestedOffers: string
+): void => {
   try {
     influxdb(200, 'offer_exit_nested')
     params.landingPageUrl = exitOffer?.landingPageUrl
@@ -20,6 +25,7 @@ export const exitOfferNested = (params: IParams, exitOffer: IOffer, lengthNested
     params.payout = exitOffer?.payout || 0
     params.exitOfferResult.type = IRedirectType.EXIT_OFFER_NESTED
     params.exitOfferResult.info = ` -> Additional override by exitOfferId:${exitOffer?.offerId}, total nested offer:${lengthNestedExitOffer}`
+    params.exitOfferResult.steps = stepsNestedOffers
     consola.info(` -> Additional override by { exitOfferNested } lid { ${params.lid} }`)
 
   } catch (e) {

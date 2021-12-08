@@ -136,7 +136,7 @@ export const socketConnection = (type: ISocketType) => {
     setInterval(checkRedisSize, 600000) // 600000 every 10 min
 
     const checkRedisSizeOffers = async () => {
-      const offersRedisKeys = await redis.keys(`offer_*`)
+      const offersRedisKeys = await redis.keys(`offer:*`)
       influxdb(200, `redis_size_offers_${offersRedisKeys.length}_for_${computerName}`)
     }
     setInterval(checkRedisSizeOffers, 720000) // 720000 every 12 min

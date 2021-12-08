@@ -8,29 +8,37 @@ import {redirectUrl} from "../../Utils/redirectUrl";
 
 export const exitOfferNested = async (
   params: IParams,
-  exitOffer: IOffer,
-  lengthNestedExitOffer: number,
-  stepsNestedOffers: string
+  exitOfferDetected: IOffer
 ): Promise<void> => {
   try {
+
+    if (Object.keys(exitOfferDetected).length === 0) {
+      return
+    }
     influxdb(200, 'offer_exit_nested')
-    consola.info('-> exitOfferNested origin landingPageUrl:', params.landingPageUrl)
-    params.landingPageUrl = exitOffer?.landingPageUrl
-    params.advertiserId = exitOffer?.advertiserId || 0
-    params.advertiserName = exitOffer?.advertiserName || ''
-    params.conversionType = exitOffer?.conversionType || ''
-    params.isCpmOptionEnabled = exitOffer?.isCpmOptionEnabled || 0
-    params.offerId = exitOffer?.offerId || 0
-    params.verticalId = exitOffer?.verticalId || 0
-    params.verticalName = exitOffer?.verticalName || ''
-    params.payin = exitOffer?.payin || 0
-    params.payout = exitOffer?.payout || 0
+    const exitOffersNestedArr: IOffer[] = params?.offerInfo?.exitOffersNested || []
+    const lengthNestedExitOffer: number = params?.offerInfo?.exitOffersNested?.length || 0
+
+    const exitTrafficFilter = exitOffersNestedArr.filter(i => i.capInfo?.isExitTraffic)
+    exitTrafficFilter.push(exitOfferDetected)
+    const stepsNestedOffers = params?.offerInfo?.offerId + ',' + exitTrafficFilter.map(i => i.offerId).join(',')
+
+    const tmpOriginUrl = params.landingPageUrl
+    params.landingPageUrl = exitOfferDetected?.landingPageUrl
+    params.advertiserId = exitOfferDetected?.advertiserId || 0
+    params.advertiserName = exitOfferDetected?.advertiserName || ''
+    params.conversionType = exitOfferDetected?.conversionType || ''
+    params.isCpmOptionEnabled = exitOfferDetected?.isCpmOptionEnabled || 0
+    params.offerId = exitOfferDetected?.offerId || 0
+    params.verticalId = exitOfferDetected?.verticalId || 0
+    params.verticalName = exitOfferDetected?.verticalName || ''
+    params.payin = exitOfferDetected?.payin || 0
+    params.payout = exitOfferDetected?.payout || 0
     params.exitOfferResult.type = IRedirectType.EXIT_OFFER_NESTED
-    params.exitOfferResult.info = ` -> Additional override by exitOfferId:${exitOffer?.offerId}, total nested offer:${lengthNestedExitOffer}`
+    params.exitOfferResult.info = ` -> Additional override by exitOfferId:${exitOfferDetected?.offerId}, total nested offer:${lengthNestedExitOffer}`
     params.exitOfferResult.steps = stepsNestedOffers
     params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
-    consola.info(` -> Additional override by { exitOfferNested } lid { ${params.lid} } redirectUrl:${params.redirectUrl}`)
-
+    consola.info(` -> Additional override by { exitOfferNested } lid { ${params.lid} } origin LP:${tmpOriginUrl}, override LP:${params.landingPageUrl}`)
 
   } catch (e) {
     consola.error('exitOfferNestedError:', e)

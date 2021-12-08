@@ -79,15 +79,9 @@ const additionalOverride = async (handleConditionsResponse: IResponse): Promise<
     && handleConditionsResponse?.data
     && handleConditionsResponse?.data?.offerInfo?.exitOfferDetected
   ) {
-    const exitOffersNestedArr: IOffer[] = handleConditionsResponse?.data?.offerInfo?.exitOffersNested || []
-
-    if (exitOffersNestedArr.length !== 0) {
-      const lengthNestedExitOffer: number = handleConditionsResponse?.data?.offerInfo?.exitOffersNested?.length || 0
-      const exitTrafficFilter = exitOffersNestedArr.filter(i => i.capInfo?.isExitTraffic)
-      exitTrafficFilter.push(handleConditionsResponse?.data?.offerInfo?.exitOfferDetected)
-      const stepsNestedOffers = handleConditionsResponse?.data?.offerInfo?.offerId + ',' + exitTrafficFilter.map(i => i.offerId).join(',')
-      const exitOfferDetected: IOffer = handleConditionsResponse?.data?.offerInfo?.exitOfferDetected
-      await exitOfferNested(handleConditionsResponse?.data, exitOfferDetected, lengthNestedExitOffer, stepsNestedOffers)
+    const exitOfferDetected: IOffer | null = handleConditionsResponse?.data?.offerInfo?.exitOfferDetected!
+    if (exitOfferDetected) {
+      await exitOfferNested(handleConditionsResponse?.data, exitOfferDetected)
     }
   }
 }

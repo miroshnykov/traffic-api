@@ -49,6 +49,7 @@ export interface ILid {
   country: string | null
   platform: string | null
   nestedExitOfferSteps: string | null
+  fingerPrintInfo: string | null
   eventType: string | null
   ttl?: number | null
   _messageType: string | null

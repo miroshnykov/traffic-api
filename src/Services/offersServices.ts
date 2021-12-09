@@ -22,6 +22,9 @@ import {lidOffer} from "../Utils/lid";
 import {createLidOffer} from "../Utils/dynamoDb";
 import {exitOfferCustomPayout, exitOfferNested} from "./offers/exitOfferNested";
 import {ILid} from "../Interfaces/lid";
+import {getFpRedis, setFpToRedis} from "../Utils/redisCluster";
+import {fpOverride} from "./offers/fpOverride";
+import {IFingerPrintData} from "../Interfaces/fp";
 
 export const offersServices = async (req: Request): Promise<IResponse> => {
 
@@ -30,9 +33,14 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     influxdb(200, 'offers_all_request')
     const params: IParams = await getParams(req)
 
+    consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`)
+    const fpData = await getFpRedis(`fp:${req.fingerprint?.hash!}-${params.campaignId}`)
+
     const handleConditionsResponse: IResponse = await handleConditions(params, debug)
 
     await additionalOverride(handleConditionsResponse)
+
+    await fingerPrintOverride(params, req, fpData)
 
     const lidObj: ILid = lidOffer(params)
     createLidOffer(lidObj)
@@ -50,6 +58,38 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     }
   }
 };
+
+const fingerPrintOverride = async (params: IParams, req: Request, fpData: string | null): Promise<void> => {
+  const debugFp: boolean = req?.query?.fp! === 'disabled';
+
+  if (debugFp) {
+    return
+  }
+
+  if (fpData) {
+    consola.info(` ***** CACHE FINGER_PRINT fp:${req.fingerprint?.hash!}-${params.campaignId} from cache, data  `, fpData)
+    if (params.offerType === 'aggregated') {
+      consola.info('Offer has type aggregated so lets do override use finger print data from cache')
+      const fpDataObj: IFingerPrintData = JSON.parse(fpData)
+      await fpOverride(params, fpDataObj)
+    }
+  } else {
+    consola.info(` ***** SET CACHE FINGER_PRINT`, JSON.stringify(req.fingerprint))
+
+    const fpStore: IFingerPrintData = {
+      landingPageUrl: params.landingPageUrl,
+      offerId: params.offerId,
+      advertiserId: params.advertiserId,
+      advertiserName: params.advertiserName,
+      conversionType: params.conversionType,
+      verticalId: params.verticalId,
+      verticalName: params.verticalName,
+      payin: params.payin,
+      payout: params.payout
+    }
+    setFpToRedis(`fp:${req.fingerprint?.hash}-${params.campaignId}`, JSON.stringify(fpStore))
+  }
+}
 
 const additionalOverride = async (handleConditionsResponse: IResponse): Promise<void> => {
   //PH-459

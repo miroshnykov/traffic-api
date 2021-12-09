@@ -36,14 +36,13 @@ export class OffersController extends BaseController {
         data: responseOffer.data,
         redirect: defaultOfferUrl || ''
       })
-      return next()
+      return
     }
 
     if (!responseOffer?.success) {
       const defaultOfferUrl: string = await getDefaultOfferUrl()
       influxdb(200, `default_offer_url`)
-      res.redirect(defaultOfferUrl)
-      return next()
+      return res.redirect(defaultOfferUrl)
     }
 
     if (responseOffer?.success && responseOffer?.debug) {
@@ -51,14 +50,13 @@ export class OffersController extends BaseController {
         status: 'success',
         data: responseOffer.data
       })
-      return next()
+      return
     }
 
     if (responseOffer?.success) {
       const redirectUrl: string = responseOffer.data?.redirectUrl || REDIRECT_URLS.DEFAULT
       consola.info(`redirect to ${redirectUrl}`)
-      res.redirect(redirectUrl)
-      return next()
+      return res.redirect(redirectUrl)
     }
   }
 }

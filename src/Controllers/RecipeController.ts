@@ -28,7 +28,7 @@ export class RecipeController extends BaseController {
         status: 'error',
         error: 'body empty'
       })
-      return next()
+      return
     }
 
     const response: IRecipeResponse = {

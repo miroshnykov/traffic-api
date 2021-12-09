@@ -67,14 +67,13 @@ const fingerPrintOverride = async (params: IParams, req: Request, fpData: string
   }
 
   if (fpData) {
-    consola.info(` ***** CACHE FINGER_PRINT fp:${req.fingerprint?.hash!}-${params.campaignId} from cache, data  `, fpData)
+    consola.info(` ***** GET FINGER_PRINT FROM CACHE fp:${req.fingerprint?.hash!}-${params.campaignId} from cache, data  `, fpData)
     if (params.offerType === 'aggregated') {
       consola.info('Offer has type aggregated so lets do override use finger print data from cache')
       const fpDataObj: IFingerPrintData = JSON.parse(fpData)
       await fpOverride(params, fpDataObj)
     }
   } else {
-    consola.info(` ***** SET CACHE FINGER_PRINT`, JSON.stringify(req.fingerprint))
 
     const fpStore: IFingerPrintData = {
       landingPageUrl: params.landingPageUrl,
@@ -87,6 +86,8 @@ const fingerPrintOverride = async (params: IParams, req: Request, fpData: string
       payin: params.payin,
       payout: params.payout
     }
+    consola.info(` ***** SET CACHE FINGER_PRINT`, JSON.stringify(fpStore))
+
     setFpToRedis(`fp:${req.fingerprint?.hash}-${params.campaignId}`, JSON.stringify(fpStore))
   }
 }

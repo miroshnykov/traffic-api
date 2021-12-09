@@ -84,7 +84,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const capsResult: ICapsResult = {}
     const exitOfferResult: IExitOfferResult = {}
     const isExitOffer: boolean = false
-    const fingerPrint: IFingerPrint ={}
+    const fingerPrint: IFingerPrint = {}
 
     return {
       offerId,

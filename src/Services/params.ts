@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {decrypt} from "../Utils/decrypt";
-import {IDecodedUrl, IParams} from "../Interfaces/params";
+import {IDecodedUrl, IFingerPrint, IParams} from "../Interfaces/params";
 import {getOffer} from "../Models/offersModel";
 import {influxdb} from "../Utils/metrics";
 import {getCampaign} from "../Models/campaignsModel";
@@ -84,6 +84,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const capsResult: ICapsResult = {}
     const exitOfferResult: IExitOfferResult = {}
     const isExitOffer: boolean = false
+    const fingerPrint: IFingerPrint ={}
 
     return {
       offerId,
@@ -130,7 +131,8 @@ export const getParams = async (req: Request): Promise<IParams> => {
       capsResult,
       IP,
       isExitOffer,
-      exitOfferResult
+      exitOfferResult,
+      fingerPrint
     };
 
   } catch (e) {

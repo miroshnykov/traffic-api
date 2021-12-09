@@ -53,6 +53,7 @@ export const lidOffer = (params: IParams): ILid => (
     'country': params.country || null,
     'platform': params.platform || null,
     'nestedExitOfferSteps': params?.exitOfferResult?.steps || null,
+    'fingerPrintInfo': params?.fingerPrint.info || null,
     'eventType': 'click',
     '_messageType': 'aggregatorStatSflOffer'
   }

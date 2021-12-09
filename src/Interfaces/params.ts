@@ -3,6 +3,7 @@ import {ICampaign} from "./campaigns";
 import {ICustomPayOutPerGeo} from "./customPayOutPerGeo";
 import {IRedirectType} from "./recipeTypes";
 import {ICapsResult} from "./caps";
+import {IFingerPrintData} from "./fp";
 
 export interface IParams {
   offerId: number
@@ -78,6 +79,12 @@ export interface IParams {
   exitOfferInfo?: IOffer
   exitOffersNested?: IOffer[] | any
   exitOfferResult?: IExitOfferResult | any
+  fingerPrint?: IFingerPrint | any
+}
+
+export interface IFingerPrint {
+  info?: string
+  fpData?: IFingerPrintData
 }
 
 export interface IDecodedUrl {

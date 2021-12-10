@@ -18,9 +18,13 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const offerEncoded: string = String(req.query.o! || '')
     const encKey: string = process.env.ENCRIPTION_KEY || ''
     const decodedString: string = decrypt(offerEncoded, encKey)
-    const decodedObj: IDecodedUrl = JSON.parse(decodedString!)
-    const offerId: number = Number(decodedObj.offerId)
-    const campaignId: number = Number(decodedObj.campaignId)
+    // const decodedObj: IDecodedUrl = JSON.parse(decodedString!)
+    // const offerId: number = Number(decodedObj.offerId)
+    // const campaignId: number = Number(decodedObj.campaignId)
+
+    const inputData = decodedString.split("|");
+    const offerId: number = Number(inputData[0])
+    const campaignId: number = Number(inputData[1])
 
     const offer = await getOffer(offerId)
     if (!offer) {

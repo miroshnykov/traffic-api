@@ -46,7 +46,7 @@
 
 ## check recipe
     offer
-        http://localhost:5000/getRecipeData?debugging=debugging&offerId=36336
+        http://localhost:5000/getRecipeData?debugging=debugging&offerId=36349
         https://mghkpg.com/getRecipeData?debugging=debugging&offerId=35784
         https://traffic.aezai.com/getRecipeData?debugging=debugging&offerId=36520
 

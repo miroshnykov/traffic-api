@@ -129,11 +129,11 @@ export const socketConnection = (type: ISocketType) => {
       await setSqsDataToRedis(message)
     })
 
-    const checkRedisSize = async () => {
-      let redisSize: number = await redis.dbsize()
-      influxdb(200, `redis_size_${redisSize}_for_${computerName}`)
+    const checkRedisSizeCampaigns = async () => {
+      const campaignRedisKeys = await redis.keys(`campaign:*`)
+      influxdb(200, `redis_size_campaigns_${campaignRedisKeys.length}_for_${computerName}`)
     }
-    setInterval(checkRedisSize, 600000) // 600000 every 10 min
+    setInterval(checkRedisSizeCampaigns, 600000) // 600000 every 10 min
 
     const checkRedisSizeOffers = async () => {
       const offersRedisKeys = await redis.keys(`offer:*`)

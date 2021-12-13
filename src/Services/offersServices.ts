@@ -22,7 +22,7 @@ import {lidOffer} from "../Utils/lid";
 import {createLidOffer} from "../Utils/dynamoDb";
 import {exitOfferCustomPayout, exitOfferNested} from "./offers/exitOfferNested";
 import {ILid} from "../Interfaces/lid";
-import {getFpRedis, setFpToRedis} from "../Utils/redisCluster";
+import {getFp, setFp} from '../Models/fpModel'
 import {fpOverride} from "./offers/fpOverride";
 import {IFingerPrintData} from "../Interfaces/fp";
 
@@ -34,7 +34,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     const params: IParams = await getParams(req)
 
     consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`)
-    const fpData = await getFpRedis(`fp:${req.fingerprint?.hash!}-${params.campaignId}`)
+    const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`)
 
     const handleConditionsResponse: IResponse = await handleConditions(params, debug)
 
@@ -72,6 +72,7 @@ const fingerPrintOverride = async (params: IParams, req: Request, fpData: string
       consola.info('Offer has type aggregated so lets do override use finger print data from cache')
       const fpDataObj: IFingerPrintData = JSON.parse(fpData)
       await fpOverride(params, fpDataObj)
+      influxdb(200, 'offer_aggregated_fingerprint_override')
     }
   } else {
 
@@ -86,9 +87,9 @@ const fingerPrintOverride = async (params: IParams, req: Request, fpData: string
       payin: params.payin,
       payout: params.payout
     }
-    consola.info(` ***** SET CACHE FINGER_PRINT`, JSON.stringify(fpStore))
+    consola.info(` ***** SET CACHE FINGER_PRINT`)
 
-    setFpToRedis(`fp:${req.fingerprint?.hash}-${params.campaignId}`, JSON.stringify(fpStore))
+    setFp(`fp:${req.fingerprint?.hash}-${params.campaignId}`, JSON.stringify(fpStore))
   }
 }
 

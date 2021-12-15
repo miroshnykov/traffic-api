@@ -4,7 +4,7 @@ import consola from "consola";
 import {getOffer} from '../../Models/offersModel'
 import {IOffer} from "../../Interfaces/offers";
 import {REDIRECT_URLS} from "../../Utils/defaultRedirectUrls";
-import {OFFER_DEFAULT} from "../../Utils/defaultOffer";
+import {getDefaultOfferUrl, OFFER_DEFAULT} from "../../Utils/defaultOffer";
 
 export const override = async (params: IParams, offerIdRedirectExitTraffic: number): Promise<void> => {
 
@@ -31,7 +31,15 @@ export const override = async (params: IParams, offerIdRedirectExitTraffic: numb
     params.landingPageUrlOrigin = params.offerInfo?.landingPageUrl || ''
     params.offerIdRedirectExitTraffic = params.offerInfo?.offerIdRedirectExitTraffic || 0
 
-    params.landingPageUrl = offerExitTrafficInfo?.landingPageUrl
+    let landingPageUrl: string
+    if (!offerExitTrafficInfo?.landingPageUrl) {
+      landingPageUrl = await getDefaultOfferUrl() || REDIRECT_URLS.DEFAULT
+      params.isUseDefaultOfferUrl = true
+      consola.info(`exitOfferUrl is empty will use default offer url:${landingPageUrl}`)
+    } else {
+      landingPageUrl = offerExitTrafficInfo?.landingPageUrl
+    }
+    params.landingPageUrl = landingPageUrl
     params.landingPageId = offerExitTrafficInfo?.landingPageId
     params.advertiserId = offerExitTrafficInfo?.advertiserId || 0
     params.advertiserName = offerExitTrafficInfo?.advertiserName || ''

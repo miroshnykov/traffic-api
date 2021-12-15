@@ -52,6 +52,7 @@ export const lidOffer = (params: IParams): ILid => (
     'capsType': params?.capsResult?.capsType || null,
     'country': params.country || null,
     'platform': params.platform || null,
+    'isUseDefaultOfferUrl': params.isUseDefaultOfferUrl || null,
     'nestedExitOfferSteps': params?.exitOfferResult?.steps || null,
     'fingerPrintInfo': params?.fingerPrint.info || null,
     'eventType': 'click',

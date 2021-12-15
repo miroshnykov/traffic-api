@@ -12,8 +12,9 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-export const redirectUrl = async (lp: string, params: IParams): Promise<string> => {
+export const redirectUrl = async (params: IParams): Promise<string> => {
 
+  let lp = params.landingPageUrl
   if (!lp) {
     influxdb(200, `default_offer_url_for_offer_id_${params.offerId}`)
     lp = await getDefaultOfferUrl() || REDIRECT_URLS.DEFAULT

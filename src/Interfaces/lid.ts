@@ -48,6 +48,7 @@ export interface ILid {
   capsType: string | null
   country: string | null
   platform: string | null
+  isUseDefaultOfferUrl: boolean | null
   nestedExitOfferSteps: string | null
   fingerPrintInfo: string | null
   eventType: string | null

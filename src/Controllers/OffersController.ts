@@ -8,16 +8,19 @@ import {IParams} from "../Interfaces/params";
 import {REDIRECT_URLS} from "../Utils/defaultRedirectUrls";
 import {getDefaultOfferUrl} from "../Utils/defaultOffer";
 import {IResponse} from "../Interfaces/params";
+import {redirectUrl} from "../Utils/redirectUrl";
 
 export class OffersController extends BaseController {
 
   public async read(req: Request, res: Response, next: NextFunction): Promise<IParams | void> {
     const responseOffer: IResponse = await offersServices(req)
-
     const timeCurrent: number = new Date().getTime()
     if (responseOffer.data) {
+
+      responseOffer.data.redirectUrl = await redirectUrl(responseOffer.data)
+
       responseOffer.data.speedTime = timeCurrent - responseOffer.data?.startTime
-      let speedTime: number = rangeSpeed(responseOffer.data.speedTime)
+      const speedTime: number = rangeSpeed(responseOffer.data.speedTime)
       if (speedTime >= 2500) {
         influxdb(200, `speed_time_more_${speedTime}_ms_country_${responseOffer.data.country}`)
       } else {
@@ -29,7 +32,7 @@ export class OffersController extends BaseController {
     }
 
     if (!responseOffer.success && responseOffer?.debug) {
-      let defaultOfferUrl: string = await getDefaultOfferUrl()
+      const defaultOfferUrl: string = await getDefaultOfferUrl()
       influxdb(200, `default_offer_url`)
       res.status(400).json({
         error: `Recipe is inactive or not ready or broken  ${responseOffer.errors.toString()}, will redirect to default offer:${defaultOfferUrl}`,
@@ -46,6 +49,7 @@ export class OffersController extends BaseController {
     }
 
     if (responseOffer?.success && responseOffer?.debug) {
+      consola.info(`redirect to ${responseOffer?.data?.redirectUrl}`)
       res.status(200).json({
         status: 'success',
         data: responseOffer.data
@@ -54,9 +58,9 @@ export class OffersController extends BaseController {
     }
 
     if (responseOffer?.success) {
-      const redirectUrl: string = responseOffer.data?.redirectUrl || REDIRECT_URLS.DEFAULT
-      consola.info(`redirect to ${redirectUrl}`)
-      return res.redirect(redirectUrl)
+      const redirectUrlFinal: string = responseOffer.data?.redirectUrl || REDIRECT_URLS.DEFAULT
+      consola.info(`redirect to ${redirectUrlFinal}`)
+      return res.redirect(redirectUrlFinal)
     }
   }
 }

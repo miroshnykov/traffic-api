@@ -16,7 +16,6 @@ export const fpOverride = async (params: IParams, fpData: IFingerPrintData): Pro
     params.payout = fpData?.payout || 0
     params.fingerPrint.info = IRedirectType.FINGER_PRINT_OVERRIDE
     params.fingerPrint.fpData = fpData
-
   } catch (e) {
     consola.error('fpOverride fields error', e)
   }

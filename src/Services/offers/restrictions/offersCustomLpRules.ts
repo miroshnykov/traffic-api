@@ -1,5 +1,4 @@
-import {override} from "../override"
-import {redirectUrl} from "../../../Utils/redirectUrl"
+import {override} from "../../override/override"
 import consola from "consola";
 import {customLP} from "../customLp"
 import {IParams} from "../../../Interfaces/params";
@@ -17,7 +16,8 @@ export const offersCustomLpRules = async (params: IParams): Promise<boolean> => 
       params.redirectType = IRedirectType.CUSTOM_LANDING_PAGES
       params.redirectReason = `customLpRules-${JSON.stringify(resolveCustomLP)}`
       await override(params, params.offerInfo.offerIdRedirectExitTraffic)
-      params.redirectUrl = await redirectUrl(resolveCustomLP[0].lpUrl, params)
+      params.landingPageUrl = resolveCustomLP[0].lpUrl
+      params.isUseDefaultOfferUrl = false
       pass = true
     }
     return pass

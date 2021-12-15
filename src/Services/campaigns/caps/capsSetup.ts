@@ -55,7 +55,6 @@ export const capsCampaignChecking = async (params: IParams): Promise<boolean> =>
     }
 
     influxdb(200, `offer_cap_campaign_${params.redirectType}`)
-    params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
     return true
   } catch (e) {
     consola.error('capsCampaignsCheckingError:', e)

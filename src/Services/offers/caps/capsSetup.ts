@@ -1,11 +1,8 @@
-import {getOffer} from "../../../Models/offersModel";
-import {redirectUrl} from "../../../Utils/redirectUrl"
 import consola from "consola";
 import {influxdb} from "../../../Utils/metrics";
 import {IParams} from "../../../Interfaces/params";
-import {IOffer} from "../../../Interfaces/offers";
 import {IRedirectType} from "../../../Interfaces/recipeTypes";
-import {override} from "../override";
+import {override} from "../../override/override";
 
 export const capsOfferChecking = async (params: IParams): Promise<boolean> => {
   try {
@@ -42,7 +39,6 @@ export const capsOfferChecking = async (params: IParams): Promise<boolean> => {
     }
 
     influxdb(200, `offer_cap_${params.redirectType}`)
-    params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
     return true
   } catch (e) {
     consola.error('capsOfferCheckingError:', e)

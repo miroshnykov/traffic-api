@@ -4,7 +4,6 @@ import {IOffer} from "../../Interfaces/offers";
 import {IRedirectType} from "../../Interfaces/recipeTypes";
 import {ICustomPayOutPerGeo} from "../../Interfaces/customPayOutPerGeo";
 import {influxdb} from "../../Utils/metrics";
-import {redirectUrl} from "../../Utils/redirectUrl";
 
 export const exitOfferNested = async (
   params: IParams,
@@ -37,7 +36,6 @@ export const exitOfferNested = async (
     params.exitOfferResult.type = IRedirectType.EXIT_OFFER_NESTED
     params.exitOfferResult.info = ` -> Additional override by exitOfferId:${exitOfferDetected?.offerId}, total nested offer:${lengthNestedExitOffer}`
     params.exitOfferResult.steps = stepsNestedOffers
-    params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
     consola.info(` -> Additional override by { exitOfferNested } lid { ${params.lid} } origin LP:${tmpOriginUrl}, override LP:${params.landingPageUrl}`)
 
   } catch (e) {

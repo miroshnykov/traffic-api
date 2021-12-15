@@ -4,6 +4,7 @@ import {ICustomPayOutPerGeo} from "./customPayOutPerGeo";
 import {IRedirectType} from "./recipeTypes";
 import {ICapsResult} from "./caps";
 import {IFingerPrintData} from "./fp";
+import {ILid} from "./lid";
 
 export interface IParams {
   offerId: number
@@ -16,6 +17,7 @@ export interface IParams {
   conversionType: string
   landingPageId: number
   landingPageUrl: string
+  isUseDefaultOfferUrl?: boolean
   payin: number
   payout: number
   payoutPercent: number
@@ -68,7 +70,7 @@ export interface IParams {
   originVerticalName?: string
   originPayIn?: number
   originPayOut?: number
-  lidObj?: object
+  lidObj?: ILid
   landingPageIdOrigin?: number
   landingPageUrlOrigin?: string
   offerIdRedirectExitTraffic?: number

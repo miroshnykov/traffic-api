@@ -28,3 +28,11 @@ export const setFp = (key: string, value: string): void => {
     consola.error('redis cluster set value error', e)
   })
 }
+
+export const expireFp = (key: string, seconds: number): void => {
+
+  redisClient.expire(key, seconds).then().catch((e: any) => {
+    influxdb(500, 'redis_cluster_expire_fp_value_error')
+    consola.error('redis cluster expire Fp value error', e)
+  })
+}

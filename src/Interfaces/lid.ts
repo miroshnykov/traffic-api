@@ -51,6 +51,7 @@ export interface ILid {
   isUseDefaultOfferUrl: boolean | null
   nestedExitOfferSteps: string | null
   fingerPrintInfo: string | null
+  fingerPrintKey: string | null
   eventType: string | null
   ttl?: number | null
   _messageType: string | null

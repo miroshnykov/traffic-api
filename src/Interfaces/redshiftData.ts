@@ -31,4 +31,5 @@ export interface IRedshiftData {
   click: number
   event_type: string
   referer?: string
+  fingerprint?: string
 }

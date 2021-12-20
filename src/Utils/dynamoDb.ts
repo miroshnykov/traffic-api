@@ -99,7 +99,8 @@ const redshiftOffer = (lidObj: ILid): IRedshiftData => (
     'referer': lidObj.referer || '',
     'date_added': new Date().getTime(),
     'click': 1,
-    'event_type': lidObj.eventType || ''
+    'event_type': lidObj.eventType || '',
+    'fingerprint': lidObj.fingerPrintKey || ''
   }
 )
 

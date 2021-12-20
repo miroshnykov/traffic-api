@@ -81,6 +81,7 @@ export interface IParams {
   exitOfferInfo?: IOffer
   exitOffersNested?: IOffer[] | any
   exitOfferResult?: IExitOfferResult | any
+  fingerPrintKey?: string
   fingerPrint?: IFingerPrint | any
 }
 

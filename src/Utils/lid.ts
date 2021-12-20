@@ -55,6 +55,7 @@ export const lidOffer = (params: IParams): ILid => (
     'isUseDefaultOfferUrl': params.isUseDefaultOfferUrl || null,
     'nestedExitOfferSteps': params?.exitOfferResult?.steps || null,
     'fingerPrintInfo': params?.fingerPrint.info || null,
+    'fingerPrintKey': params?.fingerPrintKey || null,
     'eventType': 'click',
     '_messageType': 'aggregatorStatSflOffer'
   }

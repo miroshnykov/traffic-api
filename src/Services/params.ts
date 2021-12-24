@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {decrypt} from "../Utils/decrypt";
-import {IDecodedUrl, IParams} from "../Interfaces/params";
+import {IDecodedUrl, IFingerPrint, IParams} from "../Interfaces/params";
 import {getOffer} from "../Models/offersModel";
 import {influxdb} from "../Utils/metrics";
 import {getCampaign} from "../Models/campaignsModel";
@@ -8,21 +8,24 @@ import DeviceDetector from "device-detector-js";
 import {resolveIP} from "../Utils/geo";
 import {v4} from "uuid";
 import consola from "consola";
-import {IOffer} from "../Interfaces/offers";
+import {IExitOfferResult, IOffer} from "../Interfaces/offers";
 import {ICampaign} from "../Interfaces/campaigns";
 import {IGeo} from "../Interfaces/geo";
 import {ICapsResult} from "../Interfaces/caps";
 
 export const getParams = async (req: Request): Promise<IParams> => {
   try {
-    // const offerId: number = +req.query.offerId! || 0
-    // const campaignId: number = +req.query.campaignId! || 0
-    const offerEncoded: string = String(req.query.offer! || '')
+    const offerEncoded: string = String(req.query.o! || '')
     const encKey: string = process.env.ENCRIPTION_KEY || ''
     const decodedString: string = decrypt(offerEncoded, encKey)
-    const decodedObj: IDecodedUrl = JSON.parse(decodedString!)
-    const offerId: number = Number(decodedObj.offerId)
-    const campaignId: number = Number(decodedObj.campaignId)
+    // const decodedObj: IDecodedUrl = JSON.parse(decodedString!)
+    // const offerId: number = Number(decodedObj.offerId)
+    // const campaignId: number = Number(decodedObj.campaignId)
+
+    const inputData = decodedString.split("|");
+    const offerId: number = Number(inputData[0])
+    const campaignId: number = Number(inputData[1])
+
     const offer = await getOffer(offerId)
     if (!offer) {
       influxdb(500, `offer_${offerId}_recipe_error`)
@@ -49,7 +52,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const browserEngine = deviceInfo?.client?.engine || ''
 
     const browserVersion = String(deviceInfo?.client?.version!)
-    const offerHash = req.query.offer
+    const offerHash = req.query.o
     const browser: string = String(deviceInfo?.client?.name!)
     const os: string = String(deviceInfo?.os?.name!)
     const platform: string = String(deviceInfo?.os?.platform!)
@@ -83,6 +86,9 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const isCpmOptionEnabled: boolean | number = offerInfo.isCpmOptionEnabled
     const redirectUrl: string = ''
     const capsResult: ICapsResult = {}
+    const exitOfferResult: IExitOfferResult = {}
+    const isExitOffer: boolean = false
+    const fingerPrint: IFingerPrint = {}
 
     return {
       offerId,
@@ -127,7 +133,10 @@ export const getParams = async (req: Request): Promise<IParams> => {
       speedTime,
       redirectUrl,
       capsResult,
-      IP
+      IP,
+      isExitOffer,
+      exitOfferResult,
+      fingerPrint
     };
 
   } catch (e) {

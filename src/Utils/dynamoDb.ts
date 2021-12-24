@@ -5,10 +5,11 @@ import consola from "consola";
 import {influxdb} from "./metrics";
 import {IParams} from "../Interfaces/params";
 import {IRedshiftData} from "../Interfaces/redshiftData";
+import {ILid} from "../Interfaces/lid";
 
 dotenv.config();
 
-export const createLidOffer = (lidInfo: any): void => {
+export const createLidOffer = (lidInfo: ILid): void => {
   try {
     // const dynamoDbConf = {
     //   region: process.env.AWS_DYNAMODB_REGION,
@@ -22,11 +23,11 @@ export const createLidOffer = (lidInfo: any): void => {
       region: process.env.AWS_DYNAMODB_REGION,
     }
 
-    const ddbClient = new DynamoDBClient(dynamoDbConf);
-    let YearPlusOne = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-    lidInfo['ttl'] = YearPlusOne.getTime()
+    const ddbClient: DynamoDBClient = new DynamoDBClient(dynamoDbConf);
+    const yearPlusOne: Date = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+    lidInfo['ttl'] = yearPlusOne.getTime()
 
-    let stats: IRedshiftData = redshiftOffer(lidInfo)
+    const stats: IRedshiftData = redshiftOffer(lidInfo)
 
     // @ts-ignore
     process.send({
@@ -35,20 +36,22 @@ export const createLidOffer = (lidInfo: any): void => {
       stats: stats
     });
 
-    for (const key in lidInfo) {
-      if (!lidInfo[key]) {
+    let lidInfoToSend: { [index: string]: any } = {}
+    lidInfoToSend = lidInfo
+    for (const key in lidInfoToSend) {
+      if (!lidInfoToSend[key]) {
         if (key === 'isCpmOptionEnabled'
           || key === 'originIsCpmOptionEnabled'
         ) {
           continue
         }
-        delete lidInfo[key]
+        delete lidInfoToSend[key]
       }
     }
 
-    let leadParams = {
+    const leadParams = {
       TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
-      Item: lidInfo
+      Item: lidInfoToSend
     }
     ddbClient.send(new PutCommand(leadParams)).then().catch(e => {
       influxdb(500, 'dynamo_db_create_lid_error')
@@ -63,14 +66,14 @@ export const createLidOffer = (lidInfo: any): void => {
   }
 }
 
-const redshiftOffer = (lidObj: IParams) => (
+const redshiftOffer = (lidObj: ILid): IRedshiftData => (
   {
     'lid': lidObj.lid,
-    'affiliate_id': +lidObj.affiliateId || 0,
-    'campaign_id': +lidObj.campaignId || 0,
-    'offer_id': +lidObj.offerId || 0,
+    'affiliate_id': +lidObj.affiliateId! || 0,
+    'campaign_id': +lidObj.campaignId! || 0,
+    'offer_id': +lidObj.offerId! || 0,
     'landing_page': lidObj.landingPageUrl || '',
-    'landing_page_id': +lidObj.landingPageId || 0,
+    'landing_page_id': +lidObj.landingPageId! || 0,
     'payin': lidObj.payin || 0,
     'payout': lidObj.payout || 0,
     'geo': lidObj.country || '',
@@ -78,24 +81,26 @@ const redshiftOffer = (lidObj: IParams) => (
     'is_cpm_option_enabled': lidObj.isCpmOptionEnabled || 0,
     'landing_page_id_origin': lidObj.landingPageIdOrigin || 0,
     'landing_page_url_origin': lidObj.landingPageUrlOrigin || '',
-    'advertiser_id': +lidObj.advertiserId || 0,
-    'advertiser_manager_id': +lidObj.advertiserManagerId || 0,
-    'affiliate_manager_id': +lidObj.affiliateManagerId || 0,
-    'referred_advertiser_id': +lidObj.originAdvertiserId! || 0,
-    'referred_conversion_type': lidObj.originConversionType || '',
-    'referred_is_cpm_option_enabled': lidObj.originIsCpmOptionEnabled || 0,
-    'referred_offer_id': +lidObj.originOfferId! || 0,
-    'referred_vertical_id': +lidObj.originVerticalId! || 0,
+    'advertiser_id': +lidObj.advertiserId! || 0,
+    'advertiser_manager_id': +lidObj.advertiserManagerId! || 0,
+    'affiliate_manager_id': +lidObj.affiliateManagerId! || 0,
+    'origin_advertiser_id': +lidObj.originAdvertiserId! || 0,
+    'origin_conversion_type': lidObj.originConversionType || '',
+    'origin_is_cpm_option_enabled': lidObj.originIsCpmOptionEnabled || 0,
+    'origin_offer_id': +lidObj.originOfferId! || 0,
+    'origin_vertical_id': +lidObj.originVerticalId! || 0,
     'verticals': lidObj.verticalId || 0,
     'conversion_type': lidObj.conversionType || '',
     'platform': lidObj.platform || '',
     'payout_percent': lidObj.payoutPercent || 0,
-    'device': lidObj.deviceType || '',
+    'device': lidObj.deviceType! || '',
     'os': lidObj.os || '',
     'isp': lidObj.isp || '',
+    'referer': lidObj.referer || '',
     'date_added': new Date().getTime(),
     'click': 1,
-    'event_type': lidObj.eventType || ''
+    'event_type': lidObj.eventType || '',
+    'fingerprint': lidObj.fingerPrintKey || ''
   }
 )
 

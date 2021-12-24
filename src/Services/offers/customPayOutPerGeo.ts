@@ -1,8 +1,5 @@
-import {redirectUrl} from "../../Utils/redirectUrl"
 import consola from "consola";
 import {IParams} from "../../Interfaces/params";
-import {lidOffer} from "../../Utils/lid";
-import {createLidOffer} from "../../Utils/dynamoDb";
 import {ICustomPayOutPerGeo} from "../../Interfaces/customPayOutPerGeo";
 import {IRedirectType} from "../../Interfaces/recipeTypes";
 
@@ -18,11 +15,6 @@ export const customPayOutPerGeo = async (params: IParams): Promise<boolean> => {
       params.redirectType = IRedirectType.CUSTOM_PAY_OUT_PER_GEO
       params.payout = checkCustomPerGeo[0].payOut
       params.payin = checkCustomPerGeo[0].payIn
-      let lidObj = lidOffer(params)
-      createLidOffer(lidObj)
-      params.lidObj = lidObj
-
-      params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
 
       pass = true
     }

@@ -15,11 +15,11 @@ export interface IRedshiftData {
   advertiser_id: number
   advertiser_manager_id: number
   affiliate_manager_id: number
-  referred_advertiser_id: number
-  referred_conversion_type: string
-  referred_is_cpm_option_enabled: number | boolean
-  referred_offer_id: number
-  referred_vertical_id: number
+  origin_advertiser_id: number
+  origin_conversion_type: string
+  origin_is_cpm_option_enabled: number | boolean
+  origin_offer_id: number
+  origin_vertical_id: number
   verticals: number
   conversion_type: string
   platform: string
@@ -30,4 +30,6 @@ export interface IRedshiftData {
   date_added: number
   click: number
   event_type: string
+  referer?: string
+  fingerprint?: string
 }

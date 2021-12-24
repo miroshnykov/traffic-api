@@ -1,8 +1,10 @@
-import {IOffer} from "./offers"
+import {IExitOfferResult, IOffer} from "./offers"
 import {ICampaign} from "./campaigns";
 import {ICustomPayOutPerGeo} from "./customPayOutPerGeo";
 import {IRedirectType} from "./recipeTypes";
 import {ICapsResult} from "./caps";
+import {IFingerPrintData} from "./fp";
+import {ILid} from "./lid";
 
 export interface IParams {
   offerId: number
@@ -15,6 +17,7 @@ export interface IParams {
   conversionType: string
   landingPageId: number
   landingPageUrl: string
+  isUseDefaultOfferUrl?: boolean
   payin: number
   payout: number
   payoutPercent: number
@@ -67,13 +70,24 @@ export interface IParams {
   originVerticalName?: string
   originPayIn?: number
   originPayOut?: number
-  lidObj?: object
+  lidObj?: ILid
   landingPageIdOrigin?: number
   landingPageUrlOrigin?: string
   offerIdRedirectExitTraffic?: number
   eventType?: string
   capsResult?: ICapsResult | any
   IP?: string
+  isExitOffer: boolean
+  exitOfferInfo?: IOffer
+  exitOffersNested?: IOffer[] | any
+  exitOfferResult?: IExitOfferResult | any
+  fingerPrintKey?: string
+  fingerPrint?: IFingerPrint | any
+}
+
+export interface IFingerPrint {
+  info?: string
+  fpData?: IFingerPrintData
 }
 
 export interface IDecodedUrl {

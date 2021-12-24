@@ -1,11 +1,12 @@
 import {IParams} from "../Interfaces/params";
+import {ILid} from "../Interfaces/lid";
 
-export const lidOffer = (params: IParams): object => (
+export const lidOffer = (params: IParams): ILid => (
   {
     'lid': params.lid || '',
     'adDomain': params.host || null,
     'adPath': params.originalUrl || null,
-    'device': params.deviceType || null,
+    'deviceType': params.deviceType || null,
     'domain': params.domain || null,
     'campaignId': +params.campaignId || null,
     'payin': +params.payin || null,
@@ -32,7 +33,7 @@ export const lidOffer = (params: IParams): object => (
     'landingPageId': params.landingPageId || null,
     'conversionType': params.conversionType || null,
     'os': params.os || null,
-    'refererPath': params.referer || null,
+    'referer': params.referer || null,
     'originPayIn': params.originPayIn || 0,
     'originPayOut': params.originPayOut || 0,
     'originAdvertiserId': params.originAdvertiserId || null,
@@ -51,6 +52,10 @@ export const lidOffer = (params: IParams): object => (
     'capsType': params?.capsResult?.capsType || null,
     'country': params.country || null,
     'platform': params.platform || null,
+    'isUseDefaultOfferUrl': params.isUseDefaultOfferUrl || null,
+    'nestedExitOfferSteps': params?.exitOfferResult?.steps || null,
+    'fingerPrintInfo': params?.fingerPrint.info || null,
+    'fingerPrintKey': params?.fingerPrintKey || null,
     'eventType': 'click',
     '_messageType': 'aggregatorStatSflOffer'
   }

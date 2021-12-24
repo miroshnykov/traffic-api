@@ -37,7 +37,7 @@ export const resolveIP = async (req: Request) => {
 const resolveGeo = (ipData: any, ISP: any, IP: string) => {
 
   const country: string = ipData?.country?.iso_code || null
-  const region: string = ipData?.subdivisions[0]?.iso_code || null
+  const region: string = ipData?.subdivisions && ipData?.subdivisions[0]?.iso_code || null
   const city: string = ipData?.city?.names?.en ? ipData?.city?.names?.en : ipData?.city?.names?.fr || null
   const ll: Array<string> = [ipData?.location?.latitude, ipData?.location?.longitude]
   const isp: string = ISP?.isp

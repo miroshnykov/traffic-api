@@ -10,6 +10,8 @@ export enum IRedirectType {
   CAMPAIGN_TARGET_RULES = 'campaignTargetRules',
   OFFER_START_END_DATA_RANGE_NOT_PASS = 'OfferStartEndDataRangeNotPass',
   CUSTOM_PAY_OUT_PER_GEO = 'customPayOutPerGeo',
+  EXIT_OFFER_CUSTOM_PAY_OUT_PER_GEO = 'exitOfferCustomPayOutPerGeo',
+  EXIT_OFFER_NESTED = 'exitOfferNested',
   CUSTOM_LANDING_PAGES = 'customLandingPages',
   OFFER_GEO_RESTRICTION = 'offerGeoRestriction',
   CAPS_OFFER_UNDER_LIMIT = 'capsOfferUnderLimit',
@@ -19,4 +21,5 @@ export enum IRedirectType {
   CAPS_CAMPAIGN_DATA_RANGE_NOT_PASS = 'capsCampaignDataRangeNotPass',
   CAPS_CAMPAIGN_OVER_LIMIT_SALES = 'capsCampaignOverLimitSales',
   CAPS_CAMPAIGN_UNDER_LIMIT_ClICKS = 'capsCampaignUnderLimitClicks',
+  FINGER_PRINT_OVERRIDE = 'fingerPrintOverride',
 }

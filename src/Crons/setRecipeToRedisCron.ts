@@ -16,7 +16,7 @@ export const setOffersToRedis = async () => {
 
   try {
 
-    const offersRedisKeys = await redis.keys(`offer_*`)
+    const offersRedisKeys = await redis.keys(`offer:*`)
     consola.info(`offersRedisKeysForDeleteCount:${offersRedisKeys.length} computerName:${computerName}`)
     for (const offerKey of offersRedisKeys) {
       await redis.del(offerKey)
@@ -33,8 +33,8 @@ export const setOffersToRedis = async () => {
       if (!item.offerId) {
         return
       }
-      // consola.info(`Set offers to redis offer_${item.offerId}`)
-      await redis.set(`offer_${item.offerId}`, JSON.stringify(item))
+      // consola.info(`Set offers to redis offer:${item.offerId}`)
+      await redis.set(`offer:${item.offerId}`, JSON.stringify(item))
     })
 
   } catch (e) {
@@ -57,8 +57,8 @@ export const setCampaignsToRedis = async () => {
       if (!item.campaignId) {
         return
       }
-      //consola.success(`Set campaigns to redis campaign_${item.campaignId}`)
-      await redis.set(`campaign_${item.campaignId}`, JSON.stringify(item))
+      //consola.success(`Set campaigns to redis campaign:${item.campaignId}`)
+      await redis.set(`campaign:${item.campaignId}`, JSON.stringify(item))
     })
 
   } catch (e) {

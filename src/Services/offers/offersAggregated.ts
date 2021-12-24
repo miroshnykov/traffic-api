@@ -1,9 +1,4 @@
-import {geoRestrictions} from "./geoRestrictions"
-import {customLP} from "./customLp"
-import {getOffer} from '../../Models/offersModel'
-import {redirectUrl} from "../../Utils/redirectUrl"
-import {override} from "./override"
-
+import {override} from "../override/override"
 import consola from "consola";
 import {IParams} from "../../Interfaces/params";
 import {IAggregatedOfferList, IOffer} from "../../Interfaces/offers";
@@ -48,14 +43,12 @@ export const offerAggregatedCalculations = async (params: IParams): Promise<bool
         params.redirectType = IRedirectType.OFFER_AGGREGATED_BEST_OFFER
         await override(params, bestOfferId)
         params.groupBestOffer = bestOfferId
-        params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
         pass = true
 
       } else {
         params.redirectReason = `Offers Aggregated exit traffic`
         params.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC
         await override(params, params.offerInfo?.offerIdRedirectExitTraffic)
-        params.redirectUrl = await redirectUrl(params.landingPageUrl, params)
         pass = true
       }
     }

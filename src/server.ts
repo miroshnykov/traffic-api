@@ -15,7 +15,7 @@ import {IRedshiftData} from "./Interfaces/redshiftData";
 import {IRecipeType} from "./Interfaces/recipeTypes";
 import {socketConnection} from "./socket";
 import {ISocketType} from "./Interfaces/socketTypes";
-
+import Fingerprint  from "express-fingerprint"
 const computerName = os.hostname()
 
 const app: Application = express();
@@ -56,7 +56,7 @@ if (cluster.isMaster) {
         if (logBufferOffer[index].length === 0) return
 
         for (const j in logBufferOffer[index]) {
-          let statsData: IRedshiftData = logBufferOffer[index][j]
+          const statsData: IRedshiftData = logBufferOffer[index][j]
           sendToAggregator(statsData)
 
         }
@@ -111,10 +111,10 @@ if (cluster.isMaster) {
   })
   // }
   setTimeout(getFileFromBucket, 6000, IRecipeType.OFFER)
-  setTimeout(setOffersToRedis, 12000)
+  // setTimeout(setOffersToRedis, 12000)
 
   setTimeout(getFileFromBucket, 13000, IRecipeType.CAMPAIGN)
-  setTimeout(setCampaignsToRedis, 20000)
+  // setTimeout(setCampaignsToRedis, 20000)
 
 } else {
   const server = http.createServer(app) as Server
@@ -123,6 +123,17 @@ if (cluster.isMaster) {
   app.get('/api/v1/health', (req: Request, res: Response, next: NextFunction) => {
     res.send('Ok')
   });
+
+  app.use(Fingerprint({
+    parameters:[
+      // @ts-ignore
+      Fingerprint.useragent,
+      // @ts-ignore
+      Fingerprint.acceptHeaders,
+      // @ts-ignore
+      Fingerprint.geoip,
+    ]
+  }))
 
   app.use(routes);
   const host: string = process.env.HOST || ''

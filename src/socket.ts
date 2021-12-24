@@ -41,26 +41,27 @@ export const socketConnection = (type: ISocketType) => {
     consola.info(`Socket connected, host: ${socketHost}, socket type: { ${type} }, masterServerRunning:${masterServerRunning}, slaveServerRunning:${slaveServerRunning} `)
   });
 
-  socket[type].on('fileSizeOffersCheck', async (offersSize: number) => {
+  socket[type].on('fileSizeOffersCheck', async (offersSizeRecipe: number) => {
 
     try {
-      consola.warn(`Socket type: { ${type} }, Size offers from co-recipe and from co-traffic is different, offersSize:${offersSize} Re-download new recipe offers from S3, Set offersSize to redis:${offersSize}`)
-      await redis.set(`offersSize_`, offersSize)
+      const offersSizeTraffic: number = Number(await redis.get(`offersSizeTraffic`))
+      consola.warn(`Socket type: { ${type} }.Size of { offers } from recipe-api:${offersSizeRecipe} and from traffic-api:${offersSizeTraffic} is different, Re-download new recipe offers from S3, Set offersSizeTraffic to redis:${offersSizeRecipe}`)
+      await redis.set(`offersSizeTraffic`, offersSizeRecipe)
       setTimeout(getFileFromBucket, 6000, IRecipeType.OFFER)
-      setTimeout(setOffersToRedis, 20000)
     } catch (e) {
       influxdb(500, `file_size_offers_check_error`)
       console.log(`fileSizeOffersInfoError:`, e)
     }
   })
 
-  socket[type].on('fileSizeCampaignsCheck', async (campaignsSize: number) => {
+  socket[type].on('fileSizeCampaignsCheck', async (campaignsSizeRecipe: number) => {
 
     try {
-      consola.warn(`Socket type: { ${type} }, Size campaigns from co-recipe and from co-traffic is different, campaignsSize:${campaignsSize}, Re-download new recipe campaigns from S3  `)
-      await redis.set(`campaignsSize_`, campaignsSize!)
+      const campaignsSizeTraffic: number = Number(await redis.get(`campaignsSizeTraffic`))
+      consola.warn(`Socket type: { ${type} }.Size of { campaigns } from recipe-api:${campaignsSizeRecipe} and from co-traffic:${campaignsSizeTraffic} is different,  Re-download new recipe campaigns from S3, Set campaignsSizeTraffic to redis:${campaignsSizeRecipe} `)
+      await redis.set(`campaignsSizeTraffic`, campaignsSizeRecipe!)
       setTimeout(getFileFromBucket, 6000, IRecipeType.CAMPAIGN)
-      setTimeout(setCampaignsToRedis, 20000)
+      // setTimeout(setCampaignsToRedis, 20000)
     } catch (e) {
       influxdb(500, `file_size_campaigns_check_error`)
       console.log(`fileSizeCampaignsInfoError:`, e)
@@ -95,9 +96,9 @@ export const socketConnection = (type: ISocketType) => {
   }
   setInterval(setOffersCheckSize, 10000)
 
-  const socketEmitOffersRun = async (type:ISocketType) => {
+  const socketEmitOffersRun = async (type: ISocketType) => {
     // consola.info(`fileSizeOffersCheck, Socket type: { ${type} } masterServerRunning:${masterServerRunning}, slaveServerRunning:${slaveServerRunning} `)
-    const offerSize: number = Number(await redis.get(`offersSize_`))
+    const offerSize: number = Number(await redis.get(`offersSizeTraffic`))
     socket[type].emit('fileSizeOffersCheck', offerSize)
   }
 
@@ -116,7 +117,7 @@ export const socketConnection = (type: ISocketType) => {
   }
   const socketEmitCampaignsRun = async (type: ISocketType) => {
     // consola.info(`fileSizeCampaignsCheck, Socket type: { ${type} }, masterServerRunning:${masterServerRunning}, slaveServerRunning:${slaveServerRunning} `)
-    const campaignsSize: number = Number(await redis.get(`campaignsSize_`))
+    const campaignsSize: number = Number(await redis.get(`campaignsSizeTraffic`))
     socket[type].emit('fileSizeCampaignsCheck', campaignsSize)
   }
 
@@ -128,14 +129,14 @@ export const socketConnection = (type: ISocketType) => {
       await setSqsDataToRedis(message)
     })
 
-    const checkRedisSize = async () => {
-      let redisSize: number = await redis.dbsize()
-      influxdb(200, `redis_size_${redisSize}_for_${computerName}`)
+    const checkRedisSizeCampaigns = async () => {
+      const campaignRedisKeys = await redis.keys(`campaign:*`)
+      influxdb(200, `redis_size_campaigns_${campaignRedisKeys.length}_for_${computerName}`)
     }
-    setInterval(checkRedisSize, 600000) // 600000 every 10 min
+    setInterval(checkRedisSizeCampaigns, 600000) // 600000 every 10 min
 
     const checkRedisSizeOffers = async () => {
-      const offersRedisKeys = await redis.keys(`offer_*`)
+      const offersRedisKeys = await redis.keys(`offer:*`)
       influxdb(200, `redis_size_offers_${offersRedisKeys.length}_for_${computerName}`)
     }
     setInterval(checkRedisSizeOffers, 720000) // 720000 every 12 min

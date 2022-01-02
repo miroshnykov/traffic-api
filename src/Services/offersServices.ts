@@ -27,14 +27,14 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     influxdb(200, 'offers_all_request')
     const params: IParams = await getParams(req)
 
-    consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`)
-    const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`)
+    // consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`)
+    // const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`)
 
     const handleConditionsResponse: IResponse = await handleConditions(params, debug)
 
     await exitOfferOverride(handleConditionsResponse)
 
-    await fingerPrintOverride(params, req, fpData)
+    // await fingerPrintOverride(params, req, fpData)
 
     const lidObj: ILid = lidOffer(params)
     createLidOffer(lidObj)

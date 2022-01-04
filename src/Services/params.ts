@@ -15,6 +15,7 @@ import {ICapsResult} from "../Interfaces/caps";
 
 export const getParams = async (req: Request): Promise<IParams> => {
   try {
+    const fingerPrintKey = req.fingerprint?.hash
     const offerEncoded: string = String(req.query.o! || '')
     const encKey: string = process.env.ENCRIPTION_KEY || ''
     const decodedString: string = decrypt(offerEncoded, encKey)
@@ -136,7 +137,8 @@ export const getParams = async (req: Request): Promise<IParams> => {
       IP,
       isExitOffer,
       exitOfferResult,
-      fingerPrint
+      fingerPrint,
+      fingerPrintKey
     };
 
   } catch (e) {

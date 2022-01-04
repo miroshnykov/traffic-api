@@ -67,8 +67,8 @@ const checkRestrictionsByOffer = async (offer: IAggregatedOfferList, params: IPa
     return !(offer?.capsOverLimitClicks
       || offer?.capsOverLimitSales
       || offer?.dateRangeNotPass
-      || offer?.countriesRestrictions && offer?.countriesRestrictions.includes(params.country)
-      || offer?.customLpCountriesRestrictions && offer?.customLpCountriesRestrictions.includes(params.country))
+      || offer?.countriesRestrictions && offer?.countriesRestrictions.includes(params.country))
+      // || offer?.customLpCountriesRestrictions && offer?.customLpCountriesRestrictions.includes(params.country))
 
 
   } catch (e) {

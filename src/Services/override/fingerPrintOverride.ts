@@ -13,7 +13,6 @@ export const fingerPrintOverride = async (params: IParams, req: Request, fpData:
     return
   }
   const fpKey = `fp:${req.fingerprint?.hash!}-${params.campaignId}`
-  params.fingerPrintKey = req.fingerprint?.hash
   if (fpData) {
     consola.info(` ***** GET FINGER_PRINT FROM CACHE ${fpKey} from cache, data  `, fpData)
     if (params.offerType === 'aggregated') {

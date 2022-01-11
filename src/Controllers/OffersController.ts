@@ -9,26 +9,35 @@ import {REDIRECT_URLS} from "../Utils/defaultRedirectUrls";
 import {getDefaultOfferUrl} from "../Utils/defaultOffer";
 import {IResponse} from "../Interfaces/params";
 import {redirectUrl} from "../Utils/redirectUrl";
+import {convertHrtime} from "../Utils/convertHrtime";
 
 export class OffersController extends BaseController {
 
-  public async read(req: Request, res: Response, next: NextFunction): Promise<IParams | void> {
+  public async read(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<IParams | void> {
+
+    const startTime: bigint = process.hrtime.bigint()
     const responseOffer: IResponse = await offersServices(req)
-    const timeCurrent: number = new Date().getTime()
+    const endTime: bigint = process.hrtime.bigint()
+    const diffTime: bigint = endTime - startTime
+    // const timeCurrent: number = new Date().getTime()
     if (responseOffer.data) {
 
       responseOffer.data.redirectUrl = await redirectUrl(responseOffer.data)
-
-      responseOffer.data.speedTime = timeCurrent - responseOffer.data?.startTime
+      responseOffer.data.speedTime = convertHrtime(diffTime)
+      // const speedTime: number = rangeSpeed(responseOffer.data.speedTime)
       const speedTime: number = rangeSpeed(responseOffer.data.speedTime)
-      if (speedTime >= 2500) {
+      if (speedTime >= 2000) {
         influxdb(200, `speed_time_more_${speedTime}_ms_country_${responseOffer.data.country}`)
       } else {
         influxdb(200, `speed_time_less_${speedTime}_ms`)
       }
-      influxdb(200, `country_${responseOffer.data.country}`)
-      influxdb(200, `offerId_${responseOffer.data.offerId}`)
-      influxdb(200, `campaignId_${responseOffer.data.campaignId}`)
+      // influxdb(200, `country_${responseOffer.data.country}`)
+      // influxdb(200, `offerId_${responseOffer.data.offerId}`)
+      // influxdb(200, `campaignId_${responseOffer.data.campaignId}`)
     }
 
     if (!responseOffer.success && responseOffer?.debug) {
@@ -60,6 +69,7 @@ export class OffersController extends BaseController {
     if (responseOffer?.success) {
       const redirectUrlFinal: string = responseOffer.data?.redirectUrl || REDIRECT_URLS.DEFAULT
       consola.info(`redirect to ${redirectUrlFinal}`)
+      influxdb(200, `offers_success_redirect`)
       return res.redirect(redirectUrlFinal)
     }
   }

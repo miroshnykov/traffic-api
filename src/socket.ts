@@ -49,8 +49,8 @@ export const socketConnection = (type: ISocketType) => {
       await redis.set(`offersSizeTraffic`, offersSizeRecipe)
       setTimeout(getFileFromBucket, 6000, IRecipeType.OFFER)
     } catch (e) {
-      influxdb(500, `file_size_offers_check_error`)
-      console.log(`fileSizeOffersInfoError:`, e)
+      influxdb(500, `file_size_offers_check_error_${type}`)
+      console.log(`fileSizeOffersInfoError${type}:`, e)
     }
   })
 
@@ -63,8 +63,8 @@ export const socketConnection = (type: ISocketType) => {
       setTimeout(getFileFromBucket, 6000, IRecipeType.CAMPAIGN)
       // setTimeout(setCampaignsToRedis, 20000)
     } catch (e) {
-      influxdb(500, `file_size_campaigns_check_error`)
-      console.log(`fileSizeCampaignsInfoError:`, e)
+      influxdb(500, `file_size_campaigns_check_error_${type}`)
+      console.log(`fileSizeCampaignsInfoError${type}:`, e)
     }
   })
 
@@ -87,11 +87,12 @@ export const socketConnection = (type: ISocketType) => {
       if (type === ISocketType.MASTER && masterServerRunning) {
         await socketEmitOffersRun(type)
       } else if (type === ISocketType.SLAVE && !masterServerRunning && slaveServerRunning) {
+        influxdb(500, `master_recipe_api_off_use_slave`)
         await socketEmitOffersRun(type)
       }
     } catch (e) {
-      influxdb(500, `set_offers_check_size_error`)
-      consola.error(`setOffersCheckSizeError:`, e)
+      influxdb(500, `set_offers_check_size_error_${type}`)
+      consola.error(`setOffersCheckSizeError${type}:`, e)
     }
   }
   setInterval(setOffersCheckSize, 10000)
@@ -111,8 +112,8 @@ export const socketConnection = (type: ISocketType) => {
       }
 
     } catch (e) {
-      influxdb(500, `set_campaigns_check_size_error`)
-      consola.error(`setCampaignsCheckSizeError:`, e)
+      influxdb(500, `set_campaigns_check_size_error_${type}`)
+      consola.error(`setCampaignsCheckSizeError${type}:`, e)
     }
   }
   const socketEmitCampaignsRun = async (type: ISocketType) => {

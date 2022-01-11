@@ -1,7 +1,7 @@
 import {override} from "../override/override"
 import consola from "consola";
 import {IParams} from "../../Interfaces/params";
-import {IAggregatedOfferList, IOffer} from "../../Interfaces/offers";
+import {IAggregatedOfferList, IOffer, IOfferType} from "../../Interfaces/offers";
 import {IRedirectType} from "../../Interfaces/recipeTypes";
 import {getOffer} from "../../Models/offersModel";
 
@@ -31,8 +31,8 @@ export const offerAggregatedCalculations = async (
         const offerExitTrafficInfo: IOffer = JSON.parse(offerExitTraffic)
 
         // PH-577
-        if (offerExitTrafficInfo.type === 'aggregated') {
-          params.redirectReason = `Offers Aggregated exit traffic to aggregatedOffer `
+        if (offerExitTrafficInfo.type === IOfferType.AGGREGATED) {
+          params.redirectReason = `Offers Aggregated exit traffic to aggregatedOffer`
           params.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC_TO_AGGREGATED_OFFER
           exitTrafficOfferId = identifyBestOffer(offerExitTrafficInfo?.offersAggregatedIds!, params)
         } else {

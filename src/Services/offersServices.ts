@@ -19,6 +19,7 @@ import {ILid} from "../Interfaces/lid";
 import {getFp, setFp} from '../Models/fpModel'
 import {fingerPrintOverride} from "./override/fingerPrintOverride"
 import {exitOfferOverride} from "./override/exitOfferOverride";
+import {IOfferType} from "../Interfaces/offers";
 
 export const offersServices = async (req: Request): Promise<IResponse> => {
 
@@ -56,7 +57,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
 
 const handleConditions = async (params: IParams, debug: boolean): Promise<IResponse> => {
 
-  if (params.offerInfo.type === 'aggregated') {
+  if (params.offerInfo.type === IOfferType.AGGREGATED) {
     const offerAggregatedRes: boolean = await offerAggregatedCalculations(params)
     if (offerAggregatedRes) {
       influxdb(200, 'offer_aggregated')

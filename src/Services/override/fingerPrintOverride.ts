@@ -5,6 +5,7 @@ import {IFingerPrintData} from "../../Interfaces/fp";
 import {fpOverride} from "../offers/fpOverride";
 import {influxdb} from "../../Utils/metrics";
 import {expireFp, setFp} from "../../Models/fpModel";
+import {IOfferType} from "../../Interfaces/offers";
 
 export const fingerPrintOverride = async (params: IParams, req: Request, fpData: string | null): Promise<void> => {
   const debugFp: boolean = req?.query?.fp! === 'disabled';
@@ -15,7 +16,7 @@ export const fingerPrintOverride = async (params: IParams, req: Request, fpData:
   const fpKey = `fp:${req.fingerprint?.hash!}-${params.campaignId}`
   if (fpData) {
     consola.info(` ***** GET FINGER_PRINT FROM CACHE ${fpKey} from cache, data  `, fpData)
-    if (params.offerType === 'aggregated') {
+    if (params.offerType === IOfferType.AGGREGATED) {
       consola.info('Offer has type aggregated so lets do override use finger print data from cache')
       const fpDataObj: IFingerPrintData = JSON.parse(fpData)
       await fpOverride(params, fpDataObj)

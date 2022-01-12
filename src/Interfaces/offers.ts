@@ -60,3 +60,8 @@ export interface IExitOfferResult {
   info?: string
   steps?: string
 }
+
+export enum IOfferType {
+  REGULAR = 'regular',
+  AGGREGATED = 'aggregated'
+}

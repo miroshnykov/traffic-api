@@ -26,22 +26,9 @@ export const offerAggregatedCalculations = async (
         pass = true
 
       } else {
-        let exitTrafficOfferId: number
-        const offerExitTraffic: any = await getOffer(params.offerInfo?.offerIdRedirectExitTraffic)
-        const offerExitTrafficInfo: IOffer = JSON.parse(offerExitTraffic)
-
-        // PH-577
-        if (offerExitTrafficInfo.type === IOfferType.AGGREGATED) {
-          params.redirectReason = `Offers Aggregated exit traffic to aggregatedOffer`
-          params.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC_TO_AGGREGATED_OFFER
-          exitTrafficOfferId = identifyBestOffer(offerExitTrafficInfo?.offersAggregatedIds!, params)
-        } else {
-          params.redirectReason = `Offers Aggregated exit traffic to regular offer`
-          params.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC_TO_REGULAR_OFFER
-          exitTrafficOfferId = params.offerInfo?.offerIdRedirectExitTraffic
-        }
-
-        await override(params, exitTrafficOfferId)
+        params.redirectReason = `Offers Aggregated exit traffic to regular offer`
+        params.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC_TO_REGULAR_OFFER
+        await override(params, params.offerInfo?.offerIdRedirectExitTraffic)
         pass = true
       }
     }
@@ -53,7 +40,7 @@ export const offerAggregatedCalculations = async (
   }
 }
 
-const identifyBestOffer = (
+export const identifyBestOffer = (
   offersAggregatedIds: IAggregatedOfferList[],
   params: IParams
 ): number => {

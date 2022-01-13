@@ -1,5 +1,7 @@
-import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
+import {DynamoDBClient, GetItemCommand} from "@aws-sdk/client-dynamodb";
 import {PutCommand} from "@aws-sdk/lib-dynamodb";
+import {unmarshall} from "@aws-sdk/util-dynamodb"
+
 import * as dotenv from "dotenv";
 import consola from "consola";
 import {influxdb} from "./metrics";
@@ -66,7 +68,25 @@ export const createLidOffer = (lidInfo: ILid): void => {
   }
 }
 
-const redshiftOffer = (lidObj: ILid): IRedshiftData => (
+export const getLeadData = async (leadId: string) => {
+  const dynamoDbConf = {
+    region: process.env.AWS_DYNAMODB_REGION,
+  }
+  const leadParams = {
+    TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
+    Key: {
+      lid: {
+        S: leadId
+      }
+    }
+  }
+  const ddbClient: DynamoDBClient = new DynamoDBClient(dynamoDbConf);
+  const data = await ddbClient.send(new GetItemCommand(leadParams));
+  const record = unmarshall(data?.Item!)
+  return record
+}
+
+export const redshiftOffer = (lidObj: ILid): IRedshiftData => (
   {
     'lid': lidObj.lid,
     'affiliate_id': +lidObj.affiliateId! || 0,

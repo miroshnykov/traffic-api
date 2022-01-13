@@ -2,18 +2,35 @@ import {IParams} from "../../Interfaces/params";
 
 import consola from "consola";
 import {getOffer} from '../../Models/offersModel'
-import {IOffer} from "../../Interfaces/offers";
+import {IOffer, IOfferType} from "../../Interfaces/offers";
 import {REDIRECT_URLS} from "../../Utils/defaultRedirectUrls";
 import {getDefaultOfferUrl, OFFER_DEFAULT} from "../../Utils/defaultOffer";
+import {IRedirectType} from "../../Interfaces/recipeTypes";
+import {identifyBestOffer} from "../offers/offersAggregated";
 
-export const override = async (params: IParams, offerIdRedirectExitTraffic: number): Promise<void> => {
-
-  const overrideOfferId = offerIdRedirectExitTraffic ? offerIdRedirectExitTraffic : OFFER_DEFAULT.OFFER_ID
-
-  const offerExitTraffic: any = await getOffer(overrideOfferId)
-  const offerExitTrafficInfo: IOffer = JSON.parse(offerExitTraffic)
-
+export const override = async (
+  params: IParams,
+  offerIdRedirectExitTraffic: number
+): Promise<void> => {
   try {
+    const overrideOfferId = offerIdRedirectExitTraffic ? offerIdRedirectExitTraffic : OFFER_DEFAULT.OFFER_ID
+
+    const offerExitTraffic: any = await getOffer(overrideOfferId)
+    let offerExitTrafficInfo: IOffer = JSON.parse(offerExitTraffic)
+
+    // PH-577
+    if (offerExitTrafficInfo.type === IOfferType.AGGREGATED) {
+      params.redirectReason = `Offers Aggregated exit traffic to aggregatedOffer`
+      params.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC_TO_AGGREGATED_OFFER
+      const exitTrafficBestOfferId = identifyBestOffer(offerExitTrafficInfo?.offersAggregatedIds!, params)
+      if (exitTrafficBestOfferId) {
+        const offerExitTrafficBestOffer: any = await getOffer(exitTrafficBestOfferId)
+        offerExitTrafficInfo = JSON.parse(offerExitTrafficBestOffer)
+      } else {
+        const defaultOffer: any = await getOffer(OFFER_DEFAULT.OFFER_ID)
+        offerExitTrafficInfo = JSON.parse(defaultOffer)
+      }
+    }
 
     params.isExitOffer = true
     params.exitOfferInfo = offerExitTrafficInfo
@@ -51,7 +68,6 @@ export const override = async (params: IParams, offerIdRedirectExitTraffic: numb
 
     params.payin = offerExitTrafficInfo && offerExitTrafficInfo?.payin || 0
     params.payout = offerExitTrafficInfo && offerExitTrafficInfo?.payout || 0
-
 
   } catch (e) {
     consola.error('override fields error', e)

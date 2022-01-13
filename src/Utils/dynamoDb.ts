@@ -69,21 +69,25 @@ export const createLidOffer = (lidInfo: ILid): void => {
 }
 
 export const getLeadData = async (leadId: string) => {
-  const dynamoDbConf = {
-    region: process.env.AWS_DYNAMODB_REGION,
-  }
-  const leadParams = {
-    TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
-    Key: {
-      lid: {
-        S: leadId
+  try {
+    const dynamoDbConf = {
+      region: process.env.AWS_DYNAMODB_REGION,
+    }
+    const leadParams = {
+      TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
+      Key: {
+        lid: {
+          S: leadId
+        }
       }
     }
+    const ddbClient: DynamoDBClient = new DynamoDBClient(dynamoDbConf);
+    const data = await ddbClient.send(new GetItemCommand(leadParams));
+    const record = unmarshall(data?.Item!)
+    return record
+  } catch (e) {
+    consola.error(`no lid:${leadId} in DynamoDB`,e)
   }
-  const ddbClient: DynamoDBClient = new DynamoDBClient(dynamoDbConf);
-  const data = await ddbClient.send(new GetItemCommand(leadParams));
-  const record = unmarshall(data?.Item!)
-  return record
 }
 
 export const redshiftOffer = (lidObj: ILid): IRedshiftData => (

@@ -42,16 +42,20 @@ export class RecipeController extends BaseController {
         resendLid = 'already added'
       } else {
         let respLid: any = await getLeadData(lid)
-        resendLid = respLid
-        await setFp(lid, lid)
-        const stats: IRedshiftData = redshiftOffer(respLid)
+        if (respLid) {
+          resendLid = respLid
+          await setFp(lid, lid)
+          const stats: IRedshiftData = redshiftOffer(respLid)
 
-        // @ts-ignore
-        process.send({
-          type: 'clickOffer',
-          value: 1,
-          stats: stats
-        });
+          // @ts-ignore
+          process.send({
+            type: 'clickOffer',
+            value: 1,
+            stats: stats
+          });
+        } else {
+          resendLid = `no lid: { ${lid} } in DB `
+        }
       }
     }
 

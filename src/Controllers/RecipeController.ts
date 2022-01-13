@@ -6,6 +6,8 @@ import {recipeCampaignsServices} from '../Services/recipeCampaignsServices'
 import {getOfferSize} from '../Models/offersModel'
 import {getCampaignSize} from '../Models/campaignsModel'
 import {getFp, setFp} from '../Models/fpModel'
+import {getLeadData, redshiftOffer} from "../Utils/dynamoDb";
+import {IRedshiftData} from "../Interfaces/redshiftData";
 
 interface IRecipeResponse {
   offer?: object;
@@ -14,6 +16,7 @@ interface IRecipeResponse {
   campaignSize?: number;
   fpResult?: string;
   fpCache?: boolean;
+  resendLid?: any;
 }
 
 export class RecipeController extends BaseController {
@@ -21,6 +24,8 @@ export class RecipeController extends BaseController {
   public async read(req: Request, res: Response, next: NextFunction): Promise<any> {
     const offerId: number = +req.query.offerId! || 0
     const campaignId: number = +req.query.campaignId! || 0
+    const isResendLid: string = String(req.query.resendLid!) || ''
+    const lid: string = String(req.query.lid!) || ''
 
     const fp: string = String(req.query.fp! || '')
     let responseOffer = await recipeOffersServices(offerId)
@@ -29,6 +34,27 @@ export class RecipeController extends BaseController {
     let campaignSize: number = await getCampaignSize() || 0
     let fpResult: string = await getFp(fp) || ''
     let fpCache: boolean = true
+    let resendLid: any
+
+    if (isResendLid === 'yes' && lid) {
+      const lidCache = await getFp(lid)
+      if (lidCache) {
+        resendLid = 'already added'
+      } else {
+        let respLid: any = await getLeadData(lid)
+        resendLid = respLid
+        await setFp(lid, lid)
+        const stats: IRedshiftData = redshiftOffer(respLid)
+
+        // @ts-ignore
+        process.send({
+          type: 'clickOffer',
+          value: 1,
+          stats: stats
+        });
+      }
+    }
+
 
     if (!fpResult) {
       await setFp(fp, fp)
@@ -49,6 +75,7 @@ export class RecipeController extends BaseController {
       campaignSize,
       fpResult,
       fpCache,
+      resendLid
     }
 
     res.status(200).json({

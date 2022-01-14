@@ -44,7 +44,7 @@ const resolveGeo = (ipData: any, ISP: any, IP: string) => {
   consola.info(`IP address:${IP} country:${country}`)
   if (!country) {
     consola.info(`Country empty by IP address:${IP}`)
-    influxdb(500, `country_empty_by_ip_${IP}`)
+    influxdb(500, `country_empty`)
   }
   return {
     country,

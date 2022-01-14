@@ -55,6 +55,7 @@
         https://traffic.aezai.com/getRecipeData?debugging=debugging&campaignId=40
 ## resend lid just one time
     http://localhost:5000/getRecipeData?debugging=debugging&resendLid=***&lid=7e0a853e-595f-43b5-a42b-765cdc09cffa
+    https://traffic.aezai.com/getRecipeData?debugging=debugging&resendLid=***&lid=c225991f-4a28-431c-a944-b26dc91484cb
 
 ## build
 

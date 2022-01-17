@@ -1,21 +1,29 @@
-import {override} from "../../override/override"
-import consola from "consola";
-import {IParams} from "../../../Interfaces/params";
-import {IRedirectType} from "../../../Interfaces/recipeTypes";
+import consola from 'consola';
+import { override } from '../../override/override';
+import { IBaseResponse, IParams } from '../../../Interfaces/params';
+import { IRedirectType } from '../../../Interfaces/recipeTypes';
 
-export const offersStartEndDateSetupCalculations = async (params: IParams): Promise<boolean> => {
+export const offersStartEndDateSetupCalculations = async (params: IParams): Promise<IBaseResponse> => {
+  let paramsOverride:IParams;
+  let pass :boolean = false;
+  let paramsClone = { ...params };
   try {
-    let pass = false
-    if (!params.offerInfo.startEndDateSetting.dateRangePass) {
-      params.redirectReason = `Offers not active by date range settings: ${JSON.stringify(params.offerInfo.startEndDateSetting)}`
-      params.redirectType = IRedirectType.OFFER_START_END_DATA_RANGE_NOT_PASS
-      await override(params, params.offerInfo.offerIdRedirectExitTraffic)
-      pass = true
+    if (!paramsClone.offerInfo.startEndDateSetting.dateRangePass) {
+      paramsClone.redirectReason = `Offers not active by date range settings: ${JSON.stringify(paramsClone.offerInfo.startEndDateSetting)}`;
+      paramsClone.redirectType = IRedirectType.OFFER_START_END_DATA_RANGE_NOT_PASS;
+      paramsOverride = await override(params, params.offerInfo.offerIdRedirectExitTraffic);
+      paramsClone = { ...paramsClone, ...paramsOverride };
+      pass = true;
     }
-    return pass
-
+    return {
+      success: pass,
+      params: paramsClone,
+    };
   } catch (e) {
-    consola.error('offersStartEndDateSetupCalculationsError:', e)
-    return false
+    consola.error('offersStartEndDateSetupCalculationsError:', e);
+    return {
+      success: pass,
+      params: paramsClone,
+    };
   }
-}
+};

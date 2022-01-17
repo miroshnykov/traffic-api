@@ -1,11 +1,12 @@
-import {Router, Request, Response, NextFunction} from 'express';
+import {
+  Router, Request, Response, NextFunction,
+} from 'express';
+import { offerController } from '../Controllers';
 
 const offersRouter = Router();
-import {offerController} from '../Controllers';
 
 offersRouter.get('/', async (req: Request, res: Response, next:NextFunction): Promise<any> => {
-  await offerController.read(req, res, next)
+  await offerController.read(req, res, next);
 });
 
 export default offersRouter;
-

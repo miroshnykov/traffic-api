@@ -76,7 +76,7 @@ export const offerAggregatedCalculations = async (
         paramsClone.redirectType = IRedirectType.OFFER_AGGREGATED_BEST_OFFER;
         paramsOverride = await override(paramsClone, bestOfferRes.bestOfferId);
         paramsClone.groupBestOffer = bestOfferRes.bestOfferId;
-        paramsClone = { ...paramsClone, ...paramsOverride };
+        paramsClone = { ...paramsClone, ...paramsOverride, ...bestOfferRes?.params };
         pass = true;
       } else {
         paramsClone.redirectReason = 'Offers Aggregated exit traffic to regular offer';

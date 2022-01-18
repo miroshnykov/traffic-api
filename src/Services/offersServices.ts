@@ -7,8 +7,8 @@ import { getParams } from './params';
 import { lidOffer } from '../Utils/lid';
 import { createLidOffer } from '../Utils/dynamoDb';
 import { ILid } from '../Interfaces/lid';
-import { getFp } from '../Models/fpModel';
-import { fingerPrintOverride } from './override/fingerPrintOverride';
+// import { getFp } from '../Models/fpModel';
+// import { fingerPrintOverride } from './override/fingerPrintOverride';
 import { exitOfferOverride } from './override/exitOfferOverride';
 import { handleConditions } from './handleConditions';
 

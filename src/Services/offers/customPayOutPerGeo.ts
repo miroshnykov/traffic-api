@@ -15,8 +15,8 @@ export const customPayOutPerGeo = (params: IParams): IBaseResponse => {
 
     paramsClone.redirectReason = `customPayoutByGeo-${JSON.stringify(checkCustomPerGeo)}`;
     paramsClone.redirectType = IRedirectType.CUSTOM_PAY_OUT_PER_GEO;
-    paramsClone.payout = checkCustomPerGeo.payOut;
-    paramsClone.payin = checkCustomPerGeo.payIn;
+    paramsClone.payOut = checkCustomPerGeo.payOut;
+    paramsClone.payIn = checkCustomPerGeo.payIn;
 
     pass = true;
   }

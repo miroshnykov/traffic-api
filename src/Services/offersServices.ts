@@ -1,16 +1,16 @@
-import {Request} from 'express';
+import { Request } from 'express';
 import consola from 'consola';
-import {influxdb} from '../Utils/metrics';
+import { influxdb } from '../Utils/metrics';
 
-import {IBaseResponse, IParams, IResponse} from '../Interfaces/params';
-import {getParams} from './params';
-import {lidOffer} from '../Utils/lid';
-import {createLidOffer} from '../Utils/dynamoDb';
-import {ILid} from '../Interfaces/lid';
+import { IParams, IResponse } from '../Interfaces/params';
+import { getParams } from './params';
+import { lidOffer } from '../Utils/lid';
+import { createLidOffer } from '../Utils/dynamoDb';
+import { ILid } from '../Interfaces/lid';
 // import { getFp, setFp } from '../Models/fpModel';
 // import { fingerPrintOverride } from './override/fingerPrintOverride';
-import {exitOfferOverride} from './override/exitOfferOverride';
-import {handleConditions} from './handleConditions';
+import { exitOfferOverride } from './override/exitOfferOverride';
+import { handleConditions } from './handleConditions';
 
 export const offersServices = async (req: Request): Promise<IResponse> => {
   const debug: boolean = req?.query?.debugging! === 'debugging';
@@ -23,15 +23,15 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
 
     const handleConditionsResponse: IResponse = await handleConditions(params, debug);
 
-    exitOfferOverride(handleConditionsResponse);
+    const finalResponse:IResponse = exitOfferOverride(handleConditionsResponse);
 
     // await fingerPrintOverride(params, req, fpData)
 
-    const lidObj: ILid = lidOffer(handleConditionsResponse?.params!);
+    const lidObj: ILid = lidOffer(finalResponse?.params!);
     createLidOffer(lidObj);
-    handleConditionsResponse!.params!.lidObj = lidObj;
+    finalResponse!.params!.lidObj = lidObj;
 
-    return handleConditionsResponse;
+    return finalResponse;
   } catch (e) {
     consola.error('Service offer error:', e);
     influxdb(500, 'offer_ad_error');

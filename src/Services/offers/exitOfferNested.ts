@@ -30,8 +30,8 @@ export const exitOfferNested = (
   paramsClone.offerId = exitOfferDetected?.offerId || 0;
   paramsClone.verticalId = exitOfferDetected?.verticalId || 0;
   paramsClone.verticalName = exitOfferDetected?.verticalName || '';
-  paramsClone.payin = exitOfferDetected?.payin || 0;
-  paramsClone.payout = exitOfferDetected?.payout || 0;
+  paramsClone.payIn = exitOfferDetected?.payin || 0;
+  paramsClone.payOut = exitOfferDetected?.payout || 0;
   paramsClone.exitOfferResult.type = IRedirectType.EXIT_OFFER_NESTED;
   paramsClone.exitOfferResult.info = ` -> Additional override by exitOfferId:${exitOfferDetected?.offerId}, total nested offer:${lengthNestedExitOffer}`;
   paramsClone.exitOfferResult.steps = stepsNestedOffers;
@@ -46,8 +46,8 @@ export const exitOfferCustomPayout = (params: IParams, handleConditionsResponse:
   const paramsClone = { ...params };
   if (checkExitOfferCustomPerGeo) {
     influxdb(200, 'offer_exit_custom_pay_out_per_geo');
-    paramsClone.payout = checkExitOfferCustomPerGeo.payOut;
-    paramsClone.payin = checkExitOfferCustomPerGeo.payIn;
+    paramsClone.payOut = checkExitOfferCustomPerGeo.payOut;
+    paramsClone.payIn = checkExitOfferCustomPerGeo.payIn;
     paramsClone.exitOfferResult.type = IRedirectType.EXIT_OFFER_CUSTOM_PAY_OUT_PER_GEO;
     paramsClone.exitOfferResult.info = handleConditionsResponse?.params?.exitOfferInfo?.customPayOutPerGeo!;
     consola.info(` -> Additional override by { exitOfferCustomPayout } lid { ${params.lid} }`);

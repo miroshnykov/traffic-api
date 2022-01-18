@@ -18,8 +18,8 @@ export interface IParams {
   landingPageId: number
   landingPageUrl: string
   isUseDefaultOfferUrl?: boolean
-  payin: number
-  payout: number
+  payIn: number
+  payOut: number
   payoutPercent: number
   isCpmOptionEnabled: boolean | number
   verticalId: number

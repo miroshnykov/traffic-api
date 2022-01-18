@@ -25,12 +25,10 @@ export const getParams = async (req: Request): Promise<IParams> => {
 
     const inputData = decodedString.split('|');
 
-    consola.info('inputData:', inputData);
     const offerId: number = Number(inputData[0]);
     const campaignId: number = Number(inputData[1]);
 
     const offer = await getOffer(offerId);
-    consola.info('offerId:11', offerId);
     if (!offer) {
       influxdb(500, `offer_${offerId}_recipe_error`);
       throw Error(`no offerId ${offerId} in recipe`);
@@ -84,9 +82,9 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const { advertiserId } = offerInfo;
     const { advertiserName } = offerInfo;
     const { advertiserManagerId } = offerInfo;
-    const payin: number = Number(offerInfo.payin);
+    const payIn: number = Number(offerInfo.payin);
     const payoutPercent: number = Number(offerInfo.payoutPercent);
-    const payout: number = Number(campaignInfo.payout ? campaignInfo.payout : offerInfo.payout);
+    const payOut: number = Number(campaignInfo.payout ? campaignInfo.payout : offerInfo.payout);
     const { isCpmOptionEnabled } = offerInfo;
     const redirectUrl: string = '';
     const capsResult: ICapsResult = {};
@@ -105,8 +103,8 @@ export const getParams = async (req: Request): Promise<IParams> => {
       conversionType,
       landingPageId,
       landingPageUrl,
-      payin,
-      payout,
+      payIn,
+      payOut,
       payoutPercent,
       isCpmOptionEnabled,
       verticalId,

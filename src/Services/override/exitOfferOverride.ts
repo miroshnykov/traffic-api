@@ -5,7 +5,8 @@ import { influxdb } from '../../Utils/metrics';
 import { exitOfferCustomPayout, exitOfferNested } from '../offers/exitOfferNested';
 import { IOffer } from '../../Interfaces/offers';
 
-export const exitOfferOverride = (handleConditionsResponse: IResponse): void => {
+export const exitOfferOverride = (handleConditionsResponse: IResponse): IResponse => {
+  const handleConditionsResponseClone = { ...handleConditionsResponse };
   // PH-459
   if (handleConditionsResponse?.success
     && (handleConditionsResponse?.params?.offerInfo?.capInfo?.capsSalesUnderLimit
@@ -13,9 +14,7 @@ export const exitOfferOverride = (handleConditionsResponse: IResponse): void => 
     && handleConditionsResponse?.params.offerInfo?.customPayOutPerGeo) {
     const customPayOutPerGeoRes:IBaseResponse = customPayOutPerGeo(handleConditionsResponse?.params);
     if (customPayOutPerGeoRes.success) {
-      handleConditionsResponse!.params = { ...handleConditionsResponse?.params, ...customPayOutPerGeoRes.params };
-      // responseParams.params = { ...handleConditionsResponse?.params, ...customPayOutPerGeoRes.params };
-      // responseParams.success = true;
+      handleConditionsResponseClone.params = { ...handleConditionsResponse?.params, ...customPayOutPerGeoRes.params };
       influxdb(200, 'offer_custom_pay_out_per_geo_caps_under_limit');
       consola.info(` -> additional override Redirect type { offer customPayOutPerGeo CapsUnderLimit } lid { ${handleConditionsResponse?.params.lid} }`);
     }
@@ -27,7 +26,7 @@ export const exitOfferOverride = (handleConditionsResponse: IResponse): void => 
     if (handleConditionsResponse?.params?.exitOfferInfo?.customPayOutPerGeo!) {
       const exitOfferCustomPayoutRes = exitOfferCustomPayout(handleConditionsResponse?.params, handleConditionsResponse);
       if (exitOfferCustomPayoutRes) {
-        handleConditionsResponse!.params = { ...handleConditionsResponse?.params, ...exitOfferCustomPayoutRes };
+        handleConditionsResponseClone.params = { ...handleConditionsResponse?.params, ...exitOfferCustomPayoutRes };
       }
     }
   }
@@ -41,8 +40,10 @@ export const exitOfferOverride = (handleConditionsResponse: IResponse): void => 
     if (exitOfferDetected) {
       const exitOfferNestedRes = exitOfferNested(handleConditionsResponse?.params, exitOfferDetected);
       if (exitOfferNestedRes) {
-        handleConditionsResponse!.params = { ...handleConditionsResponse?.params, ...exitOfferNestedRes };
+        handleConditionsResponseClone.params = { ...handleConditionsResponse?.params, ...exitOfferNestedRes };
       }
     }
   }
+
+  return handleConditionsResponseClone;
 };

@@ -66,7 +66,7 @@ export const override = async (
   paramsClone.verticalId = offerExitTrafficInfo?.verticalId || 0;
   paramsClone.verticalName = offerExitTrafficInfo?.verticalName || '';
 
-  paramsClone.payin = offerExitTrafficInfo?.payin || 0;
-  paramsClone.payout = offerExitTrafficInfo?.payout || 0;
+  paramsClone.payIn = offerExitTrafficInfo?.payin || 0;
+  paramsClone.payOut = offerExitTrafficInfo?.payout || 0;
   return paramsClone;
 };

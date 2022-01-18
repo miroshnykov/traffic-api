@@ -1,5 +1,5 @@
-import {ICapInfo} from "./caps"
-import {IRedirectType} from "./recipeTypes";
+import { ICapInfo } from './caps';
+import { IRedirectType } from './recipeTypes';
 
 export interface IAggregatedOfferList {
   aggregatedOfferId: number,
@@ -63,5 +63,5 @@ export interface IExitOfferResult {
 
 export enum IOfferType {
   REGULAR = 'regular',
-  AGGREGATED = 'aggregated'
+  AGGREGATED = 'aggregated',
 }

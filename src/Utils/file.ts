@@ -1,11 +1,6 @@
-import {promises as fs} from "fs";
-import consola from "consola";
+import { promises as fs } from 'fs';
 
 export const getFileSize = async (filename: string) => {
-  try {
-    let stats = await fs.stat(filename)
-    return Number(stats?.size) | 0
-  } catch (e) {
-    consola.error('File Stream:', e);
-  }
-}
+  const stats = await fs.stat(filename);
+  return Number(stats?.size) || 0;
+};

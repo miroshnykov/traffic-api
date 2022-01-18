@@ -1,6 +1,6 @@
 export enum IRecipeType {
   CAMPAIGN = 'campaign',
-  OFFER = 'offer'
+  OFFER = 'offer',
 }
 
 export enum IRedirectType {

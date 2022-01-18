@@ -9,7 +9,9 @@ export const campaignsTargetRules = async (params: IParams): Promise<boolean> =>
     let pass = false;
     const resolveCampaignRules = await resolveRules(params);
     if (resolveCampaignRules.length !== 0) {
+      // eslint-disable-next-line no-param-reassign
       params.redirectType = IRedirectType.CAMPAIGN_TARGET_RULES;
+      // eslint-disable-next-line no-param-reassign
       params.redirectReason = `campaignTargetRules-${JSON.stringify(resolveCampaignRules)}`;
       await override(params, params.offerInfo.offerIdRedirectExitTraffic);
       pass = true;

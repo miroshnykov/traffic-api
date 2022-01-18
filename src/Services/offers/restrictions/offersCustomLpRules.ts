@@ -17,7 +17,6 @@ export const offersCustomLpRules = async (params: IParams): Promise<IBaseRespons
     if (resolveCustomLP.length !== 0) {
       paramsClone.redirectType = IRedirectType.CUSTOM_LANDING_PAGES;
       paramsClone.redirectReason = `customLpRules-${JSON.stringify(resolveCustomLP)}`;
-      await override(paramsClone, paramsClone.offerInfo.offerIdRedirectExitTraffic);
       paramsOverride = await override(paramsClone, paramsClone.offerInfo.offerIdRedirectExitTraffic);
       paramsClone = { ...paramsClone, ...paramsOverride };
       paramsClone.landingPageUrl = resolveCustomLP[0].lpUrl;

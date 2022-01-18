@@ -1,45 +1,59 @@
 import consola from 'consola';
 import { influxdb } from '../../../Utils/metrics';
-import { IParams } from '../../../Interfaces/params';
+import { IBaseResponse, IParams } from '../../../Interfaces/params';
 import { IRedirectType } from '../../../Interfaces/recipeTypes';
 import { override } from '../../override/override';
 
-export const capsOfferChecking = async (params: IParams): Promise<boolean> => {
+export const capsOfferChecking = async (params: IParams): Promise<IBaseResponse> => {
+  let paramsClone = { ...params };
+  let pass :boolean = false;
   try {
-    if (params.offerInfo?.capInfo?.dateRangeSetUp
-      && !params.offerInfo?.capInfo?.dateRangePass
+    if (paramsClone.offerInfo?.capInfo?.dateRangeSetUp
+      && !paramsClone.offerInfo?.capInfo?.dateRangePass
     ) {
-      params.capsResult.dataRange = `caps offer data range setup  but not Pass  capInfo:${JSON.stringify(params.offerInfo.capInfo)}`;
-      params.redirectType = IRedirectType.CAPS_OFFER_DATA_RANGE_NOT_PASS;
-      params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!;
-      params.redirectReason = 'offerCapsDataRangeNotPass';
-      params.capsResult.info = `offer dateRangeSetUp=${params.offerInfo?.capInfo?.dateRangeSetUp}, dateRangePass=${params.offerInfo?.capInfo?.dateRangePass}`;
-      return false;
+      paramsClone.capsResult.dataRange = `caps offer data range setup  but not Pass  capInfo:${JSON.stringify(paramsClone.offerInfo.capInfo)}`;
+      paramsClone.redirectType = IRedirectType.CAPS_OFFER_DATA_RANGE_NOT_PASS;
+      paramsClone.capsResult.capsType = paramsClone.offerInfo?.capInfo?.capsType!;
+      paramsClone.redirectReason = 'offerCapsDataRangeNotPass';
+      paramsClone.capsResult.info = `offer dateRangeSetUp=${paramsClone.offerInfo?.capInfo?.dateRangeSetUp}, dateRangePass=${paramsClone.offerInfo?.capInfo?.dateRangePass}`;
+      return {
+        success: pass,
+        params: paramsClone,
+      };
     }
 
     if (
-      params.offerInfo?.capInfo?.capsSalesOverLimit
-      || params.offerInfo?.capInfo?.capsClicksOverLimit
+      paramsClone.offerInfo?.capInfo?.capsSalesOverLimit
+      || paramsClone.offerInfo?.capInfo?.capsClicksOverLimit
     ) {
-      await override(params, params.offerInfo?.capInfo.offerCapsOfferIdRedirect!);
-      params.redirectType = params.offerInfo?.redirectType;
-      params.redirectReason = params.offerInfo?.redirectReason;
-      params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!;
-      params.capsResult.info = `offers caps capsSalesOverLimit=${params.offerInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${params.offerInfo?.capInfo?.capsClicksOverLimit}`;
+      const paramsOverride = await override(paramsClone, paramsClone.offerInfo?.capInfo.offerCapsOfferIdRedirect!);
+      paramsClone = { ...paramsClone, ...paramsOverride };
+      paramsClone.redirectType = paramsClone.offerInfo?.redirectType;
+      paramsClone.redirectReason = paramsClone.offerInfo?.redirectReason;
+      paramsClone.capsResult.capsType = paramsClone.offerInfo?.capInfo?.capsType!;
+      paramsClone.capsResult.info = `offers caps capsSalesOverLimit=${paramsClone.offerInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${paramsClone.offerInfo?.capInfo?.capsClicksOverLimit}`;
+      pass = true;
     } else if (
-      params.offerInfo?.capInfo?.capsSalesUnderLimit
-      || params.offerInfo?.capInfo?.capsClicksUnderLimit
+      paramsClone.offerInfo?.capInfo?.capsSalesUnderLimit
+      || paramsClone.offerInfo?.capInfo?.capsClicksUnderLimit
     ) {
-      params.redirectType = IRedirectType.CAPS_OFFER_UNDER_LIMIT;
-      params.redirectReason = 'offer caps sales or clicks under limit ';
-      params.capsResult.capsType = params.offerInfo?.capInfo?.capsType!;
-      params.capsResult.info = `offers caps capsSalesUnderLimit=${params.offerInfo?.capInfo?.capsSalesUnderLimit}, capsClicksUnderLimit=${params.offerInfo?.capInfo?.capsClicksUnderLimit}`;
+      paramsClone.redirectType = IRedirectType.CAPS_OFFER_UNDER_LIMIT;
+      paramsClone.redirectReason = 'offer caps sales or clicks under limit ';
+      paramsClone.capsResult.capsType = paramsClone.offerInfo?.capInfo?.capsType!;
+      paramsClone.capsResult.info = `offers caps capsSalesUnderLimit=${paramsClone.offerInfo?.capInfo?.capsSalesUnderLimit}, capsClicksUnderLimit=${paramsClone.offerInfo?.capInfo?.capsClicksUnderLimit}`;
+      pass = true;
     }
 
     influxdb(200, `offer_cap_${params.redirectType}`);
-    return true;
+    return {
+      success: pass,
+      params: paramsClone,
+    };
   } catch (e) {
     consola.error('capsOfferCheckingError:', e);
-    return false;
+    return {
+      success: pass,
+      params: paramsClone,
+    };
   }
 };

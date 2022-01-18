@@ -13,8 +13,8 @@ const params = {
   conversionType: 'cpi',
   landingPageId: 164,
   landingPageUrl: 'customLp.com',
-  payin: 4,
-  payout: 4,
+  payIn: 4,
+  payOut: 4,
   payoutPercent: 0,
   isCpmOptionEnabled: 0,
   verticalId: 1,
@@ -48,8 +48,9 @@ const params = {
     startDate: null,
     endDate: null,
     descriptions: '',
-    offerIdRedirectExitTraffic: 35893,
+    offerIdRedirectExitTraffic: 0,
     type: 'regular',
+    countriesRestrictions: 'CA,AO,BF,BI,BJ,BW,CD,CF,CG,CI,EG,ER,ET,GH,GM,GN,GW,KE,LR,LS,MG,MK,ML,MR,MZ,NA,NG,RE,RW,SD,SL,SO,SS,SZ,TD,TG,TN,TZ,UG,ZW,SN,MA,DZ,BR,CN,CY,IN,ID,IL,MY,AF,GE,IR,IQ,PK,RO,RU,BA,BB,UA,AI,KY',
     customPayOutCount: 0,
     startEndDateSetting: {
       dateRangePass: false,
@@ -98,35 +99,35 @@ const params = {
 
 test('OfferStartEndDataRangeNotPass', async () => {
   const res = await offersStartEndDateSetupCalculations(params);
-  expect(res).toBeTruthy();
+  expect(res.success).toBeTruthy();
 });
 
 test('OfferStartEndDataRangePass', async () => {
   params.offerInfo.startEndDateSetting.dateRangePass = true;
   const res = await offersStartEndDateSetupCalculations(params);
-  expect(res).not.toBeTruthy();
+  expect(res.success).not.toBeTruthy();
 });
 
 test('offersGeoRestrictionsPass', async () => {
-  params.offerInfo.geoRules = '{"geo":[{"country":"US","include":true}]}';
+  params.offerInfo.countriesRestrictions = 'US';
   const res = await offersGeoRestrictions(params);
-  expect(res).toBeTruthy();
+  expect(res.success).toBeTruthy();
 });
 
 test('offersGeoRestrictionsFailed', async () => {
-  params.offerInfo.geoRules = '{"geo":[{"country":"CA","include":true}]}';
+  params.offerInfo.countriesRestrictions = 'CA';
   const res = await offersGeoRestrictions(params);
-  expect(res).not.toBeTruthy();
+  expect(res.success).not.toBeTruthy();
 });
 
 test('offersCustomLpRulesPass', async () => {
   params.offerInfo.customLpRules = '{"customLPRules":[{"id":574,"pos":0,"country":"US","lpName":"testDimon.com","lpUrl":"testDimon.com"}]}';
   const res = await offersCustomLpRules(params);
-  expect(res).toBeTruthy();
+  expect(res.success).toBeTruthy();
 });
 
 test('offersCustomLpRulesNotPass', async () => {
   params.offerInfo.customLpRules = '{"customLPRules":[{"id":574,"pos":0,"country":"CA","lpName":"testDimon.com","lpUrl":"testDimon.com"}]}';
   const res = await offersCustomLpRules(params);
-  expect(res).not.toBeTruthy();
+  expect(res.success).not.toBeTruthy();
 });

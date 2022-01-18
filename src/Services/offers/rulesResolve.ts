@@ -23,7 +23,9 @@ export const resolveRules = async (params: IParams) => {
       const { include } = filterGroups;
       filterGroups.filterGroups.forEach((cond: any) => {
         cond.conditions.forEach((condition: any) => {
+          // eslint-disable-next-line no-param-reassign
           condition.include = include;
+          // eslint-disable-next-line no-param-reassign
           condition.redirectOfferId = redirectOfferId;
 
           const rDimension = resolveDimension(params, condition);

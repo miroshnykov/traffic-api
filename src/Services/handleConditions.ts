@@ -1,6 +1,6 @@
 import consola from 'consola';
 import {
-  IBaseResponse, ICalculationResponse, IParams, IResponse,
+  IBaseResponse, IParams, IResponse,
 } from '../Interfaces/params';
 import { IOfferType } from '../Interfaces/offers';
 import { offerAggregatedCalculations } from './offers/offersAggregated';
@@ -16,7 +16,7 @@ import { offersDefaultRedirection } from './offers/defaultRedirection';
 
 export const handleConditions = async (params: IParams, debug: boolean): Promise<IResponse> => {
   if (params.offerInfo.type === IOfferType.AGGREGATED) {
-    const offerAggregatedRes: ICalculationResponse = await offerAggregatedCalculations(params);
+    const offerAggregatedRes: IBaseResponse = await offerAggregatedCalculations(params);
     if (offerAggregatedRes.success) {
       influxdb(200, 'offer_aggregated');
       consola.info(`Redirect type { offer aggregated } lid { ${params.lid} }`);
@@ -29,7 +29,7 @@ export const handleConditions = async (params: IParams, debug: boolean): Promise
   }
 
   if (params.offerInfo.startEndDateSetup) {
-    const offersStartEndDateSetupRes: ICalculationResponse = await offersStartEndDateSetupCalculations(params);
+    const offersStartEndDateSetupRes: IBaseResponse = await offersStartEndDateSetupCalculations(params);
     if (offersStartEndDateSetupRes.success) {
       influxdb(200, 'offer_start_end_date_setup'); //
       consola.info(`Redirect type { offer startEndDateSetup } lid { ${params.lid} }`);
@@ -42,7 +42,7 @@ export const handleConditions = async (params: IParams, debug: boolean): Promise
   }
 
   if (params.offerInfo.countriesRestrictions) {
-    const offersGeoRestrictionsRes: ICalculationResponse = await offersGeoRestrictions(params);
+    const offersGeoRestrictionsRes: IBaseResponse = await offersGeoRestrictions(params);
     if (offersGeoRestrictionsRes.success) {
       influxdb(200, 'offer_geo_rules');
       consola.info(`Redirect type { offer geoRules } lid { ${params.lid} } `);
@@ -55,7 +55,7 @@ export const handleConditions = async (params: IParams, debug: boolean): Promise
   }
 
   if (params.offerInfo.customLpRules) {
-    const offersCustomLpRulesRes: ICalculationResponse = await offersCustomLpRules(params);
+    const offersCustomLpRulesRes: IBaseResponse = await offersCustomLpRules(params);
     if (offersCustomLpRulesRes.success) {
       influxdb(200, 'offer_custom_lp_rules');
       consola.info(`Redirect type { offer customLpRules } lid { ${params.lid} }`);
@@ -68,24 +68,24 @@ export const handleConditions = async (params: IParams, debug: boolean): Promise
   }
 
   if (params.campaignInfo.capSetup) {
-    const capsCheckingRes: boolean = await capsCampaignChecking(params);
-    if (capsCheckingRes) {
+    const capsCheckingRes: IBaseResponse = await capsCampaignChecking(params);
+    if (capsCheckingRes.success) {
       consola.info(`Redirect type { campaign caps } lid { ${params.lid} }`);
       return {
         success: true,
-        params,
+        params: capsCheckingRes.params,
         debug,
       };
     }
   }
 
   if (params.offerInfo.capSetup) {
-    const capsCheckingRes: boolean = await capsOfferChecking(params);
-    if (capsCheckingRes) {
+    const capsCheckingRes:IBaseResponse = await capsOfferChecking(params);
+    if (capsCheckingRes.success) {
       consola.info(`Redirect type { offer caps } lid { ${params.lid} }`);
       return {
         success: true,
-        params,
+        params: capsCheckingRes.params,
         debug,
       };
     }

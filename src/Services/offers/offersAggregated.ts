@@ -1,7 +1,7 @@
 import consola from 'consola';
 // eslint-disable-next-line import/no-cycle
 import { override } from '../override/override';
-import { IBestOffer, ICalculationResponse, IParams } from '../../Interfaces/params';
+import { IBestOffer, IBaseResponse, IParams } from '../../Interfaces/params';
 import { IAggregatedOfferList } from '../../Interfaces/offers';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
 
@@ -60,7 +60,7 @@ export const identifyBestOffer = (
 
 export const offerAggregatedCalculations = async (
   params: IParams,
-): Promise<ICalculationResponse> => {
+): Promise<IBaseResponse> => {
   let paramsClone = { ...params };
   let pass: boolean = false;
   let paramsOverride:IParams;

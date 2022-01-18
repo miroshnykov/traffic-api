@@ -105,9 +105,6 @@ export interface IResponse extends IBaseResponse{
   debug?: boolean;
 }
 
-export interface ICalculationResponse extends IBaseResponse{
-}
-
 export interface IBestOffer extends IBaseResponse{
   bestOfferId:number
 }

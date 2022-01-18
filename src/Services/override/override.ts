@@ -1,5 +1,5 @@
 import consola from 'consola';
-import {IBestOffer, IParams} from '../../Interfaces/params';
+import { IBestOffer, IParams } from '../../Interfaces/params';
 
 import { getOffer } from '../../Models/offersModel';
 import { IOffer, IOfferType } from '../../Interfaces/offers';

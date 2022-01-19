@@ -1,20 +1,29 @@
-import {override} from "../../override/override"
-import consola from "consola";
-import {IParams} from "../../../Interfaces/params";
-import {IRedirectType} from "../../../Interfaces/recipeTypes";
+import consola from 'consola';
+import { override } from '../../override/override';
+import { IBaseResponse, IParams } from '../../../Interfaces/params';
+import { IRedirectType } from '../../../Interfaces/recipeTypes';
 
-export const offersGeoRestrictions = async (params: IParams): Promise<boolean> => {
-  let pass: boolean = false
+export const offersGeoRestrictions = async (params: IParams): Promise<IBaseResponse> => {
+  let pass: boolean = false;
+  let paramsOverride:IParams;
+  let paramsClone = { ...params };
   try {
-    if (params.offerInfo?.countriesRestrictions?.includes(params.country)) {
-      params.redirectReason = `geoRestriction by country:${params.country}`
-      params.redirectType = IRedirectType.OFFER_GEO_RESTRICTION
-      await override(params, params.offerInfo.offerIdRedirectExitTraffic)
-      pass = true
+    if (paramsClone.offerInfo?.countriesRestrictions?.includes(paramsClone.country)) {
+      paramsClone.redirectReason = `geoRestriction by country:${paramsClone.country}`;
+      paramsClone.redirectType = IRedirectType.OFFER_GEO_RESTRICTION;
+      paramsOverride = await override(paramsClone, paramsClone.offerInfo.offerIdRedirectExitTraffic);
+      paramsClone = { ...paramsClone, ...paramsOverride };
+      pass = true;
     }
-    return pass
+    return {
+      success: pass,
+      params: paramsClone,
+    };
   } catch (e) {
-    consola.error('offersGeoRestrictionsError:', e)
-    return pass
+    consola.error('offersGeoRestrictionsError:', e);
+    return {
+      success: pass,
+      params: paramsClone,
+    };
   }
-}
+};

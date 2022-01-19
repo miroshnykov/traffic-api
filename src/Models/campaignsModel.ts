@@ -1,18 +1,5 @@
-import {redis} from "../redis";
-import consola from "consola";
+import { redis } from '../redis';
 
-export const getCampaign = async (id: number) => {
-  try {
-    return await redis.get(`campaign:${id}`)
-  } catch (e) {
-    consola.error('getCampaign error:', e)
-  }
-};
+export const getCampaign = async (id: number) => (redis.get(`campaign:${id}`));
 
-export const getCampaignSize = async () => {
-  try {
-    return Number(await redis.get(`campaignsSizeTraffic`))
-  } catch (e) {
-    consola.error('getCampaignSize error:', e)
-  }
-};
+export const getCampaignSize = async () => (Number(await redis.get('campaignsSizeTraffic')));

@@ -1,28 +1,37 @@
-import {override} from "../../override/override"
-import consola from "consola";
-import {customLP} from "../customLp"
-import {IParams} from "../../../Interfaces/params";
-import {ICustomLP} from "../../../Interfaces/customLPRules";
-import {IRedirectType} from "../../../Interfaces/recipeTypes";
+import consola from 'consola';
+import { override } from '../../override/override';
+import { customLP } from '../customLp';
+import { IBaseResponse, IParams } from '../../../Interfaces/params';
+import { ICustomLP } from '../../../Interfaces/customLPRules';
+import { IRedirectType } from '../../../Interfaces/recipeTypes';
 
-export const offersCustomLpRules = async (params: IParams): Promise<boolean> => {
-  let pass: boolean = false
+export const offersCustomLpRules = async (params: IParams): Promise<IBaseResponse> => {
+  let pass: boolean = false;
+  let paramsOverride:IParams;
+  let paramsClone = { ...params };
   try {
-    let customLPRules = JSON.parse(params.offerInfo.customLpRules)
+    const customLPRules = JSON.parse(paramsClone.offerInfo.customLpRules);
 
-    let customLPRules_: ICustomLP[] = customLPRules.customLPRules
-    let resolveCustomLP = await customLP(params.country, customLPRules_)
+    const customLPRulesFormat: ICustomLP[] = customLPRules.customLPRules;
+    const resolveCustomLP = await customLP(paramsClone.country, customLPRulesFormat);
     if (resolveCustomLP.length !== 0) {
-      params.redirectType = IRedirectType.CUSTOM_LANDING_PAGES
-      params.redirectReason = `customLpRules-${JSON.stringify(resolveCustomLP)}`
-      await override(params, params.offerInfo.offerIdRedirectExitTraffic)
-      params.landingPageUrl = resolveCustomLP[0].lpUrl
-      params.isUseDefaultOfferUrl = false
-      pass = true
+      paramsClone.redirectType = IRedirectType.CUSTOM_LANDING_PAGES;
+      paramsClone.redirectReason = `customLpRules-${JSON.stringify(resolveCustomLP)}`;
+      paramsOverride = await override(paramsClone, paramsClone.offerInfo.offerIdRedirectExitTraffic);
+      paramsClone = { ...paramsClone, ...paramsOverride };
+      paramsClone.landingPageUrl = resolveCustomLP[0].lpUrl;
+      paramsClone.isUseDefaultOfferUrl = false;
+      pass = true;
     }
-    return pass
+    return {
+      success: pass,
+      params: paramsClone,
+    };
   } catch (e) {
-    consola.error('offersCustomLpRulesError:', e)
-    return pass
+    consola.error('offersCustomLpRulesError:', e);
+    return {
+      success: pass,
+      params: paramsClone,
+    };
   }
-}
+};

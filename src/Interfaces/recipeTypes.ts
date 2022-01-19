@@ -1,12 +1,13 @@
 export enum IRecipeType {
   CAMPAIGN = 'campaign',
-  OFFER = 'offer'
+  OFFER = 'offer',
 }
 
 export enum IRedirectType {
   DEFAULT_REDIRECTION = 'defaultRedirection',
   OFFER_AGGREGATED_BEST_OFFER = 'offerAggregatedBestOffer',
-  OFFER_AGGREGATED_EXIT_TRAFFIC = 'offerAggregatedExitTraffic',
+  OFFER_AGGREGATED_EXIT_TRAFFIC_TO_REGULAR_OFFER = 'offerAggregatedExitTrafficTpRegularOffer',
+  OFFER_AGGREGATED_EXIT_TRAFFIC_TO_AGGREGATED_OFFER = 'offerAggregatedExitTrafficToAggregatedOffer',
   CAMPAIGN_TARGET_RULES = 'campaignTargetRules',
   OFFER_START_END_DATA_RANGE_NOT_PASS = 'OfferStartEndDataRangeNotPass',
   CUSTOM_PAY_OUT_PER_GEO = 'customPayOutPerGeo',

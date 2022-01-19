@@ -1,60 +1,80 @@
-import {IParams} from "../../Interfaces/params";
+import consola from 'consola';
+import { IBestOffer, IParams } from '../../Interfaces/params';
 
-import consola from "consola";
-import {getOffer} from '../../Models/offersModel'
-import {IOffer} from "../../Interfaces/offers";
-import {REDIRECT_URLS} from "../../Utils/defaultRedirectUrls";
-import {getDefaultOfferUrl, OFFER_DEFAULT} from "../../Utils/defaultOffer";
+import { getOffer } from '../../Models/offersModel';
+import { IOffer, IOfferType } from '../../Interfaces/offers';
+import { RedirectUrls } from '../../Utils/defaultRedirectUrls';
+import { getDefaultOfferUrl, OfferDefault } from '../../Utils/defaultOffer';
+import { IRedirectType } from '../../Interfaces/recipeTypes';
+// eslint-disable-next-line import/no-cycle
+import { identifyBestOffer } from '../offers/offersAggregated';
+import { influxdb } from '../../Utils/metrics';
 
-export const override = async (params: IParams, offerIdRedirectExitTraffic: number): Promise<void> => {
-
-  const overrideOfferId = offerIdRedirectExitTraffic ? offerIdRedirectExitTraffic : OFFER_DEFAULT.OFFER_ID
-
-  const offerExitTraffic: any = await getOffer(overrideOfferId)
-  const offerExitTrafficInfo: IOffer = JSON.parse(offerExitTraffic)
-
-  try {
-
-    params.isExitOffer = true
-    params.exitOfferInfo = offerExitTrafficInfo
-    params.originPayIn = Number(params.offerInfo?.payin)
-    params.originPayOut = Number(params.offerInfo?.payout)
-    params.originAdvertiserId = params.offerInfo?.advertiserId || 0
-    params.originAdvertiserName = params.offerInfo?.advertiserName || ''
-    params.originConversionType = params.offerInfo?.conversionType || ''
-    params.originIsCpmOptionEnabled = params.offerInfo?.isCpmOptionEnabled || 0
-    params.originOfferId = params.offerInfo?.offerId || 0
-    params.originVerticalId = params.offerInfo?.verticalId || 0
-    params.originVerticalName = params.offerInfo?.verticalName || ''
-
-    params.landingPageIdOrigin = params.offerInfo?.landingPageId || 0
-    params.landingPageUrlOrigin = params.offerInfo?.landingPageUrl || ''
-    params.offerIdRedirectExitTraffic = params.offerInfo?.offerIdRedirectExitTraffic || 0
-
-    let landingPageUrl: string
-    if (!offerExitTrafficInfo?.landingPageUrl) {
-      landingPageUrl = await getDefaultOfferUrl() || REDIRECT_URLS.DEFAULT
-      params.isUseDefaultOfferUrl = true
-      consola.info(`exitOfferUrl is empty will use default offer url:${landingPageUrl}`)
-    } else {
-      landingPageUrl = offerExitTrafficInfo?.landingPageUrl
-    }
-    params.landingPageUrl = landingPageUrl
-    params.landingPageId = offerExitTrafficInfo?.landingPageId
-    params.advertiserId = offerExitTrafficInfo?.advertiserId || 0
-    params.advertiserName = offerExitTrafficInfo?.advertiserName || ''
-    params.conversionType = offerExitTrafficInfo?.conversionType || ''
-    params.isCpmOptionEnabled = offerExitTrafficInfo?.isCpmOptionEnabled || 0
-    params.offerId = offerExitTrafficInfo?.offerId || 0
-    params.verticalId = offerExitTrafficInfo?.verticalId || 0
-    params.verticalName = offerExitTrafficInfo?.verticalName || ''
-
-    params.payin = offerExitTrafficInfo && offerExitTrafficInfo?.payin || 0
-    params.payout = offerExitTrafficInfo && offerExitTrafficInfo?.payout || 0
-
-
-  } catch (e) {
-    consola.error('override fields error', e)
+export const override = async (
+  params: IParams,
+  offerIdRedirectExitTraffic: number,
+): Promise<IParams> => {
+  let overrideOfferId = offerIdRedirectExitTraffic;
+  if (!offerIdRedirectExitTraffic) {
+    consola.error(`Exit traffic does not setup offerType:${params.offerType} for campaign ${params.campaignId} offerId ${params.offerId} will use default ${OfferDefault.OFFER_ID}`);
+    influxdb(200, `exit_traffic_empty_for_offer_type_${params.offerType}`);
+    overrideOfferId = OfferDefault.OFFER_ID;
   }
-}
 
+  const paramsClone = { ...params };
+  const offerExitTraffic: any = await getOffer(overrideOfferId);
+  let offerExitTrafficInfo: IOffer = JSON.parse(offerExitTraffic);
+
+  // PH-577
+  if (offerExitTrafficInfo.type === IOfferType.AGGREGATED) {
+    paramsClone.redirectReason = 'Offers Aggregated exit traffic to aggregatedOffer';
+    paramsClone.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC_TO_AGGREGATED_OFFER;
+    const exitTrafficBestOfferRes:IBestOffer = identifyBestOffer(offerExitTrafficInfo?.offersAggregatedIds!, paramsClone);
+    if (exitTrafficBestOfferRes.success && exitTrafficBestOfferRes.bestOfferId) {
+      const offerExitTrafficBestOffer: any = await getOffer(exitTrafficBestOfferRes.bestOfferId);
+      offerExitTrafficInfo = JSON.parse(offerExitTrafficBestOffer);
+    } else {
+      const defaultOffer: any = await getOffer(OfferDefault.OFFER_ID);
+      offerExitTrafficInfo = JSON.parse(defaultOffer);
+    }
+  }
+
+  paramsClone.isExitOffer = true;
+  paramsClone.exitOfferInfo = offerExitTrafficInfo;
+  paramsClone.originPayIn = Number(paramsClone.offerInfo?.payin);
+  paramsClone.originPayOut = Number(paramsClone.offerInfo?.payout);
+  paramsClone.originAdvertiserId = paramsClone.offerInfo?.advertiserId || 0;
+  paramsClone.originAdvertiserName = paramsClone.offerInfo?.advertiserName || '';
+  paramsClone.originConversionType = paramsClone.offerInfo?.conversionType || '';
+  paramsClone.originIsCpmOptionEnabled = paramsClone.offerInfo?.isCpmOptionEnabled || 0;
+  paramsClone.originOfferId = paramsClone.offerInfo?.offerId || 0;
+  paramsClone.originVerticalId = paramsClone.offerInfo?.verticalId || 0;
+  paramsClone.originVerticalName = paramsClone.offerInfo?.verticalName || '';
+
+  paramsClone.landingPageIdOrigin = paramsClone.offerInfo?.landingPageId || 0;
+  paramsClone.landingPageUrlOrigin = paramsClone.offerInfo?.landingPageUrl || '';
+  paramsClone.offerIdRedirectExitTraffic = paramsClone.offerInfo?.offerIdRedirectExitTraffic || 0;
+
+  let landingPageUrl: string;
+  if (!offerExitTrafficInfo?.landingPageUrl) {
+    landingPageUrl = await getDefaultOfferUrl() || RedirectUrls.DEFAULT;
+    paramsClone.isUseDefaultOfferUrl = true;
+    consola.info(`exitOfferUrl is empty will use default offer url:${landingPageUrl}`);
+    influxdb(500, `exit_offer_url_empty_for_offer_${paramsClone.offerId}_and_campaign_${paramsClone.campaignId}`);
+  } else {
+    landingPageUrl = offerExitTrafficInfo?.landingPageUrl;
+  }
+  paramsClone.landingPageUrl = landingPageUrl;
+  paramsClone.landingPageId = offerExitTrafficInfo?.landingPageId;
+  paramsClone.advertiserId = offerExitTrafficInfo?.advertiserId || 0;
+  paramsClone.advertiserName = offerExitTrafficInfo?.advertiserName || '';
+  paramsClone.conversionType = offerExitTrafficInfo?.conversionType || '';
+  paramsClone.isCpmOptionEnabled = offerExitTrafficInfo?.isCpmOptionEnabled || 0;
+  paramsClone.offerId = offerExitTrafficInfo?.offerId || 0;
+  paramsClone.verticalId = offerExitTrafficInfo?.verticalId || 0;
+  paramsClone.verticalName = offerExitTrafficInfo?.verticalName || '';
+
+  paramsClone.payIn = offerExitTrafficInfo?.payin || 0;
+  paramsClone.payOut = offerExitTrafficInfo?.payout || 0;
+  return paramsClone;
+};

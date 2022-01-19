@@ -1,10 +1,10 @@
-import {IExitOfferResult, IOffer} from "./offers"
-import {ICampaign} from "./campaigns";
-import {ICustomPayOutPerGeo} from "./customPayOutPerGeo";
-import {IRedirectType} from "./recipeTypes";
-import {ICapsResult} from "./caps";
-import {IFingerPrintData} from "./fp";
-import {ILid} from "./lid";
+import { IExitOfferResult, IOffer } from './offers';
+import { ICampaign } from './campaigns';
+import { ICustomPayOutPerGeo } from './customPayOutPerGeo';
+import { IRedirectType } from './recipeTypes';
+import { ICapsResult } from './caps';
+import { IFingerPrintData } from './fp';
+import { ILid } from './lid';
 
 export interface IParams {
   offerId: number
@@ -18,8 +18,8 @@ export interface IParams {
   landingPageId: number
   landingPageUrl: string
   isUseDefaultOfferUrl?: boolean
-  payin: number
-  payout: number
+  payIn: number
+  payOut: number
   payoutPercent: number
   isCpmOptionEnabled: boolean | number
   verticalId: number
@@ -95,9 +95,16 @@ export interface IDecodedUrl {
   campaignId: number
 }
 
-export interface IResponse {
+export interface IBaseResponse {
   success: boolean;
-  data?: IParams;
+  params?: IParams;
+}
+
+export interface IResponse extends IBaseResponse{
   errors?: any;
   debug?: boolean;
+}
+
+export interface IBestOffer extends IBaseResponse{
+  bestOfferId:number
 }

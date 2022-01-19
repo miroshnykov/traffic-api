@@ -16,8 +16,8 @@ export const override = async (
 ): Promise<IParams> => {
   let overrideOfferId = offerIdRedirectExitTraffic;
   if (!offerIdRedirectExitTraffic) {
-    consola.error(`Exit traffic does not setup for campaign:${params.campaignId} offerId:${params.offerId} will use default:${OfferDefault.OFFER_ID}`);
-    influxdb(500, `exit_traffic_empty_for_offer_${params.offerId}_and_campaign_${params.campaignId}`);
+    consola.error(`Exit traffic does not setup offerType:${params.offerType} for campaign ${params.campaignId} offerId ${params.offerId} will use default ${OfferDefault.OFFER_ID}`);
+    influxdb(200, `exit_traffic_empty_for_offer_type_${params.offerType}`);
     overrideOfferId = OfferDefault.OFFER_ID;
   }
 

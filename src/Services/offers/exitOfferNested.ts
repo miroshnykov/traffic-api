@@ -35,14 +35,14 @@ export const exitOfferNested = (
   paramsClone.exitOfferResult.type = IRedirectType.EXIT_OFFER_NESTED;
   paramsClone.exitOfferResult.info = ` -> Additional override by exitOfferId:${exitOfferDetected?.offerId}, total nested offer:${lengthNestedExitOffer}`;
   paramsClone.exitOfferResult.steps = stepsNestedOffers;
-  consola.info(` -> Additional override by { exitOfferNested } lid { ${paramsClone.lid} } origin LP:${tmpOriginUrl}, override LP:${paramsClone.landingPageUrl}`);
+  consola.info(` -> Additional override by { exitOfferNested } lid { ${paramsClone.lid} } origin LP:{ ${tmpOriginUrl} }, override LP: { ${exitOfferDetected.landingPageUrl} }`);
   return paramsClone;
 };
 
 export const exitOfferCustomPayout = (params: IParams, handleConditionsResponse: IResponse): IParams => {
   const exitOfferCustomPayOutPerGeoData: ICustomPayOutPerGeo[] = JSON.parse(handleConditionsResponse?.params?.exitOfferInfo?.customPayOutPerGeo!);
   const [checkExitOfferCustomPerGeo] = exitOfferCustomPayOutPerGeoData.filter((i: any) => (i.geo === params.country));
-  consola.info('checkExitOfferCustomPerGeo:', checkExitOfferCustomPerGeo);
+  // consola.info('checkExitOfferCustomPerGeo:', checkExitOfferCustomPerGeo);
   const paramsClone = { ...params };
   if (checkExitOfferCustomPerGeo) {
     influxdb(200, 'offer_exit_custom_pay_out_per_geo');
@@ -50,7 +50,7 @@ export const exitOfferCustomPayout = (params: IParams, handleConditionsResponse:
     paramsClone.payIn = checkExitOfferCustomPerGeo.payIn;
     paramsClone.exitOfferResult.type = IRedirectType.EXIT_OFFER_CUSTOM_PAY_OUT_PER_GEO;
     paramsClone.exitOfferResult.info = handleConditionsResponse?.params?.exitOfferInfo?.customPayOutPerGeo!;
-    consola.info(` -> Additional override by { exitOfferCustomPayout } lid { ${params.lid} }`);
+    consola.info(` -> Additional override by { exitOfferCustomPayout } payIn { ${paramsClone.payIn}, payOut { ${paramsClone.payOut} }  lid { ${params.lid} }`);
   }
   return paramsClone;
 };

@@ -8,12 +8,19 @@ import { getDefaultOfferUrl, OfferDefault } from '../../Utils/defaultOffer';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
 // eslint-disable-next-line import/no-cycle
 import { identifyBestOffer } from '../offers/offersAggregated';
+import { influxdb } from '../../Utils/metrics';
 
 export const override = async (
   params: IParams,
   offerIdRedirectExitTraffic: number,
 ): Promise<IParams> => {
-  const overrideOfferId = offerIdRedirectExitTraffic || OfferDefault.OFFER_ID;
+  let overrideOfferId = offerIdRedirectExitTraffic;
+  if (!offerIdRedirectExitTraffic) {
+    consola.error(`Exit traffic does not setup for campaign:${params.campaignId} offerId:${params.offerId} will use default:${OfferDefault.OFFER_ID}`);
+    influxdb(500, `exit_traffic_empty_for_offer_${params.offerId}_and_campaign_${params.campaignId}`);
+    overrideOfferId = OfferDefault.OFFER_ID;
+  }
+
   const paramsClone = { ...params };
   const offerExitTraffic: any = await getOffer(overrideOfferId);
   let offerExitTrafficInfo: IOffer = JSON.parse(offerExitTraffic);
@@ -22,7 +29,7 @@ export const override = async (
   if (offerExitTrafficInfo.type === IOfferType.AGGREGATED) {
     paramsClone.redirectReason = 'Offers Aggregated exit traffic to aggregatedOffer';
     paramsClone.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC_TO_AGGREGATED_OFFER;
-    const exitTrafficBestOfferRes:IBestOffer = identifyBestOffer(offerExitTrafficInfo?.offersAggregatedIds!, params);
+    const exitTrafficBestOfferRes:IBestOffer = identifyBestOffer(offerExitTrafficInfo?.offersAggregatedIds!, paramsClone);
     if (exitTrafficBestOfferRes.success && exitTrafficBestOfferRes.bestOfferId) {
       const offerExitTrafficBestOffer: any = await getOffer(exitTrafficBestOfferRes.bestOfferId);
       offerExitTrafficInfo = JSON.parse(offerExitTrafficBestOffer);
@@ -34,25 +41,26 @@ export const override = async (
 
   paramsClone.isExitOffer = true;
   paramsClone.exitOfferInfo = offerExitTrafficInfo;
-  paramsClone.originPayIn = Number(params.offerInfo?.payin);
-  paramsClone.originPayOut = Number(params.offerInfo?.payout);
-  paramsClone.originAdvertiserId = params.offerInfo?.advertiserId || 0;
-  paramsClone.originAdvertiserName = params.offerInfo?.advertiserName || '';
-  paramsClone.originConversionType = params.offerInfo?.conversionType || '';
-  paramsClone.originIsCpmOptionEnabled = params.offerInfo?.isCpmOptionEnabled || 0;
-  paramsClone.originOfferId = params.offerInfo?.offerId || 0;
-  paramsClone.originVerticalId = params.offerInfo?.verticalId || 0;
-  paramsClone.originVerticalName = params.offerInfo?.verticalName || '';
+  paramsClone.originPayIn = Number(paramsClone.offerInfo?.payin);
+  paramsClone.originPayOut = Number(paramsClone.offerInfo?.payout);
+  paramsClone.originAdvertiserId = paramsClone.offerInfo?.advertiserId || 0;
+  paramsClone.originAdvertiserName = paramsClone.offerInfo?.advertiserName || '';
+  paramsClone.originConversionType = paramsClone.offerInfo?.conversionType || '';
+  paramsClone.originIsCpmOptionEnabled = paramsClone.offerInfo?.isCpmOptionEnabled || 0;
+  paramsClone.originOfferId = paramsClone.offerInfo?.offerId || 0;
+  paramsClone.originVerticalId = paramsClone.offerInfo?.verticalId || 0;
+  paramsClone.originVerticalName = paramsClone.offerInfo?.verticalName || '';
 
-  paramsClone.landingPageIdOrigin = params.offerInfo?.landingPageId || 0;
-  paramsClone.landingPageUrlOrigin = params.offerInfo?.landingPageUrl || '';
-  paramsClone.offerIdRedirectExitTraffic = params.offerInfo?.offerIdRedirectExitTraffic || 0;
+  paramsClone.landingPageIdOrigin = paramsClone.offerInfo?.landingPageId || 0;
+  paramsClone.landingPageUrlOrigin = paramsClone.offerInfo?.landingPageUrl || '';
+  paramsClone.offerIdRedirectExitTraffic = paramsClone.offerInfo?.offerIdRedirectExitTraffic || 0;
 
   let landingPageUrl: string;
   if (!offerExitTrafficInfo?.landingPageUrl) {
     landingPageUrl = await getDefaultOfferUrl() || RedirectUrls.DEFAULT;
     paramsClone.isUseDefaultOfferUrl = true;
     consola.info(`exitOfferUrl is empty will use default offer url:${landingPageUrl}`);
+    influxdb(500, `exit_offer_url_empty_for_offer_${paramsClone.offerId}_and_campaign_${paramsClone.campaignId}`);
   } else {
     landingPageUrl = offerExitTrafficInfo?.landingPageUrl;
   }

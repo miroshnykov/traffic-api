@@ -22,8 +22,11 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     // const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`);
 
     const handleConditionsResponse: IResponse = await handleConditions(params, debug);
-
-    const finalResponse: IResponse = exitOfferOverride(handleConditionsResponse);
+    let finalResponse: IParams;
+    if (handleConditionsResponse?.success) {
+      finalResponse = exitOfferOverride(handleConditionsResponse?.params!);
+    }
+    // const finalResponse: IResponse = exitOfferOverride(handleConditionsResponse.params);
 
     // const fingerPrintRes: IResponse = await fingerPrintOverride(params, req, fpData);
     //
@@ -31,11 +34,11 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     //   finalResponse = { ...finalResponse, ...fingerPrintRes.params };
     // }
 
-    const lidObj: ILid = lidOffer(finalResponse?.params!);
+    const lidObj: ILid = lidOffer(finalResponse!);
     createLidOffer(lidObj);
-    finalResponse!.params!.lidObj = lidObj;
-
-    return finalResponse;
+    finalResponse!.lidObj = lidObj;
+    handleConditionsResponse.params = { ...finalResponse! };
+    return handleConditionsResponse;
   } catch (e) {
     consola.error('Service offer error:', e);
     influxdb(500, 'offer_ad_error');

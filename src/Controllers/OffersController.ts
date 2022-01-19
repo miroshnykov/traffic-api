@@ -39,7 +39,7 @@ export class OffersController extends BaseController {
 
     if (!responseOffer.success && responseOffer?.debug) {
       const defaultOfferUrl: string = await getDefaultOfferUrl();
-      influxdb(200, 'default_offer_url');
+      influxdb(500, 'default_offer_url');
       res.status(400).json({
         error: `Recipe is inactive or not ready or broken  ${responseOffer.errors.toString()}, will redirect to default offer:${defaultOfferUrl}`,
         data: responseOffer.params,
@@ -50,12 +50,13 @@ export class OffersController extends BaseController {
 
     if (!responseOffer?.success) {
       const defaultOfferUrl: string = await getDefaultOfferUrl();
-      influxdb(200, 'default_offer_url');
+      influxdb(500, 'default_offer_url');
       res.redirect(defaultOfferUrl);
     }
 
     if (responseOffer?.success && responseOffer?.debug) {
-      consola.info(`redirect to ${responseOffer?.params?.redirectUrl}`);
+      consola.info(`Redirect to ${responseOffer?.params?.redirectUrl}`);
+      consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} } redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
       res.status(200).json({
         status: 'success',
         data: responseOffer.params,
@@ -65,7 +66,8 @@ export class OffersController extends BaseController {
 
     if (responseOffer?.success) {
       const redirectUrlFinal: string = responseOffer.params?.redirectUrl || RedirectUrls.DEFAULT;
-      consola.info(`redirect to ${redirectUrlFinal}`);
+      consola.info(`Redirect to ${redirectUrlFinal}`);
+      consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} }  redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
       influxdb(200, 'offers_success_redirect');
       res.redirect(redirectUrlFinal);
     }

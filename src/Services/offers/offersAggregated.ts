@@ -63,20 +63,22 @@ export const offerAggregatedCalculations = async (
 ): Promise<IBaseResponse> => {
   let paramsClone = { ...params };
   let pass: boolean = false;
-  let paramsOverride:IParams;
+  let paramsOverride: IParams;
   try {
     if (paramsClone.offerInfo?.offersAggregatedIds?.length !== 0) {
       paramsClone.groupOffer = true;
 
       const offersAggregatedIds = paramsClone.offerInfo?.offersAggregatedIds!;
 
-      const bestOfferRes:IBestOffer = identifyBestOffer(offersAggregatedIds, paramsClone);
+      const bestOfferRes: IBestOffer = identifyBestOffer(offersAggregatedIds, paramsClone);
       if (bestOfferRes.success && bestOfferRes.bestOfferId) {
         paramsClone.redirectReason = 'Offers Aggregated';
         paramsClone.redirectType = IRedirectType.OFFER_AGGREGATED_BEST_OFFER;
-        paramsOverride = await override(paramsClone, bestOfferRes.bestOfferId);
         paramsClone.groupBestOffer = bestOfferRes.bestOfferId;
-        paramsClone = { ...paramsClone, ...paramsOverride, ...bestOfferRes?.params };
+        paramsOverride = await override(paramsClone, bestOfferRes.bestOfferId);
+        paramsClone = { ...paramsClone, ...paramsOverride };
+        paramsClone.offersAggregatedIdsToRedirect = bestOfferRes?.params?.offersAggregatedIdsToRedirect;
+        paramsClone.offersAggregatedIdsMargin = bestOfferRes?.params?.offersAggregatedIdsMargin;
         pass = true;
       } else {
         paramsClone.redirectReason = 'Offers Aggregated exit traffic to regular offer';

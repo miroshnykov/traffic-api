@@ -15,7 +15,8 @@ dotenv.config();
 export const redirectUrl = async (params: IParams): Promise<string> => {
   let lp = params.landingPageUrl;
   if (!lp) {
-    influxdb(200, `default_offer_url_for_offer_id_${params.offerId}`);
+    consola.error(`Landing page is empty for campaignId: ${params.campaignId}`);
+    influxdb(500, `default_offer_url_for_offer_id_${params.offerId}`);
     lp = await getDefaultOfferUrl() || RedirectUrls.DEFAULT;
   }
   let query = url.format({

@@ -44,7 +44,7 @@ export const capsOfferChecking = async (params: IParams): Promise<IBaseResponse>
       pass = true;
     }
 
-    influxdb(200, `offer_cap_${params.redirectType}`);
+    influxdb(200, `offer_cap_${paramsClone.redirectType}`);
     return {
       success: pass,
       params: paramsClone,

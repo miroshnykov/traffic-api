@@ -6,7 +6,7 @@ import { rangeSpeed } from '../Utils/rangeSpped';
 import { influxdb } from '../Utils/metrics';
 import { IParams, IResponse } from '../Interfaces/params';
 import { RedirectUrls } from '../Utils/defaultRedirectUrls';
-import { getDefaultOfferUrl } from '../Utils/defaultOffer';
+import { getDefaultOfferUrl, OfferDefault } from '../Utils/defaultOffer';
 import { redirectUrl } from '../Utils/redirectUrl';
 import { convertHrtime } from '../Utils/convertHrtime';
 
@@ -57,6 +57,10 @@ export class OffersController extends BaseController {
     if (responseOffer?.success && responseOffer?.debug) {
       consola.info(`Redirect to ${responseOffer?.params?.redirectUrl}`);
       consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} } redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
+
+      if (responseOffer.params?.offerId === OfferDefault.OFFER_ID) {
+        consola.info('Offers_default_redirect');
+      }
       res.status(200).json({
         status: 'success',
         data: responseOffer.params,
@@ -68,7 +72,12 @@ export class OffersController extends BaseController {
       const redirectUrlFinal: string = responseOffer.params?.redirectUrl || RedirectUrls.DEFAULT;
       consola.info(`Redirect to ${redirectUrlFinal}`);
       consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} }  redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
-      influxdb(200, 'offers_success_redirect');
+      if (responseOffer.params?.offerId === OfferDefault.OFFER_ID) {
+        influxdb(200, 'offers_default_redirect');
+      } else {
+        influxdb(200, 'offers_success_redirect');
+      }
+
       res.redirect(redirectUrlFinal);
     }
   }

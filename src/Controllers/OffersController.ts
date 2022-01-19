@@ -56,7 +56,7 @@ export class OffersController extends BaseController {
 
     if (responseOffer?.success && responseOffer?.debug) {
       consola.info(`Redirect to ${responseOffer?.params?.redirectUrl}`);
-      consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} }`);
+      consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} } redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
       res.status(200).json({
         status: 'success',
         data: responseOffer.params,
@@ -67,7 +67,7 @@ export class OffersController extends BaseController {
     if (responseOffer?.success) {
       const redirectUrlFinal: string = responseOffer.params?.redirectUrl || RedirectUrls.DEFAULT;
       consola.info(`Redirect to ${redirectUrlFinal}`);
-      consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} }`);
+      consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} }  redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
       influxdb(200, 'offers_success_redirect');
       res.redirect(redirectUrlFinal);
     }

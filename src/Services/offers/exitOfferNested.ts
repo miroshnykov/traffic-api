@@ -1,9 +1,30 @@
 import consola from 'consola';
-import { IParams, IResponse } from '../../Interfaces/params';
+import { IBaseResponse, IParams } from '../../Interfaces/params';
 import { IOffer } from '../../Interfaces/offers';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
 import { ICustomPayOutPerGeo } from '../../Interfaces/customPayOutPerGeo';
 import { influxdb } from '../../Utils/metrics';
+
+export const exitOfferCustomPayout = (params: IParams): IBaseResponse => {
+  let pass = false;
+  const exitOfferCustomPayOutPerGeoData: ICustomPayOutPerGeo[] = JSON.parse(params?.exitOfferInfo?.customPayOutPerGeo!);
+  const [checkExitOfferCustomPerGeo] = exitOfferCustomPayOutPerGeoData.filter((i: any) => (i.geo === params.country));
+  // consola.info('checkExitOfferCustomPerGeo:', checkExitOfferCustomPerGeo);
+  const paramsClone = { ...params };
+  if (checkExitOfferCustomPerGeo) {
+    influxdb(200, 'offer_exit_custom_pay_out_per_geo');
+    paramsClone.payOut = checkExitOfferCustomPerGeo.payOut;
+    paramsClone.payIn = checkExitOfferCustomPerGeo.payIn;
+    paramsClone.exitOfferResult.type = IRedirectType.EXIT_OFFER_CUSTOM_PAY_OUT_PER_GEO;
+    paramsClone.exitOfferResult.info = paramsClone?.exitOfferInfo?.customPayOutPerGeo!;
+    consola.info(` -> Additional override by { exitOfferCustomPayout } payIn { ${paramsClone.payIn}, payOut { ${paramsClone.payOut} }  lid { ${params.lid} }`);
+    pass = true;
+  }
+  return {
+    success: pass,
+    params: paramsClone,
+  };
+};
 
 export const exitOfferNested = (
   params: IParams,
@@ -35,22 +56,14 @@ export const exitOfferNested = (
   paramsClone.exitOfferResult.type = IRedirectType.EXIT_OFFER_NESTED;
   paramsClone.exitOfferResult.info = ` -> Additional override by exitOfferId:${exitOfferDetected?.offerId}, total nested offer:${lengthNestedExitOffer}`;
   paramsClone.exitOfferResult.steps = stepsNestedOffers;
-  consola.info(` -> Additional override by { exitOfferNested } lid { ${paramsClone.lid} } origin LP:{ ${tmpOriginUrl} }, override LP: { ${exitOfferDetected.landingPageUrl} }`);
-  return paramsClone;
-};
+  consola.info(` -> Additional override by { exitOfferNested } lid { ${paramsClone.lid} } origin LP:{ ${tmpOriginUrl} }, override LP: { ${exitOfferDetected.landingPageUrl} } payIn: { ${paramsClone.payIn} } payOut: { ${paramsClone.payOut} } `);
+  // if (paramsClone?.customPayOutPerGeo!) {
+  //   const exitOfferCustomPayoutRes = exitOfferCustomPayout(paramsClone);
+  //   if (exitOfferCustomPayoutRes.success) {
+  //     paramsClone = { ...paramsClone, ...exitOfferCustomPayoutRes.params };
+  //     consola.info(` -> Additional override by { exitOfferCustomPayout } lid { ${paramsClone.lid} }  payIn: { ${paramsClone.payIn} } payOut: { ${paramsClone.payOut} } `);
+  //   }
+  // }
 
-export const exitOfferCustomPayout = (params: IParams, handleConditionsResponse: IResponse): IParams => {
-  const exitOfferCustomPayOutPerGeoData: ICustomPayOutPerGeo[] = JSON.parse(handleConditionsResponse?.params?.exitOfferInfo?.customPayOutPerGeo!);
-  const [checkExitOfferCustomPerGeo] = exitOfferCustomPayOutPerGeoData.filter((i: any) => (i.geo === params.country));
-  // consola.info('checkExitOfferCustomPerGeo:', checkExitOfferCustomPerGeo);
-  const paramsClone = { ...params };
-  if (checkExitOfferCustomPerGeo) {
-    influxdb(200, 'offer_exit_custom_pay_out_per_geo');
-    paramsClone.payOut = checkExitOfferCustomPerGeo.payOut;
-    paramsClone.payIn = checkExitOfferCustomPerGeo.payIn;
-    paramsClone.exitOfferResult.type = IRedirectType.EXIT_OFFER_CUSTOM_PAY_OUT_PER_GEO;
-    paramsClone.exitOfferResult.info = handleConditionsResponse?.params?.exitOfferInfo?.customPayOutPerGeo!;
-    consola.info(` -> Additional override by { exitOfferCustomPayout } payIn { ${paramsClone.payIn}, payOut { ${paramsClone.payOut} }  lid { ${params.lid} }`);
-  }
   return paramsClone;
 };

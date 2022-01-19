@@ -1,49 +1,44 @@
 import consola from 'consola';
-import { IBaseResponse, IResponse } from '../../Interfaces/params';
+import { IBaseResponse, IParams } from '../../Interfaces/params';
 import { customPayOutPerGeo } from '../offers/customPayOutPerGeo';
 import { influxdb } from '../../Utils/metrics';
 import { exitOfferCustomPayout, exitOfferNested } from '../offers/exitOfferNested';
 import { IOffer } from '../../Interfaces/offers';
 
-export const exitOfferOverride = (handleConditionsResponse: IResponse): IResponse => {
-  const handleConditionsResponseClone = { ...handleConditionsResponse };
+export const exitOfferOverride = (params: IParams): IParams => {
+  let paramsClone = { ...params };
   // PH-459
-  if (handleConditionsResponse?.success
-    && (handleConditionsResponse?.params?.offerInfo?.capInfo?.capsSalesUnderLimit
-      || handleConditionsResponse?.params?.offerInfo?.capInfo?.capsClicksUnderLimit)
-    && handleConditionsResponse?.params.offerInfo?.customPayOutPerGeo) {
-    const customPayOutPerGeoRes:IBaseResponse = customPayOutPerGeo(handleConditionsResponse?.params);
+  if ((paramsClone?.offerInfo?.capInfo?.capsSalesUnderLimit
+      || paramsClone?.offerInfo?.capInfo?.capsClicksUnderLimit)
+    && paramsClone?.offerInfo?.customPayOutPerGeo) {
+    const customPayOutPerGeoRes:IBaseResponse = customPayOutPerGeo(paramsClone);
     if (customPayOutPerGeoRes.success) {
-      handleConditionsResponseClone.params = { ...handleConditionsResponse?.params, ...customPayOutPerGeoRes.params };
+      paramsClone = { ...paramsClone, ...customPayOutPerGeoRes.params };
       influxdb(200, 'offer_custom_pay_out_per_geo_caps_under_limit');
-      consola.info(` -> additional override Redirect type { offer customPayOutPerGeo CapsUnderLimit } lid { ${handleConditionsResponse?.params.lid} }`);
+      consola.info(` -> additional override Redirect type { offer customPayOutPerGeo CapsUnderLimit } lid { ${paramsClone?.lid} }`);
     }
   }
 
-  if (handleConditionsResponse?.success
-    && handleConditionsResponse?.params?.isExitOffer) {
+  if (paramsClone?.isExitOffer) {
     // PH-426
-    if (handleConditionsResponse?.params?.exitOfferInfo?.customPayOutPerGeo!) {
-      const exitOfferCustomPayoutRes = exitOfferCustomPayout(handleConditionsResponse?.params, handleConditionsResponse);
-      if (exitOfferCustomPayoutRes) {
-        handleConditionsResponseClone.params = { ...handleConditionsResponse?.params, ...exitOfferCustomPayoutRes };
+    if (paramsClone?.exitOfferInfo?.customPayOutPerGeo!) {
+      const exitOfferCustomPayoutRes = exitOfferCustomPayout(paramsClone);
+      if (exitOfferCustomPayoutRes.success) {
+        paramsClone = { ...paramsClone, ...exitOfferCustomPayoutRes.params };
       }
     }
   }
 
   // PH-428
-  if (handleConditionsResponse?.success
-    && handleConditionsResponse?.params
-    && handleConditionsResponse?.params?.offerInfo?.exitOfferDetected
-  ) {
-    const exitOfferDetected: IOffer | null = handleConditionsResponse?.params?.offerInfo?.exitOfferDetected!;
+  if (paramsClone?.offerInfo?.exitOfferDetected) {
+    const exitOfferDetected: IOffer | null = paramsClone?.offerInfo?.exitOfferDetected!;
     if (exitOfferDetected) {
-      const exitOfferNestedRes = exitOfferNested(handleConditionsResponse?.params, exitOfferDetected);
+      const exitOfferNestedRes = exitOfferNested(paramsClone, exitOfferDetected);
       if (exitOfferNestedRes) {
-        handleConditionsResponseClone.params = { ...handleConditionsResponse?.params, ...exitOfferNestedRes };
+        paramsClone = { ...paramsClone, ...exitOfferNestedRes };
       }
     }
   }
 
-  return handleConditionsResponseClone;
+  return paramsClone;
 };

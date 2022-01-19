@@ -16,6 +16,7 @@ export const capsOfferChecking = async (params: IParams): Promise<IBaseResponse>
       paramsClone.capsResult.capsType = paramsClone.offerInfo?.capInfo?.capsType!;
       paramsClone.redirectReason = 'offerCapsDataRangeNotPass';
       paramsClone.capsResult.info = `offer dateRangeSetUp=${paramsClone.offerInfo?.capInfo?.dateRangeSetUp}, dateRangePass=${paramsClone.offerInfo?.capInfo?.dateRangePass}`;
+      influxdb(200, `offer_cap_${paramsClone.redirectType}`);
       return {
         success: pass,
         params: paramsClone,
@@ -33,6 +34,7 @@ export const capsOfferChecking = async (params: IParams): Promise<IBaseResponse>
       paramsClone.capsResult.capsType = paramsClone.offerInfo?.capInfo?.capsType!;
       paramsClone.capsResult.info = `offers caps capsSalesOverLimit=${paramsClone.offerInfo?.capInfo?.capsSalesOverLimit}  capsClicksOverLimit=${paramsClone.offerInfo?.capInfo?.capsClicksOverLimit}`;
       pass = true;
+      influxdb(200, `offer_cap_${paramsClone.redirectType}`);
     } else if (
       paramsClone.offerInfo?.capInfo?.capsSalesUnderLimit
       || paramsClone.offerInfo?.capInfo?.capsClicksUnderLimit
@@ -42,9 +44,9 @@ export const capsOfferChecking = async (params: IParams): Promise<IBaseResponse>
       paramsClone.capsResult.capsType = paramsClone.offerInfo?.capInfo?.capsType!;
       paramsClone.capsResult.info = `offers caps capsSalesUnderLimit=${paramsClone.offerInfo?.capInfo?.capsSalesUnderLimit}, capsClicksUnderLimit=${paramsClone.offerInfo?.capInfo?.capsClicksUnderLimit}`;
       pass = true;
+      influxdb(200, `offer_cap_${paramsClone.redirectType}`);
     }
 
-    influxdb(200, `offer_cap_${paramsClone.redirectType}`);
     return {
       success: pass,
       params: paramsClone,

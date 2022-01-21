@@ -25,6 +25,8 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     let finalResponse: IParams;
     if (handleConditionsResponse?.success) {
       finalResponse = exitOfferOverride(handleConditionsResponse?.params!);
+    } else {
+      finalResponse = { ...params };
     }
     // const finalResponse: IResponse = exitOfferOverride(handleConditionsResponse.params);
 

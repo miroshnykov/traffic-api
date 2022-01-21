@@ -13,7 +13,7 @@ export const fingerPrintOverride = async (
   fpData: string | null,
 ): Promise<IBaseResponse> => {
   const debugFp: boolean = req?.query?.fp! === 'disabled';
-  let pass:boolean = false;
+  let pass: boolean = false;
   let paramsClone = { ...params };
   if (debugFp) {
     return {

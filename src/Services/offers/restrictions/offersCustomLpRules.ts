@@ -7,7 +7,7 @@ import { IRedirectType } from '../../../Interfaces/recipeTypes';
 
 export const offersCustomLpRules = async (params: IParams): Promise<IBaseResponse> => {
   let pass: boolean = false;
-  let paramsOverride:IParams;
+  let paramsOverride: IParams;
   let paramsClone = { ...params };
   try {
     const customLPRules = JSON.parse(paramsClone.offerInfo.customLpRules);

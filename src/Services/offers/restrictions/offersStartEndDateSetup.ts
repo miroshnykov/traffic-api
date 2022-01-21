@@ -4,8 +4,8 @@ import { IBaseResponse, IParams } from '../../../Interfaces/params';
 import { IRedirectType } from '../../../Interfaces/recipeTypes';
 
 export const offersStartEndDateSetupCalculations = async (params: IParams): Promise<IBaseResponse> => {
-  let paramsOverride:IParams;
-  let pass :boolean = false;
+  let paramsOverride: IParams;
+  let pass: boolean = false;
   let paramsClone = { ...params };
   try {
     if (!paramsClone.offerInfo.startEndDateSetting.dateRangePass) {

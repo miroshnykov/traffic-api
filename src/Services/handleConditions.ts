@@ -80,7 +80,7 @@ export const handleConditions = async (params: IParams, debug: boolean): Promise
   }
 
   if (params.offerInfo.capSetup) {
-    const capsCheckingRes:IBaseResponse = await capsOfferChecking(params);
+    const capsCheckingRes: IBaseResponse = await capsOfferChecking(params);
     if (capsCheckingRes.success) {
       consola.info(`Redirect type { offer caps } CampaignId { ${params.campaignId} } lid { ${params.lid} } LP { ${capsCheckingRes.params?.landingPageUrl} }`);
       return {

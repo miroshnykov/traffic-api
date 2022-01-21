@@ -7,7 +7,7 @@ import { IRedirectType } from '../../../Interfaces/recipeTypes';
 
 export const capsCampaignChecking = async (params: IParams): Promise<IBaseResponse> => {
   const paramsClone = { ...params };
-  let pass :boolean = false;
+  let pass: boolean = false;
   try {
     if (paramsClone.campaignInfo?.capInfo?.dateRangeSetUp
       && !paramsClone.campaignInfo?.capInfo?.dateRangePass

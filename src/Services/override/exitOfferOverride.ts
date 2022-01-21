@@ -11,7 +11,7 @@ export const exitOfferOverride = (params: IParams): IParams => {
   if ((paramsClone?.offerInfo?.capInfo?.capsSalesUnderLimit
       || paramsClone?.offerInfo?.capInfo?.capsClicksUnderLimit)
     && paramsClone?.offerInfo?.customPayOutPerGeo) {
-    const customPayOutPerGeoRes:IBaseResponse = customPayOutPerGeo(paramsClone);
+    const customPayOutPerGeoRes: IBaseResponse = customPayOutPerGeo(paramsClone);
     if (customPayOutPerGeoRes.success) {
       paramsClone = { ...paramsClone, ...customPayOutPerGeoRes.params };
       influxdb(200, 'offer_custom_pay_out_per_geo_caps_under_limit');

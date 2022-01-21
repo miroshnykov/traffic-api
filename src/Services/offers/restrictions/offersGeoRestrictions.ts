@@ -5,7 +5,7 @@ import { IRedirectType } from '../../../Interfaces/recipeTypes';
 
 export const offersGeoRestrictions = async (params: IParams): Promise<IBaseResponse> => {
   let pass: boolean = false;
-  let paramsOverride:IParams;
+  let paramsOverride: IParams;
   let paramsClone = { ...params };
   try {
     if (paramsClone.offerInfo?.countriesRestrictions?.includes(paramsClone.country)) {

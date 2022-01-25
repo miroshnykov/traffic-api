@@ -14,6 +14,7 @@ export interface IAggregatedOfferList {
 export interface IOffer {
   offerId: number
   name: string
+  descriptions: string
   advertiserId: number
   advertiserName: string
   verticalId: number

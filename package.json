@@ -4,7 +4,7 @@
   "description": "Traffic server",
   "main": "server.ts",
   "scripts": {
-    "dev": "ts-node-dev --files --respawn src/server.ts",
+    "dev": "ts-node-dev --files --transpile-only --respawn src/server.ts",
     "build": "tsc",
     "test": "jest",
     "lint": "npx eslint ./src --ext .ts",

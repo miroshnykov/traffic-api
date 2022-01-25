@@ -14,6 +14,7 @@ export interface IParams {
   offerType: string
   deviceType: string
   offerName: string
+  offerDescription: string
   conversionType: string
   landingPageId: number
   landingPageUrl: string

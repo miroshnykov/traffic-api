@@ -73,6 +73,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const affiliateId: number = Number(campaignInfo.affiliateId);
     const affiliateManagerId: number = Number(campaignInfo.affiliateManagerId);
     const offerType: string = offerInfo.type;
+    const offerDescription: string = offerInfo.descriptions;
     const offerName: string = offerInfo.name;
     const { conversionType } = offerInfo;
     const { landingPageId } = offerInfo;
@@ -100,6 +101,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
       offerType,
       deviceType,
       offerName,
+      offerDescription,
       conversionType,
       landingPageId,
       landingPageUrl,

@@ -49,6 +49,7 @@ export const redshiftOffer = (lidObj: ILid): IRedshiftData => (
     click: 1,
     event_type: lidObj.eventType || '',
     fingerprint: lidObj.fingerPrintKey || '',
+    is_unique_visit: lidObj.isUniqueVisit || false,
   }
 );
 
@@ -86,6 +87,7 @@ export const createLidOffer = (lidInfo: ILid): void => {
       if (!lidInfoToSend[key]) {
         if (key === 'isCpmOptionEnabled'
           || key === 'originIsCpmOptionEnabled'
+          || key === 'isUniqueVisit'
         ) {
           // eslint-disable-next-line no-continue
           continue;

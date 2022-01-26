@@ -91,6 +91,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const capsResult: ICapsResult = {};
     const exitOfferResult: IExitOfferResult = {};
     const isExitOffer: boolean = false;
+    const isUniqueVisit: boolean = true;
     const fingerPrint: IFingerPrint = {};
 
     return {
@@ -142,6 +143,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
       exitOfferResult,
       fingerPrint,
       fingerPrintKey,
+      isUniqueVisit,
     };
   } catch (e) {
     influxdb(500, 'get_params_error');

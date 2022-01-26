@@ -7,8 +7,8 @@ import { getParams } from './params';
 import { lidOffer } from '../Utils/lid';
 import { createLidOffer } from '../Utils/dynamoDb';
 import { ILid } from '../Interfaces/lid';
-// import { getFp } from '../Models/fpModel';
-// import { fingerPrintOverride } from './override/fingerPrintOverride';
+import { getFp } from '../Models/fpModel';
+import { fingerPrintOverride } from './override/fingerPrintOverride';
 import { exitOfferOverride } from './override/exitOfferOverride';
 import { handleConditions } from './handleConditions';
 
@@ -18,8 +18,8 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     influxdb(200, 'offers_all_request');
     const params: IParams = await getParams(req);
 
-    // consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`);
-    // const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`);
+    consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`);
+    const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`);
 
     const handleConditionsResponse: IResponse = await handleConditions(params, debug);
     let finalResponse: IParams;
@@ -30,12 +30,13 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     }
     // const finalResponse: IResponse = exitOfferOverride(handleConditionsResponse.params);
 
-    // const fingerPrintRes: IResponse = await fingerPrintOverride(params, req, fpData);
-    //
-    // if (fingerPrintRes.success) {
-    //   finalResponse = { ...finalResponse, ...fingerPrintRes.params };
-    // }
+     const fingerPrintRes: IResponse = await fingerPrintOverride(finalResponse, req, fpData);
 
+    if (fingerPrintRes.success) {
+      finalResponse = { ...finalResponse, ...fingerPrintRes.params };
+    }
+
+    consola.info('finalResponse isUniqueVisit:', finalResponse.isUniqueVisit)
     const lidObj: ILid = lidOffer(finalResponse!);
     createLidOffer(lidObj);
     finalResponse!.lidObj = lidObj;

@@ -36,4 +36,5 @@ export interface IRedshiftData {
   event_type: string
   referer?: string
   fingerprint?: string
+  is_unique_visit?: boolean
 }

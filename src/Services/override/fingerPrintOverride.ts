@@ -30,8 +30,10 @@ export const fingerPrintOverride = async (
       paramsClone = { ...paramsClone, ...fpOverrideRes };
       influxdb(200, 'offer_aggregated_fingerprint_override');
       expireFp(fpKey, 86400);
-      pass = true;
     }
+    paramsClone.isUniqueVisit = false;
+    pass = true;
+
   } else {
     const fpStore: IFingerPrintData = {
       landingPageUrl: params.landingPageUrl,

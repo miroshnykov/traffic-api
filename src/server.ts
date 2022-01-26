@@ -1,6 +1,6 @@
-import http, { Server } from 'http';
-import cluster, { Worker } from 'cluster';
-import { CpuInfo, cpus } from 'os';
+import http, { Server } from 'node:http';
+import cluster, { Worker } from 'node:cluster';
+import { CpuInfo, cpus } from 'node:os';
 import consola from 'consola';
 import chalk from 'chalk';
 import express, {

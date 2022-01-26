@@ -1,8 +1,8 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import AWS from 'aws-sdk';
 import consola from 'consola';
 import * as dotenv from 'dotenv';
-import os from 'os';
+import os from 'node:os';
 import { influxdb } from '../Utils/metrics';
 import { IRecipeType } from '../Interfaces/recipeTypes';
 import { setCampaignsToRedis, setOffersToRedis } from './setRecipeToRedisCron';

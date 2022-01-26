@@ -1,11 +1,11 @@
-> traffic server
+### Traffic server
 
-## Cluster
+### Cluster
 
     A single instance of Node.js runs in a single thread. To take advantage of multi-core systems, the user will sometimes want to launch a cluster of Node.js processes to handle the load.
     https://nodejs.org/api/cluster.html#cluster_cluster
 
-## Recipe
+### Recipe
 
     recipe is getting from S3 bucket "recipe-api"
     checking fileSizeOffersCheck && fileSizeCampaignsCheck every 20 sec 
@@ -13,7 +13,7 @@
     If size of recipe is different then download new files from s3 
     and reload the data to local redis for each instances
 
-## Redis
+### Redis
 
     each instanse has local redis with offers && campaigns populated with cron campaignsToRedisCron & offersToRedisCron
 
@@ -38,13 +38,13 @@
     download maxmind DB to folder /usr/share/GeoIP/GeoIP2-City.mmdb /usr/share/GeoIP/GeoIP2-ISP.mmdb
     npm run dev
 
-## ex link
+### ex link
 
-    http://localhost:5000/ad?offer=44669c38ea032aa63b94b904804131c8:2aad25bba4a84235956c7d8884fc53b85f9f5c3f3468544ae69880a225115c5dc9822ae051f70559d674a439ca272cac&debugging=debugging
-    https://traffic.aezai.com/pl?o=b00a799d7cae9430b034fed4097080c3:c364290026fe9f5c6e7195d2b90dc7e12c778337aefbb0ba09b64172f21d875b1379754e52b9d5a8b1ad8452c4fe8a7e&debugging=debugging
+    http://localhost:5000/pl?o=ea2e2954ad2d4f56126c3932fd91e09e:8feb6e231a12fbff634b1ee92dedb972&debugging=debugging
+    https://xuzeez.com/pl?o=17674b7cf3ff3d25164c2900a6d2e527:133342344f306140a37b2e1067daaccd&debugging=debugging
     
 
-## check recipe
+### check recipe
     offer
         http://localhost:5000/getRecipeData?debugging=debugging&offerId=36349
         https://mghkpg.com/getRecipeData?debugging=debugging&offerId=35784
@@ -53,47 +53,56 @@
     campaign
         http://localhost:5000/getRecipeData?debugging=debugging&campaignId=40
         https://traffic.aezai.com/getRecipeData?debugging=debugging&campaignId=40
-## resend lid just one time
+
+### resend lid just one time
+
     http://localhost:5000/getRecipeData?debugging=debugging&resendLid=***&lid=7e0a853e-595f-43b5-a42b-765cdc09cffa
     https://traffic.aezai.com/getRecipeData?debugging=debugging&resendLid=***&lid=c225991f-4a28-431c-a944-b26dc91484cb
 
-## build
+### build
 
     npm run build
 
-## env example
+### env example
+```dotenv
+HOST = localhost
+ENV = development
+PORT = 5000
+SOCKET_HOST=http://localhost:3001
 
-    HOST = localhost
-    ENV = development
-    PORT = 5000
-    SOCKET_HOST=http://localhost:3001
-    
-    AWS_ACCESS_KEY_ID=
-    AWS_SECRET_ACCESS_KEY=
-    AWS_REGION=us-east-1
-    AWS_DYNAMODB_REGION=us-west-2
-    AWS_DYNAMODB_ENDPOINT=dynamodb.us-west-2.amazonaws.com
-    AWS_DYNAMODB_TABLE_NAME=customOffers-production
-   
-    OFFERS_RECIPE_PATH=/tmp/co-recipe-traffic/offersRecipe.json.gz
-    CAMPAIGNS_RECIPE_PATH=/tmp/co-recipe-traffic/campaignsRecipe.json.gz
-    
-    S3_OFFERS_RECIPE_PATH=offersRecipe.json.gz
-    S3_CAMPAIGNS_RECIPE_PATH=campaignsRecipe.json.gz
-    S3_BUCKET_NAME=co-recipe-staging
-    
-    MAXMIND_PATH=/usr/share/GeoIP/GeoIP2-City.mmdb
-    MAXMIND_PATH_ISP=/usr/share/GeoIP/GeoIP2-ISP.mmdb
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=us-east-1
+AWS_DYNAMODB_REGION=us-west-2
+AWS_DYNAMODB_ENDPOINT=dynamodb.us-west-2.amazonaws.com
+AWS_DYNAMODB_TABLE_NAME=customOffers-production
 
-## docker build
+OFFERS_RECIPE_PATH=/tmp/co-recipe-traffic/offersRecipe.json.gz
+CAMPAIGNS_RECIPE_PATH=/tmp/co-recipe-traffic/campaignsRecipe.json.gz
+
+S3_OFFERS_RECIPE_PATH=offersRecipe.json.gz
+S3_CAMPAIGNS_RECIPE_PATH=campaignsRecipe.json.gz
+S3_BUCKET_NAME=co-recipe-staging
+
+MAXMIND_PATH=/usr/share/GeoIP/GeoIP2-City.mmdb
+MAXMIND_PATH_ISP=/usr/share/GeoIP/GeoIP2-ISP.mmdb
+```
+
+### docker build
 
 	docker build -t traffic-api .
    	docker run -it -p 5000:5000 --rm --name traffic-api-  traffic-api
 
-## autocannon
+### autocannon
     set the load of 300 connections for 15 seconds
     autocannon -c 300 -d 15 http://localhost:5000/getRecipeData?debugging=debugging&offerId=36336
-    autocannon -c 10 -d 15 http://localhost:5000/pl?o=881c7670e2d2228459a3e6ee1f1e181d:2a79b868d55c64bed2636f145e0c017109e3d851d67fdff2a202d2e9409e295258cb0f3cd06bc7c1a33d9f4045675371&debugging=debugging
+    autocannon -c 10 -d 15 http://localhost:5000/pl?o=ea2e2954ad2d4f56126c3932fd91e09e:8feb6e231a12fbff634b1ee92dedb972&debugging=debugging
+
+### nodeJs v16
+#### New in Node.js: node: protocol imports
+
+    import * as fs from 'node:fs';
+    https://nodejs.org/api/esm.html#node-imports
 
 # diagram
 

@@ -1,4 +1,4 @@
-import url from 'url';
+import url from 'node:url';
 import consola from 'consola';
 import * as dotenv from 'dotenv';
 import { sendMessageToQueue } from './sqs';

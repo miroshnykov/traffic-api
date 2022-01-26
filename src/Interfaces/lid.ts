@@ -12,6 +12,9 @@ export interface ILid {
   verticalId: number | null
   verticalName: string | null
   offerId: number | null
+  offerName: string | null
+  offerType: string | null
+  offerDescription: string | null
   region: string | null
   isp: string | null
   IP: string | null

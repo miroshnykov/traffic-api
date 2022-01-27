@@ -37,6 +37,8 @@ export const fingerPrintOverride = async (
     const fpStore: IFingerPrintData = {
       landingPageUrl: paramsClone.landingPageUrl,
       offerId: paramsClone.offerId,
+      offerName: paramsClone.offerName,
+      offerDescription: paramsClone.offerDescription,
       advertiserId: paramsClone.advertiserId,
       advertiserName: paramsClone.advertiserName,
       conversionType: paramsClone.conversionType,

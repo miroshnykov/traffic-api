@@ -28,15 +28,12 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     } else {
       finalResponse = { ...params };
     }
-    // const finalResponse: IResponse = exitOfferOverride(handleConditionsResponse.params);
-
-     const fingerPrintRes: IResponse = await fingerPrintOverride(finalResponse, req, fpData);
+    const fingerPrintRes: IResponse = await fingerPrintOverride(finalResponse, req, fpData);
 
     if (fingerPrintRes.success) {
       finalResponse = { ...finalResponse, ...fingerPrintRes.params };
     }
 
-    consola.info('finalResponse isUniqueVisit:', finalResponse.isUniqueVisit)
     const lidObj: ILid = lidOffer(finalResponse!);
     createLidOffer(lidObj);
     finalResponse!.lidObj = lidObj;

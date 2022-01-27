@@ -66,6 +66,8 @@ export const override = async (
   }
   paramsClone.landingPageUrl = landingPageUrl;
   paramsClone.landingPageId = offerExitTrafficInfo?.landingPageId;
+  paramsClone.offerDescription = offerExitTrafficInfo?.descriptions;
+  paramsClone.offerName = offerExitTrafficInfo?.name;
   paramsClone.advertiserId = offerExitTrafficInfo?.advertiserId || 0;
   paramsClone.advertiserName = offerExitTrafficInfo?.advertiserName || '';
   paramsClone.conversionType = offerExitTrafficInfo?.conversionType || '';

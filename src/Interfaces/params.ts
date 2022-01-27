@@ -79,6 +79,7 @@ export interface IParams {
   capsResult?: ICapsResult | any
   IP?: string
   isExitOffer: boolean
+  isUniqueVisit: boolean
   exitOfferInfo?: IOffer
   exitOffersNested?: IOffer[] | any
   exitOfferResult?: IExitOfferResult | any

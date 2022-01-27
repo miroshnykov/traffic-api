@@ -23,6 +23,7 @@ const params = {
   advertiserName: 'ded',
   advertiserManagerId: 1,
   offerDescription: 'offerDescriptionTest',
+  isUniqueVisit: false,
   offerInfo: {
     offerId: 35896,
     name: 'customLp',

@@ -44,6 +44,8 @@ export const exitOfferNested = (
 
   const tmpOriginUrl = paramsClone.landingPageUrl;
   paramsClone.landingPageUrl = exitOfferDetected?.landingPageUrl;
+  paramsClone.offerDescription = exitOfferDetected?.descriptions;
+  paramsClone.offerName = exitOfferDetected?.name;
   paramsClone.advertiserId = exitOfferDetected?.advertiserId || 0;
   paramsClone.advertiserName = exitOfferDetected?.advertiserName || '';
   paramsClone.conversionType = exitOfferDetected?.conversionType || '';

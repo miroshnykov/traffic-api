@@ -59,6 +59,31 @@
     http://localhost:5000/getRecipeData?debugging=debugging&resendLid=***&lid=7e0a853e-595f-43b5-a42b-765cdc09cffa
     https://traffic.aezai.com/getRecipeData?debugging=debugging&resendLid=***&lid=c225991f-4a28-431c-a944-b26dc91484cb
 
+### add record to redshift use lid example
+#### example    
+```shell script
+const timestamp = Date.now();
+const secret = '*****';
+const hash = md5(`${timestamp}|${secret}`);
+
+const params = {
+  lid: '0139d2d0-e96b-4455-a0a0-d10077b275ec',
+  hash,
+  timestamp,
+};
+const { data } = await axios.post('https://traffic.aezai.com/lid', params);
+```
+#### response
+```shell script
+interface ILidResponse {
+  success: boolean;
+  lid: string;
+  message?: string
+  errors?: string
+}
+
+```
+
 ### build
 
     npm run build
@@ -86,6 +111,7 @@ S3_BUCKET_NAME=co-recipe-staging
 
 MAXMIND_PATH=/usr/share/GeoIP/GeoIP2-City.mmdb
 MAXMIND_PATH_ISP=/usr/share/GeoIP/GeoIP2-ISP.mmdb
+GATEWAY_API_SECRET=***
 ```
 
 ### docker build

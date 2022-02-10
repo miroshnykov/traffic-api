@@ -68,31 +68,28 @@ export const createLidOffer = (lidInfo: ILid): void => {
     };
 
     const ddbClient: DynamoDBClient = new DynamoDBClient(dynamoDbConf);
-    const yearPlusOne: Date = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
-    // eslint-disable-next-line no-param-reassign
-    lidInfo.ttl = yearPlusOne.getTime();
-
     const stats: IRedshiftData = redshiftOffer(lidInfo);
 
-    // @ts-ignore
-    process.send({
-      type: 'clickOffer',
-      value: 1,
-      stats,
-    });
+    if (process.send) {
+      process.send({
+        type: 'clickOffer',
+        value: 1,
+        stats,
+      });
+    }
 
     let lidInfoToSend: { [index: string]: any } = {};
     lidInfoToSend = lidInfo;
+    const yearPlusOne: Date = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
+    lidInfoToSend.ttl = yearPlusOne.getTime();
+    const excludeFields: string[] = [
+      'isCpmOptionEnabled', 'originIsCpmOptionEnabled', 'isUniqueVisit',
+    ];
     for (const key in lidInfoToSend) {
       if (!lidInfoToSend[key]) {
-        if (key === 'isCpmOptionEnabled'
-          || key === 'originIsCpmOptionEnabled'
-          || key === 'isUniqueVisit'
-        ) {
-          // eslint-disable-next-line no-continue
-          continue;
+        if (!excludeFields.includes(key)) {
+          delete lidInfoToSend[key];
         }
-        delete lidInfoToSend[key];
       }
     }
 

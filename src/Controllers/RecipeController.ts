@@ -47,12 +47,13 @@ export class RecipeController extends BaseController {
           await setFp(lid, lid);
           const stats: IRedshiftData = redshiftOffer(respLid);
 
-          // @ts-ignore
-          process.send({
-            type: 'clickOffer',
-            value: 1,
-            stats,
-          });
+          if (process.send) {
+            process.send({
+              type: 'clickOffer',
+              value: 1,
+              stats,
+            });
+          }
         } else {
           resendLid = `no lid: { ${lid} } in DB `;
         }

@@ -22,8 +22,6 @@ export class LidController extends BaseController {
     const { timestamp } = req.body;
     let response: ILidResponse;
     try {
-      consola.info('hash:', hash);
-      // consola.info('timestamp:', timestamp);
       const secret = process.env.GATEWAY_API_SECRET;
       const checkHash = md5(`${timestamp}|${secret}`);
 
@@ -51,12 +49,13 @@ export class LidController extends BaseController {
         await setFp(lid, lid);
         const stats: IRedshiftData = redshiftOffer(respLid);
 
-        // @ts-ignore
-        process.send({
-          type: 'clickOffer',
-          value: 1,
-          stats,
-        });
+        if (process.send) {
+          process.send({
+            type: 'clickOffer',
+            value: 1,
+            stats,
+          });
+        }
       } else {
         response = {
           success: false,
@@ -76,12 +75,18 @@ export class LidController extends BaseController {
 
       res.status(200).json(response);
     } catch (e) {
-      consola.error('LidAddRedshiftError:', e);
       influxdb(500, 'lid_add_redshift_error');
+      const errMessage = (e.response
+        && e.response.data
+        && e.response.data.message)
+      || e.message
+      || e.toString();
+      consola.error('LidAddRedshiftError:', errMessage);
+
       response = {
         success: false,
         lid,
-        errors: `${JSON.stringify(e)}`,
+        errors: errMessage,
       };
       res.status(500).json(response);
     }

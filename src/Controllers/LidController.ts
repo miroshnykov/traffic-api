@@ -66,6 +66,7 @@ export class LidController extends BaseController {
           success: false,
           lid,
           message: 'Lid does not created on aggragator site for some reason',
+          errors: responseAggr.errors,
         };
         influxdb(200, 'lid_add_redshift_success');
         res.status(200).json(response);

@@ -2,6 +2,7 @@ import axios from 'axios';
 import consola from 'consola';
 import * as dotenv from 'dotenv';
 import Base64 from 'js-base64';
+import md5 from 'md5';
 import { influxdb } from './metrics';
 import { IRedshiftData } from '../Interfaces/redshiftData';
 
@@ -40,12 +41,17 @@ export const sendToAggregator = (stats: IRedshiftData): void => {
 
 export const sendBonusLidToAggregator = async (stats: IRedshiftData): Promise<any> => {
   try {
+    const timestamp = Date.now();
+    const secret = process.env.GATEWAY_API_SECRET;
+    const hash = md5(`${timestamp}|${secret}`);
+
     const params: object = {
       method: 'POST',
       url: 'lidBonus',
       data: {
         stats,
-        time: stats.date_added,
+        timestamp,
+        hash,
       },
     };
     const { data } = await aggrRequest(params);

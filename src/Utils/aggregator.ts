@@ -37,3 +37,22 @@ export const sendToAggregator = (stats: IRedshiftData): void => {
     consola.error('sendToAggregatorError:', e);
   }
 };
+
+export const sendBonusLidToAggregator = async (stats: IRedshiftData): Promise<any> => {
+  try {
+    const params: object = {
+      method: 'POST',
+      url: 'lidBonus',
+      data: {
+        stats,
+        time: stats.date_added,
+      },
+    };
+    const { data } = await aggrRequest(params);
+    return data;
+  } catch (e) {
+    influxdb(500, 'send_to_aggregator_error');
+    consola.error('sendBonusLidToAggregatorError:', e);
+    return [];
+  }
+};

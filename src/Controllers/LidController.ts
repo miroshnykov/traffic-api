@@ -6,6 +6,7 @@ import { getFp, setFp } from '../Models/fpModel';
 import { getLeadData, redshiftOffer } from '../Utils/dynamoDb';
 import { IRedshiftData } from '../Interfaces/redshiftData';
 import { influxdb } from '../Utils/metrics';
+import { sendBonusLidToAggregator } from '../Utils/aggregator';
 
 interface ILidResponse {
   success: boolean;
@@ -49,30 +50,40 @@ export class LidController extends BaseController {
         await setFp(lid, lid);
         const stats: IRedshiftData = redshiftOffer(respLid);
 
-        if (process.send) {
-          process.send({
-            type: 'clickOffer',
-            value: 1,
-            stats,
-          });
+        const responseAggr = await sendBonusLidToAggregator(stats);
+
+        if (responseAggr.success) {
+          response = {
+            success: true,
+            lid,
+            message: 'Lid successfully created in redshift',
+          };
+          influxdb(200, 'lid_add_redshift_success');
+          res.status(200).json(response);
+          return;
         }
-      } else {
         response = {
           success: false,
           lid,
-          errors: 'Lid does not exists in dynamodb',
+          message: 'Lid does not created on aggragator site for some reason',
         };
+        influxdb(200, 'lid_add_redshift_success');
         res.status(200).json(response);
         return;
+
+        // if (process.send) {
+        //   process.send({
+        //     type: 'clickOffer',
+        //     value: 1,
+        //     stats,
+        //   });
+        // }
       }
-
       response = {
-        success: true,
+        success: false,
         lid,
-        message: 'Lid successfully added to queue',
+        errors: 'Lid does not exists in dynamodb',
       };
-      influxdb(200, 'lid_add_redshift_success');
-
       res.status(200).json(response);
     } catch (e) {
       influxdb(500, 'lid_add_redshift_error');

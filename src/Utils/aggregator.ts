@@ -3,8 +3,11 @@ import consola from 'consola';
 import * as dotenv from 'dotenv';
 import Base64 from 'js-base64';
 import md5 from 'md5';
+import os from 'node:os';
 import { influxdb } from './metrics';
 import { IRedshiftData } from '../Interfaces/redshiftData';
+
+const computerName = os.hostname();
 
 dotenv.config();
 
@@ -31,7 +34,7 @@ export const sendToAggregator = (stats: IRedshiftData): void => {
 
     aggrRequest(params).then().catch((e) => {
       influxdb(500, 'send_to_aggregator_error');
-      consola.error('send to aggregator data got error:', e);
+      consola.error(`computerName:${computerName}send to aggregator data got error:`, e);
     });
   } catch (e) {
     influxdb(500, 'send_to_aggregator_error');

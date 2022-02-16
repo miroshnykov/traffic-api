@@ -24,13 +24,13 @@ export const getFileFromBucket = async (type: IRecipeType): Promise<void> => {
     let s3BucketName: string = '';
     let setRedisOffersOrCampaigns: any;
     switch (type) {
-      case 'offer':
+      case IRecipeType.OFFER:
         tempFileName = process.env.OFFERS_RECIPE_PATH || '';
         s3Key = process.env.S3_OFFERS_RECIPE_PATH || '';
         s3BucketName = process.env.S3_BUCKET_NAME || '';
         setRedisOffersOrCampaigns = setOffersToRedis;
         break;
-      case 'campaign':
+      case IRecipeType.CAMPAIGN:
         tempFileName = process.env.CAMPAIGNS_RECIPE_PATH || '';
         s3Key = process.env.S3_CAMPAIGNS_RECIPE_PATH || '';
         s3BucketName = process.env.S3_BUCKET_NAME || '';
@@ -52,6 +52,7 @@ export const getFileFromBucket = async (type: IRecipeType): Promise<void> => {
     s3Stream.pipe(tempFileDownload)
       .on('error', (err) => {
         consola.error(`File Stream error s3:${s3BucketName}/${s3Key}:`, err);
+        influxdb(500, `file_stream_s3_error_${type}`);
       })
       .on('close', () => {
         consola.success(`file from s3:${s3BucketName}/${s3Key}, to  ${tempFileName} was uploaded correctly.Computer name ${computerName}`);

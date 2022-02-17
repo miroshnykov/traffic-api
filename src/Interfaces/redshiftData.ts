@@ -2,6 +2,7 @@ export interface IRedshiftData {
   lid: string,
   affiliate_id: number
   campaign_id: number
+  sub_campaign_id?: number
   offer_id: number
   offer_name: string
   offer_type: string

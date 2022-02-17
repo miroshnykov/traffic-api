@@ -9,6 +9,7 @@ export const lidOffer = (params: IParams): ILid => (
     deviceType: params.deviceType || null,
     domain: params.domain || null,
     campaignId: +params.campaignId || null,
+    subCampaignId: +params.subCampaignId! || null,
     payin: +params.payIn || null,
     payout: +params.payOut || null,
     advertiserId: params.advertiserId || null,

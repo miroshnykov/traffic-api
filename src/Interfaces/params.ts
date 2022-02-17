@@ -9,6 +9,7 @@ import { ILid } from './lid';
 export interface IParams {
   offerId: number
   campaignId: number
+  subCampaignId?: number
   affiliateId: number
   affiliateManagerId: number
   offerType: string
@@ -109,4 +110,8 @@ export interface IResponse extends IBaseResponse{
 
 export interface IBestOffer extends IBaseResponse{
   bestOfferId: number
+}
+
+export enum ILandingPageParams {
+  SUB_CAMPAIGN = '&subid=',
 }

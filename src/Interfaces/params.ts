@@ -111,7 +111,3 @@ export interface IResponse extends IBaseResponse{
 export interface IBestOffer extends IBaseResponse{
   bestOfferId: number
 }
-
-export enum ILandingPageParams {
-  SUB_CAMPAIGN = '&subid=',
-}

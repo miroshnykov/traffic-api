@@ -55,6 +55,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
 
     const browserVersion = String(deviceInfo?.client?.version!);
     const offerHash = req.query.o;
+    const subCampaignId = Number(req.query.subid);
     const browser: string = String(deviceInfo?.client?.name!);
     const os: string = String(deviceInfo?.os?.name!);
     const platform: string = String(deviceInfo?.os?.platform!);
@@ -97,6 +98,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     return {
       offerId,
       campaignId,
+      subCampaignId,
       affiliateId,
       affiliateManagerId,
       offerType,

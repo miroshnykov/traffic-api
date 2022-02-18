@@ -4,7 +4,7 @@ export interface ILid {
   adPath: string | null
   domain: string | null
   campaignId: number | null
-  subCampaignId?: number | null
+  subCampaign?: string | null
   payin: number | null
   payout: number | null
   advertiserId: number | null

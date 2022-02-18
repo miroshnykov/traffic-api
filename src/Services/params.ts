@@ -59,7 +59,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     if (Number.MAX_SAFE_INTEGER < subCampaignId) {
       subCampaignId = 0;
       influxdb(500, 'sub_campaign_id_too_large');
-      consola.info(`huge subid number, for campaign:${campaignId} dynamoDb not support bigint for now, put subCampaignId to zero`);
+      consola.error(`huge subid number:${req.query.subid}, for campaign:${campaignId} dynamoDb not support bigint for now, put subCampaignId to zero`);
     }
     const browser: string = String(deviceInfo?.client?.name!);
     const os: string = String(deviceInfo?.os?.name!);

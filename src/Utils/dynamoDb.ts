@@ -15,7 +15,7 @@ export const redshiftOffer = (lidObj: ILid): IRedshiftData => (
     lid: lidObj.lid,
     affiliate_id: +lidObj.affiliateId! || 0,
     campaign_id: +lidObj.campaignId! || 0,
-    sub_campaign_id: +lidObj.subCampaignId! || 0,
+    sub_campaign: lidObj.subCampaign! || '',
     offer_id: +lidObj.offerId! || 0,
     offer_name: lidObj.offerName! || '',
     offer_type: lidObj.offerType! || '',

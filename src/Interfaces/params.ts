@@ -9,7 +9,7 @@ import { ILid } from './lid';
 export interface IParams {
   offerId: number
   campaignId: number
-  subCampaignId?: number
+  subCampaign?: string
   affiliateId: number
   affiliateManagerId: number
   offerType: string

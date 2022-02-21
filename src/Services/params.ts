@@ -55,12 +55,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
 
     const browserVersion = String(deviceInfo?.client?.version!);
     const offerHash = req.query.o;
-    let subCampaignId: number = Number(req.query.subid);
-    if (Number.MAX_SAFE_INTEGER < subCampaignId) {
-      subCampaignId = 0;
-      influxdb(500, 'sub_campaign_id_too_large');
-      consola.error(`huge subid number:${req.query.subid}, for campaign:${campaignId} dynamoDb not support bigint for now, put subCampaignId to zero`);
-    }
+    const subCampaign: string = String(req.query.subid);
     const browser: string = String(deviceInfo?.client?.name!);
     const os: string = String(deviceInfo?.os?.name!);
     const platform: string = String(deviceInfo?.os?.platform!);
@@ -103,7 +98,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     return {
       offerId,
       campaignId,
-      subCampaignId,
+      subCampaign,
       affiliateId,
       affiliateManagerId,
       offerType,

@@ -77,7 +77,6 @@ export class OffersController extends BaseController {
       } else {
         influxdb(200, 'offers_success_redirect');
       }
-
       res.redirect(redirectUrlFinal);
     }
   }

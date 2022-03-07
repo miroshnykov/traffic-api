@@ -36,7 +36,9 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
 
     ILandingPageParams.forEach((item) => {
       const tmp = req?.query[item];
-      finalResponse.landingPageUrl = finalResponse.landingPageUrl.replace(`{${item}}`, String(tmp));
+      if (tmp) {
+        finalResponse.landingPageUrl = finalResponse.landingPageUrl.replace(`{${item}}`, String(tmp));
+      }
     });
 
     const lidObj: ILid = lidOffer(finalResponse!);

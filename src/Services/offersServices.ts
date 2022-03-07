@@ -2,7 +2,7 @@ import { Request } from 'express';
 import consola from 'consola';
 import { influxdb } from '../Utils/metrics';
 
-import { IParams, IResponse } from '../Interfaces/params';
+import { ILandingPageParams, IParams, IResponse } from '../Interfaces/params';
 import { getParams } from './params';
 import { lidOffer } from '../Utils/lid';
 import { createLidOffer } from '../Utils/dynamoDb';
@@ -33,6 +33,14 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     // if (fingerPrintRes.success) {
     //   finalResponse = { ...finalResponse, ...fingerPrintRes.params };
     // }
+
+    ILandingPageParams.forEach((item) => {
+      const tmp = req?.query[item];
+      if (tmp) {
+        finalResponse.landingPageUrl = finalResponse.landingPageUrl.replace(`{${item}}`, String(tmp));
+      }
+    });
+
     const lidObj: ILid = lidOffer(finalResponse!);
     createLidOffer(lidObj);
     finalResponse!.lidObj = lidObj;

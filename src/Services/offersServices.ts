@@ -19,7 +19,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     const params: IParams = await getParams(req);
 
     // consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`);
-    // const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`);
+    const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`);
 
     const handleConditionsResponse: IResponse = await handleConditions(params, debug);
     let finalResponse: IParams;
@@ -28,11 +28,11 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     } else {
       finalResponse = { ...params };
     }
-    // const fingerPrintRes: IResponse = await fingerPrintOverride(finalResponse, req, fpData);
-    //
-    // if (fingerPrintRes.success) {
-    //   finalResponse = { ...finalResponse, ...fingerPrintRes.params };
-    // }
+    const fingerPrintRes: IResponse = await fingerPrintOverride(finalResponse, req, fpData);
+
+    if (fingerPrintRes.success) {
+      finalResponse = { ...finalResponse, ...fingerPrintRes.params };
+    }
 
     ILandingPageParams.forEach((item) => {
       const tmp = req?.query[item];

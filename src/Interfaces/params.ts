@@ -112,4 +112,4 @@ export interface IBestOffer extends IBaseResponse{
   bestOfferId: number
 }
 
-export const ILandingPageParams: (string)[] = ['subid', 'cid'];
+export const ILandingPageParams: (string)[] = ['subid', 'cid', 'lid'];

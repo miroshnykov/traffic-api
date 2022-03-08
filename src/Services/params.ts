@@ -56,6 +56,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const browserVersion = String(deviceInfo?.client?.version!);
     const offerHash = req.query.o;
     const subCampaign: string = String(req.query.subid || '');
+    const cid: string = String(req.query.cid || '');
     const browser: string = String(deviceInfo?.client?.name!);
     const os: string = String(deviceInfo?.os?.name!);
     const platform: string = String(deviceInfo?.os?.platform!);
@@ -146,6 +147,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
       fingerPrint,
       fingerPrintKey,
       isUniqueVisit,
+      cid,
     };
   } catch (e) {
     influxdb(500, 'get_params_error');

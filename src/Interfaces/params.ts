@@ -10,6 +10,7 @@ export interface IParams {
   offerId: number
   campaignId: number
   subCampaign?: string
+  cid?: string
   affiliateId: number
   affiliateManagerId: number
   offerType: string

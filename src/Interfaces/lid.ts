@@ -5,6 +5,7 @@ export interface ILid {
   domain: string | null
   campaignId: number | null
   subCampaign?: string | null
+  cid?: string | null
   payin: number | null
   payout: number | null
   advertiserId: number | null

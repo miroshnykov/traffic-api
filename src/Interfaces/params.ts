@@ -10,6 +10,7 @@ export interface IParams {
   offerId: number
   campaignId: number
   subCampaign?: string
+  cid?: string
   affiliateId: number
   affiliateManagerId: number
   offerType: string
@@ -112,4 +113,4 @@ export interface IBestOffer extends IBaseResponse{
   bestOfferId: number
 }
 
-export const ILandingPageParams: (string)[] = ['subid', 'cid'];
+export const ILandingPageParams: (string)[] = ['subid', 'cid', 'lid'];

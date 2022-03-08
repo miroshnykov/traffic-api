@@ -5,7 +5,8 @@ import { IFingerPrintData } from '../../Interfaces/fp';
 import { fpOverride } from '../offers/fpOverride';
 import { influxdb } from '../../Utils/metrics';
 import { expireFp, setFp } from '../../Models/fpModel';
-import { IOfferType } from '../../Interfaces/offers';
+import { IOffer, IOfferType } from '../../Interfaces/offers';
+import { getOffer } from '../../Models/offersModel';
 
 export const fingerPrintOverride = async (
   params: IParams,
@@ -24,12 +25,23 @@ export const fingerPrintOverride = async (
   if (fpData) {
     consola.info(` ***** GET FINGER_PRINT FROM CACHE ${fpKey} from cache, data  `, fpData);
     if (paramsClone.offerType === IOfferType.AGGREGATED) {
-      consola.info(' -----> Offer has type aggregated so lets do override use finger print data from cache');
       const fpDataObj: IFingerPrintData = JSON.parse(fpData);
-      const fpOverrideRes = await fpOverride(paramsClone, fpDataObj);
-      paramsClone = { ...paramsClone, ...fpOverrideRes };
-      influxdb(200, 'offer_aggregated_fingerprint_override');
-      expireFp(fpKey, 86400);
+
+      const offer: any = await getOffer(fpDataObj.offerId);
+      const offerInfo: IOffer = JSON.parse(offer);
+
+      if (offerInfo?.capInfo?.capsClicksOverLimit
+        || offerInfo?.capInfo?.capsSalesOverLimit
+      ) {
+        consola.info(` -----> Check caps for offerId:${fpDataObj.offerId} capsClicksOverLimit:${offerInfo?.capInfo?.capsClicksOverLimit},  capsSalesOverLimit:${offerInfo?.capInfo?.capsSalesOverLimit}`);
+        influxdb(200, 'offer_aggregated_fingerprint_override_caps_over_limit');
+      } else {
+        consola.info(' -----> Offer has type aggregated so lets do override use finger print data from cache');
+        const fpOverrideRes = await fpOverride(paramsClone, fpDataObj);
+        paramsClone = { ...paramsClone, ...fpOverrideRes };
+        influxdb(200, 'offer_aggregated_fingerprint_override');
+        expireFp(fpKey, 86400);
+      }
     }
     paramsClone.isUniqueVisit = false;
     pass = true;

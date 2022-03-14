@@ -2,7 +2,12 @@ export interface IRedshiftData {
   lid: string,
   affiliate_id: number
   campaign_id: number
+  sub_campaign?: string
+  cid?: string
   offer_id: number
+  offer_name: string
+  offer_type: string
+  offer_description: string
   landing_page: string
   landing_page_id: number
   payin: number
@@ -21,6 +26,7 @@ export interface IRedshiftData {
   origin_offer_id: number
   origin_vertical_id: number
   verticals: number
+  vertical_name: string
   conversion_type: string
   platform: string
   payout_percent: number
@@ -32,4 +38,5 @@ export interface IRedshiftData {
   event_type: string
   referer?: string
   fingerprint?: string
+  is_unique_visit?: boolean
 }

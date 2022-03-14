@@ -1,5 +1,5 @@
 import Influx from 'influxdb-nodejs';
-import os from 'os';
+import os from 'node:os';
 import consola from 'consola';
 import * as _ from 'lodash';
 import * as dotenv from 'dotenv';

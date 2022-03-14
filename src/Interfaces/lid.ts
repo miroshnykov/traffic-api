@@ -4,6 +4,8 @@ export interface ILid {
   adPath: string | null
   domain: string | null
   campaignId: number | null
+  subCampaign?: string | null
+  cid?: string | null
   payin: number | null
   payout: number | null
   advertiserId: number | null
@@ -12,6 +14,9 @@ export interface ILid {
   verticalId: number | null
   verticalName: string | null
   offerId: number | null
+  offerName: string | null
+  offerType: string | null
+  offerDescription: string | null
   region: string | null
   isp: string | null
   IP: string | null
@@ -52,6 +57,7 @@ export interface ILid {
   nestedExitOfferSteps: string | null
   fingerPrintInfo: string | null
   fingerPrintKey: string | null
+  isUniqueVisit: boolean | null
   eventType: string | null
   ttl?: number | null
   _messageType: string | null

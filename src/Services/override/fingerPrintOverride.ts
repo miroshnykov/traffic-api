@@ -5,15 +5,16 @@ import { IFingerPrintData } from '../../Interfaces/fp';
 import { fpOverride } from '../offers/fpOverride';
 import { influxdb } from '../../Utils/metrics';
 import { expireFp, setFp } from '../../Models/fpModel';
-import { IOfferType } from '../../Interfaces/offers';
+import { IOffer, IOfferType } from '../../Interfaces/offers';
+import { getOffer } from '../../Models/offersModel';
 
 export const fingerPrintOverride = async (
   params: IParams,
   req: Request,
-  fpData: string | null,
+  fpData: string | undefined,
 ): Promise<IBaseResponse> => {
   const debugFp: boolean = req?.query?.fp! === 'disabled';
-  let pass:boolean = false;
+  let pass: boolean = false;
   let paramsClone = { ...params };
   if (debugFp) {
     return {
@@ -23,26 +24,40 @@ export const fingerPrintOverride = async (
   const fpKey = `fp:${req.fingerprint?.hash!}-${paramsClone.campaignId}`;
   if (fpData) {
     consola.info(` ***** GET FINGER_PRINT FROM CACHE ${fpKey} from cache, data  `, fpData);
-    if (params.offerType === IOfferType.AGGREGATED) {
-      consola.info('Offer has type aggregated so lets do override use finger print data from cache');
+    if (paramsClone.offerType === IOfferType.AGGREGATED) {
       const fpDataObj: IFingerPrintData = JSON.parse(fpData);
-      const fpOverrideRes = await fpOverride(paramsClone, fpDataObj);
-      paramsClone = { ...paramsClone, ...fpOverrideRes };
-      influxdb(200, 'offer_aggregated_fingerprint_override');
-      expireFp(fpKey, 86400);
-      pass = true;
+
+      const offer: any = await getOffer(fpDataObj.offerId);
+      const offerInfo: IOffer = JSON.parse(offer);
+
+      if (offerInfo?.capInfo?.capsClicksOverLimit
+        || offerInfo?.capInfo?.capsSalesOverLimit
+      ) {
+        consola.info(` -----> Check caps for offerId:${fpDataObj.offerId} capsClicksOverLimit:${offerInfo?.capInfo?.capsClicksOverLimit},  capsSalesOverLimit:${offerInfo?.capInfo?.capsSalesOverLimit}`);
+        influxdb(200, 'offer_aggregated_fingerprint_override_caps_over_limit');
+      } else {
+        consola.info(' -----> Offer has type aggregated so lets do override use finger print data from cache');
+        const fpOverrideRes = await fpOverride(paramsClone, fpDataObj);
+        paramsClone = { ...paramsClone, ...fpOverrideRes };
+        influxdb(200, 'offer_aggregated_fingerprint_override');
+        expireFp(fpKey, 86400);
+      }
     }
+    paramsClone.isUniqueVisit = false;
+    pass = true;
   } else {
     const fpStore: IFingerPrintData = {
-      landingPageUrl: params.landingPageUrl,
-      offerId: params.offerId,
-      advertiserId: params.advertiserId,
-      advertiserName: params.advertiserName,
-      conversionType: params.conversionType,
-      verticalId: params.verticalId,
-      verticalName: params.verticalName,
-      payin: params.payIn,
-      payout: params.payOut,
+      landingPageUrl: paramsClone.landingPageUrl,
+      offerId: paramsClone.offerId,
+      offerName: paramsClone.offerName,
+      offerDescription: paramsClone.offerDescription,
+      advertiserId: paramsClone.advertiserId,
+      advertiserName: paramsClone.advertiserName,
+      conversionType: paramsClone.conversionType,
+      verticalId: paramsClone.verticalId,
+      verticalName: paramsClone.verticalName,
+      payin: paramsClone.payIn,
+      payout: paramsClone.payOut,
     };
     consola.info(' ***** SET CACHE FINGER_PRINT');
     setFp(fpKey, JSON.stringify(fpStore));

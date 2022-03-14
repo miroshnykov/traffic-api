@@ -15,7 +15,12 @@ export const redshiftOffer = (lidObj: ILid): IRedshiftData => (
     lid: lidObj.lid,
     affiliate_id: +lidObj.affiliateId! || 0,
     campaign_id: +lidObj.campaignId! || 0,
+    sub_campaign: lidObj.subCampaign! || '',
+    cid: lidObj.cid! || '',
     offer_id: +lidObj.offerId! || 0,
+    offer_name: lidObj.offerName! || '',
+    offer_type: lidObj.offerType! || '',
+    offer_description: lidObj.offerDescription! || '',
     landing_page: lidObj.landingPageUrl || '',
     landing_page_id: +lidObj.landingPageId! || 0,
     payin: lidObj.payin || 0,
@@ -34,6 +39,7 @@ export const redshiftOffer = (lidObj: ILid): IRedshiftData => (
     origin_offer_id: +lidObj.originOfferId! || 0,
     origin_vertical_id: +lidObj.originVerticalId! || 0,
     verticals: lidObj.verticalId || 0,
+    vertical_name: lidObj.verticalName || '',
     conversion_type: lidObj.conversionType || '',
     platform: lidObj.platform || '',
     payout_percent: lidObj.payoutPercent || 0,
@@ -45,6 +51,7 @@ export const redshiftOffer = (lidObj: ILid): IRedshiftData => (
     click: 1,
     event_type: lidObj.eventType || '',
     fingerprint: lidObj.fingerPrintKey || '',
+    is_unique_visit: lidObj.isUniqueVisit || false,
   }
 );
 
@@ -63,30 +70,28 @@ export const createLidOffer = (lidInfo: ILid): void => {
     };
 
     const ddbClient: DynamoDBClient = new DynamoDBClient(dynamoDbConf);
-    const yearPlusOne: Date = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
-    // eslint-disable-next-line no-param-reassign
-    lidInfo.ttl = yearPlusOne.getTime();
-
     const stats: IRedshiftData = redshiftOffer(lidInfo);
 
-    // @ts-ignore
-    process.send({
-      type: 'clickOffer',
-      value: 1,
-      stats,
-    });
+    if (process.send) {
+      process.send({
+        type: 'clickOffer',
+        value: 1,
+        stats,
+      });
+    }
 
     let lidInfoToSend: { [index: string]: any } = {};
     lidInfoToSend = lidInfo;
+    const yearPlusOne: Date = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
+    lidInfoToSend.ttl = yearPlusOne.getTime();
+    const excludeFields: string[] = [
+      'isCpmOptionEnabled', 'originIsCpmOptionEnabled', 'isUniqueVisit',
+    ];
     for (const key in lidInfoToSend) {
       if (!lidInfoToSend[key]) {
-        if (key === 'isCpmOptionEnabled'
-          || key === 'originIsCpmOptionEnabled'
-        ) {
-          // eslint-disable-next-line no-continue
-          continue;
+        if (!excludeFields.includes(key)) {
+          delete lidInfoToSend[key];
         }
-        delete lidInfoToSend[key];
       }
     }
 

@@ -6,7 +6,7 @@ import { override } from '../../override/override';
 
 export const capsOfferChecking = async (params: IParams): Promise<IBaseResponse> => {
   let paramsClone = { ...params };
-  let pass :boolean = false;
+  let pass: boolean = false;
   try {
     if (paramsClone.offerInfo?.capInfo?.dateRangeSetUp
       && !paramsClone.offerInfo?.capInfo?.dateRangePass

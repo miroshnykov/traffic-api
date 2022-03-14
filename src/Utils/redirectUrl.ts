@@ -1,4 +1,4 @@
-import url from 'url';
+import url from 'node:url';
 import consola from 'consola';
 import * as dotenv from 'dotenv';
 import { sendMessageToQueue } from './sqs';
@@ -25,6 +25,7 @@ export const redirectUrl = async (params: IParams): Promise<string> => {
       campaign_id: params.campaignId || 0,
       lid: params.lid || '',
       ap: 2, // network_id (1-Crystads , 2-Ad-Firm )
+      src: params.affiliateId,
     },
   });
 

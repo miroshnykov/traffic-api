@@ -55,6 +55,8 @@ export const getParams = async (req: Request): Promise<IParams> => {
 
     const browserVersion = String(deviceInfo?.client?.version!);
     const offerHash = req.query.o;
+    const subCampaign: string = String(req.query.subid || '');
+    const cid: string = String(req.query.cid || '');
     const browser: string = String(deviceInfo?.client?.name!);
     const os: string = String(deviceInfo?.os?.name!);
     const platform: string = String(deviceInfo?.os?.platform!);
@@ -73,6 +75,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const affiliateId: number = Number(campaignInfo.affiliateId);
     const affiliateManagerId: number = Number(campaignInfo.affiliateManagerId);
     const offerType: string = offerInfo.type;
+    const offerDescription: string = offerInfo.descriptions;
     const offerName: string = offerInfo.name;
     const { conversionType } = offerInfo;
     const { landingPageId } = offerInfo;
@@ -90,16 +93,19 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const capsResult: ICapsResult = {};
     const exitOfferResult: IExitOfferResult = {};
     const isExitOffer: boolean = false;
+    const isUniqueVisit: boolean = true;
     const fingerPrint: IFingerPrint = {};
 
     return {
       offerId,
       campaignId,
+      subCampaign,
       affiliateId,
       affiliateManagerId,
       offerType,
       deviceType,
       offerName,
+      offerDescription,
       conversionType,
       landingPageId,
       landingPageUrl,
@@ -140,6 +146,8 @@ export const getParams = async (req: Request): Promise<IParams> => {
       exitOfferResult,
       fingerPrint,
       fingerPrintKey,
+      isUniqueVisit,
+      cid,
     };
   } catch (e) {
     influxdb(500, 'get_params_error');

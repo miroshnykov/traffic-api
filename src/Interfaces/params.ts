@@ -9,11 +9,14 @@ import { ILid } from './lid';
 export interface IParams {
   offerId: number
   campaignId: number
+  subCampaign?: string
+  cid?: string
   affiliateId: number
   affiliateManagerId: number
   offerType: string
   deviceType: string
   offerName: string
+  offerDescription: string
   conversionType: string
   landingPageId: number
   landingPageUrl: string
@@ -78,6 +81,7 @@ export interface IParams {
   capsResult?: ICapsResult | any
   IP?: string
   isExitOffer: boolean
+  isUniqueVisit: boolean
   exitOfferInfo?: IOffer
   exitOffersNested?: IOffer[] | any
   exitOfferResult?: IExitOfferResult | any
@@ -106,5 +110,7 @@ export interface IResponse extends IBaseResponse{
 }
 
 export interface IBestOffer extends IBaseResponse{
-  bestOfferId:number
+  bestOfferId: number
 }
+
+export const ILandingPageParams: (string)[] = ['subid', 'cid', 'lid'];

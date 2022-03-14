@@ -1,10 +1,10 @@
-import zlib from 'zlib';
-import fs from 'fs';
+import zlib from 'node:zlib';
+import fs from 'node:fs';
 import JSONStream from 'JSONStream';
 import consola from 'consola';
 
 import * as dotenv from 'dotenv';
-import os from 'os';
+import os from 'node:os';
 import { redis } from '../redis';
 import { influxdb } from '../Utils/metrics';
 import { IOffer } from '../Interfaces/offers';

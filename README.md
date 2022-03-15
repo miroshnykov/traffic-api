@@ -54,6 +54,9 @@
         http://localhost:5000/getRecipeData?debugging=debugging&campaignId=40
         https://traffic.aezai.com/getRecipeData?debugging=debugging&campaignId=40
 
+### gotzha stage url
+    https://traffic.stage.kprnt.com/getRecipeData?debugging=debugging&offerId=38078
+
 ### resend lid just one time
 
     http://localhost:5000/getRecipeData?debugging=debugging&resendLid=***&lid=7e0a853e-595f-43b5-a42b-765cdc09cffa

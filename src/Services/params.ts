@@ -18,6 +18,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const fingerPrintKey = req.fingerprint?.hash;
     const offerEncoded: string = String(req.query.o! || '');
     const encKey: string = process.env.ENCRIPTION_KEY || '';
+    consola.info('ENCRIPTION_KEY:', encKey);
     const decodedString: string = decrypt(offerEncoded, encKey);
     // const decodedObj: IDecodedUrl = JSON.parse(decodedString!)
     // const offerId: number = Number(decodedObj.offerId)

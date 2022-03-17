@@ -36,22 +36,13 @@ export class OffersController extends BaseController {
       // influxdb(200, `offerId_${responseOffer.data.offerId}`)
       // influxdb(200, `campaignId_${responseOffer.data.campaignId}`)
     }
-
-    if (!responseOffer.success && responseOffer?.debug) {
-      const defaultOfferUrl: string = await getDefaultOfferUrl();
-      res.status(400).json({
-        error: `Recipe is inactive or not ready or broken  ${responseOffer?.errors?.toString()}, will redirect to default offer:${defaultOfferUrl}`,
-        data: responseOffer.params,
-        redirect: defaultOfferUrl || '',
-      });
-      return;
-    }
-
     if (!responseOffer?.success) {
-      const defaultOfferUrl: string = await getDefaultOfferUrl();
       influxdb(200, 'offers_default_redirect_by_error');
-      consola.error(`Recipe is inactive or not ready or broken  ${responseOffer?.errors?.toString()}, will redirect to default offer:${defaultOfferUrl}`);
-      res.redirect(defaultOfferUrl);
+      consola.error(`Recipe is inactive or not ready or broken  ${responseOffer?.errors?.toString()}`);
+      res.status(404).json({
+        error: `Recipe is inactive or not ready or broken  ${responseOffer?.errors?.toString()}`,
+        data: responseOffer,
+      });
     }
 
     if (responseOffer?.success && responseOffer?.debug) {

@@ -61,6 +61,8 @@
     https://traffic.stage.aezai.com/getRecipeData?debugging=debugging&offerId=36847
     https://traffic.stage.jatun.systems/getRecipeData?debugging=debugging&offerId=38078
     https://traffic.stage.jatun.systems/pl?o=a5d48fc5b257ef426dbfdfe2318f4b2f:806fcac95629f281bf44e65f9cb77f56&debugging=debugging
+    https://traffic.stage.aezai.com/pl?o=56ba6cb4b6790bd640b4f84fdae92b4c:f021caef5e2c6d8d094763aa0f51829e&debugging=debugging
+    https://traffic.stage.aezai.com/getRecipeData?debugging=debugging&campaignId=1000948
 
 ### resend lid just one time
 

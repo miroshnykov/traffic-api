@@ -39,10 +39,7 @@ export class OffersController extends BaseController {
     if (!responseOffer?.success) {
       influxdb(200, 'offers_default_redirect_by_error');
       consola.error(`Recipe is inactive or not ready or broken  ${responseOffer?.errors?.toString()}`);
-      res.status(404).json({
-        error: `Recipe is inactive or not ready or broken  ${responseOffer?.errors?.toString()}`,
-        data: responseOffer,
-      });
+      res.status(404).json('404 Campaign not found');
     }
 
     if (responseOffer?.success && responseOffer?.debug) {

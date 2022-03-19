@@ -22,6 +22,13 @@ export class OffersController extends BaseController {
     const endTime: bigint = process.hrtime.bigint();
     const diffTime: bigint = endTime - startTime;
     // const timeCurrent: number = new Date().getTime()
+    if (responseOffer?.block) {
+      res.status(403).json({
+        status: 'forbidden',
+        reason: responseOffer?.blockReason,
+      });
+      return;
+    }
     if (responseOffer.params) {
       responseOffer.params.redirectUrl = await redirectUrl(responseOffer.params);
       responseOffer.params.speedTime = convertHrtime(diffTime);

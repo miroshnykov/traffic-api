@@ -6,7 +6,7 @@ import { rangeSpeed } from '../Utils/rangeSpped';
 import { influxdb } from '../Utils/metrics';
 import { IParams, IResponse } from '../Interfaces/params';
 import { RedirectUrls } from '../Utils/defaultRedirectUrls';
-import { getDefaultOfferUrl, OfferDefault } from '../Utils/defaultOffer';
+import { OfferDefault } from '../Utils/defaultOffer';
 import { redirectUrl } from '../Utils/redirectUrl';
 import { convertHrtime } from '../Utils/convertHrtime';
 

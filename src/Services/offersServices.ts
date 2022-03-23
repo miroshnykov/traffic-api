@@ -11,13 +11,23 @@ import { getFp } from '../Models/fpModel';
 import { fingerPrintOverride } from './override/fingerPrintOverride';
 import { exitOfferOverride } from './override/exitOfferOverride';
 import { handleConditions } from './handleConditions';
+import { AffiliateStatus } from '../Interfaces/affiliates';
 
 export const offersServices = async (req: Request): Promise<IResponse> => {
   const debug: boolean = req?.query?.debugging! === 'debugging';
   try {
     influxdb(200, 'offers_all_request');
     const params: IParams = await getParams(req);
-
+    if (params.affiliateStatus === AffiliateStatus.BLACKLISTED) {
+      influxdb(200, 'blocked_affiliate');
+      return {
+        block: true,
+        blockReason: `Blocked by affiliateId:${params.affiliateId}`,
+        success: false,
+        params,
+        debug,
+      };
+    }
     // consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`);
     const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`);
 

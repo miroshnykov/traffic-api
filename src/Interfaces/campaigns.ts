@@ -5,6 +5,7 @@ export interface ICampaign {
   name: string
   offerId: number
   affiliateId: number
+  affiliateStatus: string
   capSetup?: boolean
   capInfo?: ICapInfo
   payout: number

@@ -6,7 +6,7 @@ import { rangeSpeed } from '../Utils/rangeSpped';
 import { influxdb } from '../Utils/metrics';
 import { IParams, IResponse } from '../Interfaces/params';
 import { RedirectUrls } from '../Utils/defaultRedirectUrls';
-import { getDefaultOfferUrl, OfferDefault } from '../Utils/defaultOffer';
+import { OfferDefault } from '../Utils/defaultOffer';
 import { redirectUrl } from '../Utils/redirectUrl';
 import { convertHrtime } from '../Utils/convertHrtime';
 
@@ -22,6 +22,13 @@ export class OffersController extends BaseController {
     const endTime: bigint = process.hrtime.bigint();
     const diffTime: bigint = endTime - startTime;
     // const timeCurrent: number = new Date().getTime()
+    if (responseOffer?.block) {
+      res.status(403).json({
+        status: 'forbidden',
+        reason: responseOffer?.blockReason,
+      });
+      return;
+    }
     if (responseOffer.params) {
       responseOffer.params.redirectUrl = await redirectUrl(responseOffer.params);
       responseOffer.params.speedTime = convertHrtime(diffTime);
@@ -37,7 +44,7 @@ export class OffersController extends BaseController {
       // influxdb(200, `campaignId_${responseOffer.data.campaignId}`)
     }
     if (!responseOffer?.success) {
-      influxdb(200, 'offers_default_redirect_by_error');
+      influxdb(200, 'blocked_by_error');
       consola.error(`Recipe is inactive or not ready or broken  ${responseOffer?.errors?.toString()}`);
       res.status(404).json('404 Campaign not found');
     }

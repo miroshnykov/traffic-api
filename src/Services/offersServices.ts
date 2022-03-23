@@ -19,6 +19,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     influxdb(200, 'offers_all_request');
     const params: IParams = await getParams(req);
     if (params.affiliateStatus === AffiliateStatus.BLACKLISTED) {
+      influxdb(200, 'blocked_affiliate');
       return {
         block: true,
         blockReason: `Blocked by affiliateId:${params.affiliateId}`,

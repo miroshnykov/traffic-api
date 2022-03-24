@@ -34,8 +34,12 @@ const addToBufferOffer = (buffer: any, t: number, msg: string) => {
   // eslint-disable-next-line no-param-reassign
   buffer[t][buffer[t].length] = msg;
 };
+const failedLidsData: IRedshiftData[] = [];
+// coreThread.length = 1;
 
-coreThread.length = 1;
+export const failedLidsObj = (stats: IRedshiftData) => {
+  failedLidsData.push(stats);
+};
 
 function loggerMiddleware(request: express.Request, response: express.Response, next: NextFunction) {
   // consola.info(`${request.method} ${request.path}`);
@@ -68,6 +72,18 @@ if (cluster.isMaster) {
   };
 
   setInterval(aggregatorData, 20000); // 20 sec
+
+  const failedLidsProcess = async () => {
+    if (failedLidsData.length === 0) return;
+    consola.info('failedLidsProcess:', failedLidsData.length);
+    for (let i = 0; i < failedLidsData.length; i++) {
+      sendToAggregator(failedLidsData[i]);
+      consola.info(`resend lid:${failedLidsData[i].lid}`);
+      influxdb(200, 're_send_to_aggregator_data');
+      failedLidsData.splice(i, 1);
+    }
+  };
+  setInterval(failedLidsProcess, 3600000); // 1 hour
 
   for (let i = 0; i < coreThread.length; i++) {
     cluster.fork();

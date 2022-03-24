@@ -6,6 +6,8 @@ import md5 from 'md5';
 import os from 'node:os';
 import { influxdb } from './metrics';
 import { IRedshiftData } from '../Interfaces/redshiftData';
+// eslint-disable-next-line import/no-cycle
+import { failedLidsObj } from '../server';
 
 const computerName = os.hostname();
 
@@ -35,6 +37,7 @@ export const sendToAggregator = (stats: IRedshiftData): void => {
     aggrRequest(params).then().catch((e) => {
       influxdb(500, 'send_to_aggregator_error');
       consola.error(`computerName:${computerName}send to aggregator data got error:`, e);
+      failedLidsObj(statsClone);
     });
   } catch (e) {
     influxdb(500, 'send_to_aggregator_error');

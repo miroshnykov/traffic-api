@@ -73,6 +73,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const lid: string = v4();
 
     const affiliateId: number = Number(campaignInfo.affiliateId);
+    const affiliateStatus: string = String(campaignInfo.affiliateStatus);
     const affiliateManagerId: number = Number(campaignInfo.affiliateManagerId);
     const offerType: string = offerInfo.type;
     const offerDescription: string = offerInfo.descriptions;
@@ -101,6 +102,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
       campaignId,
       subCampaign,
       affiliateId,
+      affiliateStatus,
       affiliateManagerId,
       offerType,
       deviceType,

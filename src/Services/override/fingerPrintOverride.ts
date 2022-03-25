@@ -29,18 +29,20 @@ export const fingerPrintOverride = async (
 
       const offer: any = await getOffer(fpDataObj.offerId);
       const offerInfo: IOffer = JSON.parse(offer);
-
       if (offerInfo?.capInfo?.capsClicksOverLimit
         || offerInfo?.capInfo?.capsSalesOverLimit
       ) {
         consola.info(` -----> Check caps for offerId:${fpDataObj.offerId} capsClicksOverLimit:${offerInfo?.capInfo?.capsClicksOverLimit},  capsSalesOverLimit:${offerInfo?.capInfo?.capsSalesOverLimit}`);
         influxdb(200, 'offer_aggregated_fingerprint_override_caps_over_limit');
+      } else if (offerInfo === null) {
+        consola.info(` -----> offerId ${fpDataObj.offerId} does not exists in recipe `);
+        influxdb(200, 'offer_aggregated_fingerprint_override_recipe_empty');
       } else {
         consola.info(' -----> Offer has type aggregated so lets do override use finger print data from cache');
         const fpOverrideRes = await fpOverride(paramsClone, fpDataObj);
         paramsClone = { ...paramsClone, ...fpOverrideRes };
         influxdb(200, 'offer_aggregated_fingerprint_override');
-        expireFp(fpKey, 86400);
+        // expireFp(fpKey, 86400);
       }
     }
     paramsClone.isUniqueVisit = false;

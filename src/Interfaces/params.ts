@@ -12,6 +12,7 @@ export interface IParams {
   subCampaign?: string
   cid?: string
   affiliateId: number
+  affiliateStatus: string
   affiliateManagerId: number
   offerType: string
   deviceType: string
@@ -107,6 +108,8 @@ export interface IBaseResponse {
 export interface IResponse extends IBaseResponse{
   errors?: any;
   debug?: boolean;
+  block?: boolean;
+  blockReason?: string;
 }
 
 export interface IBestOffer extends IBaseResponse{

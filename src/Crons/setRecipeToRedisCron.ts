@@ -42,6 +42,12 @@ export const setOffersToRedis = async () => {
 
 export const setCampaignsToRedis = async () => {
   try {
+    const campaignRedisKeys = await redis.keys('campaign:*');
+    consola.info(`campaignKeysForDeleteCount:${campaignRedisKeys.length} computerName:${computerName}`);
+    await Promise.all(campaignRedisKeys.map(async (campaignKey) => {
+      await redis.del(campaignKey);
+    }));
+
     const gunzip = zlib.createGunzip();
     const file = process.env.CAMPAIGNS_RECIPE_PATH || '';
     const stream = fs.createReadStream(file);

@@ -36,7 +36,7 @@ export const sendToAggregator = (stats: IRedshiftData): void => {
 
     aggrRequest(params).then().catch((e) => {
       influxdb(500, 'send_to_aggregator_error');
-      consola.error(`computerName:${computerName}send to aggregator data got error:`, e);
+      consola.error(`computerName:${computerName} send to aggregator data got error:`, e);
       failedLidsObj(statsClone);
     });
   } catch (e) {

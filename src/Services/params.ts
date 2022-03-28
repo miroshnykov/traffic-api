@@ -78,18 +78,13 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const offerType: string = offerInfo.type;
     const offerDescription: string = offerInfo.descriptions;
     const offerName: string = offerInfo.name;
-    const { conversionType } = offerInfo;
-    const { landingPageId } = offerInfo;
-    const { landingPageUrl } = offerInfo;
-    const { verticalId } = offerInfo;
-    const { verticalName } = offerInfo;
-    const { advertiserId } = offerInfo;
-    const { advertiserName } = offerInfo;
-    const { advertiserManagerId } = offerInfo;
+    const {
+      conversionType, landingPageId, landingPageUrl, verticalId, verticalName,
+      advertiserId, advertiserName, advertiserManagerId, isCpmOptionEnabled,
+    } = offerInfo;
     const payIn: number = Number(offerInfo.payin);
     const payoutPercent: number = Number(offerInfo.payoutPercent);
     const payOut: number = Number(campaignInfo.payout ? campaignInfo.payout : offerInfo.payout);
-    const { isCpmOptionEnabled } = offerInfo;
     const redirectUrl: string = '';
     const capsResult: ICapsResult = {};
     const exitOfferResult: IExitOfferResult = {};

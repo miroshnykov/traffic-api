@@ -15,7 +15,7 @@ export const fingerPrintOverride = async (
 ): Promise<IBaseResponse> => {
   const debugFp: boolean = req?.query?.fp! === 'disabled';
   let pass: boolean = false;
-  let paramsClone = { ...params };
+  const paramsClone = { ...params };
   if (debugFp) {
     return {
       success: pass,
@@ -24,27 +24,28 @@ export const fingerPrintOverride = async (
   const fpKey = `fp:${req.fingerprint?.hash!}-${paramsClone.campaignId}`;
   if (fpData) {
     consola.info(` ***** GET FINGER_PRINT FROM CACHE ${fpKey} from cache, data  `, fpData);
-    if (paramsClone.offerType === IOfferType.AGGREGATED) {
-      const fpDataObj: IFingerPrintData = JSON.parse(fpData);
-
-      const offer: any = await getOffer(fpDataObj.offerId);
-      const offerInfo: IOffer = JSON.parse(offer);
-      if (offerInfo?.capInfo?.capsClicksOverLimit
-        || offerInfo?.capInfo?.capsSalesOverLimit
-      ) {
-        consola.info(` -----> Check caps for offerId:${fpDataObj.offerId} capsClicksOverLimit:${offerInfo?.capInfo?.capsClicksOverLimit},  capsSalesOverLimit:${offerInfo?.capInfo?.capsSalesOverLimit}`);
-        influxdb(200, 'offer_aggregated_fingerprint_override_caps_over_limit');
-      } else if (offerInfo === null) {
-        consola.info(` -----> offerId ${fpDataObj.offerId} does not exists in recipe `);
-        influxdb(200, 'offer_aggregated_fingerprint_override_recipe_empty');
-      } else {
-        consola.info(' -----> Offer has type aggregated so lets do override use finger print data from cache');
-        const fpOverrideRes = await fpOverride(paramsClone, fpDataObj);
-        paramsClone = { ...paramsClone, ...fpOverrideRes };
-        influxdb(200, 'offer_aggregated_fingerprint_override');
-        // expireFp(fpKey, 86400);
-      }
-    }
+    // disabled cache because  of PH-885
+    // if (paramsClone.offerType === IOfferType.AGGREGATED) {
+    //   const fpDataObj: IFingerPrintData = JSON.parse(fpData);
+    //
+    //   const offer: any = await getOffer(fpDataObj.offerId);
+    //   const offerInfo: IOffer = JSON.parse(offer);
+    //   if (offerInfo?.capInfo?.capsClicksOverLimit
+    //     || offerInfo?.capInfo?.capsSalesOverLimit
+    //   ) {
+    //     consola.info(` -----> Check caps for offerId:${fpDataObj.offerId} capsClicksOverLimit:${offerInfo?.capInfo?.capsClicksOverLimit},  capsSalesOverLimit:${offerInfo?.capInfo?.capsSalesOverLimit}`);
+    //     influxdb(200, 'offer_aggregated_fingerprint_override_caps_over_limit');
+    //   } else if (offerInfo === null) {
+    //     consola.info(` -----> offerId ${fpDataObj.offerId} does not exists in recipe `);
+    //     influxdb(200, 'offer_aggregated_fingerprint_override_recipe_empty');
+    //   } else {
+    //     consola.info(' -----> Offer has type aggregated so lets do override use finger print data from cache');
+    //     const fpOverrideRes = await fpOverride(paramsClone, fpDataObj);
+    //     paramsClone = { ...paramsClone, ...fpOverrideRes };
+    //     influxdb(200, 'offer_aggregated_fingerprint_override');
+    //     // expireFp(fpKey, 86400);
+    //   }
+    // }
     paramsClone.isUniqueVisit = false;
     pass = true;
   } else {

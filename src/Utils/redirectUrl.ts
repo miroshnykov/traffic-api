@@ -19,6 +19,10 @@ export const redirectUrl = async (params: IParams): Promise<string> => {
     influxdb(500, `default_offer_url_for_offer_id_${params.offerId}`);
     lp = await getDefaultOfferUrl() || RedirectUrls.DEFAULT;
   }
+  if (!params.affiliateId) {
+    consola.info(`affiliateId is empty  ${JSON.stringify(params)}`);
+    influxdb(200, `affiliate_id_empty_lid_${params.lid}`);
+  }
   let query = url.format({
     query: {
       offer_id: params.offerId || 0,

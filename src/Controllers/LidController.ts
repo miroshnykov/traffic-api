@@ -23,6 +23,7 @@ export class LidController extends BaseController {
     const { timestamp } = req.body;
     let response: ILidResponse;
     try {
+      influxdb(200, 'lid_add_redshift_all_request');
       const secret = process.env.GATEWAY_API_SECRET;
       const checkHash = md5(`${timestamp}|${secret}`);
 
@@ -68,7 +69,7 @@ export class LidController extends BaseController {
           message: 'Lid does not created on aggragator site for some reason',
           errors: responseAggr.errors,
         };
-        influxdb(200, 'lid_add_redshift_success');
+        influxdb(200, 'lid_add_redshift_not_success');
         res.status(200).json(response);
         return;
 
@@ -85,6 +86,7 @@ export class LidController extends BaseController {
         lid,
         errors: 'Lid does not exists in dynamodb',
       };
+      influxdb(200, 'lid_add_redshift_does_not_exists_dynamo_db');
       res.status(200).json(response);
     } catch (e) {
       influxdb(500, 'lid_add_redshift_error');

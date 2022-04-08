@@ -48,11 +48,11 @@
     offer
         http://localhost:5000/getRecipeData?debugging=debugging&offerId=36349
         https://mghkpg.com/getRecipeData?debugging=debugging&offerId=35784
-        https://traffic.aezai.com/getRecipeData?debugging=debugging&offerId=36520
+        https://traffic.aezai.com/getRecipeData?debugging=debugging&offerId=38145
 
     campaign
         http://localhost:5000/getRecipeData?debugging=debugging&campaignId=40
-        https://traffic.aezai.com/getRecipeData?debugging=debugging&campaignId=40
+        https://traffic.aezai.com/getRecipeData?debugging=debugging&campaignId=1001378
 
 ### gotzha stage url
     https://traffic.stage.kprnt.com/getRecipeData?debugging=debugging&offerId=38078

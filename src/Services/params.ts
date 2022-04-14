@@ -12,6 +12,7 @@ import { IExitOfferResult, IOffer } from '../Interfaces/offers';
 import { ICampaign } from '../Interfaces/campaigns';
 import { IGeo } from '../Interfaces/geo';
 import { ICapsResult } from '../Interfaces/caps';
+import { CampaignDefault } from '../Utils/defaultCampaign';
 
 export const getParams = async (req: Request): Promise<IParams> => {
   try {
@@ -28,15 +29,22 @@ export const getParams = async (req: Request): Promise<IParams> => {
     const offerId: number = Number(inputData[0]);
     const campaignId: number = Number(inputData[1]);
 
-    const offer = await getOffer(offerId);
+    let offer = await getOffer(offerId);
     if (!offer) {
       influxdb(500, `offer_${offerId}_recipe_error`);
-      throw Error(`no offerId ${offerId} in recipe`);
+      // throw Error(`no offerId ${offerId} in recipe`);
     }
-    const campaign = await getCampaign(campaignId);
+    let campaign = await getCampaign(campaignId);
+    consola.info('campaign:', campaign);
     if (!campaign) {
       influxdb(500, `campaign_${campaignId}_recipe_error`);
-      throw Error(`no campaignId-${campaignId} in recipe`);
+      campaign = await getCampaign(CampaignDefault.CAMPAIGN_ID);
+      consola.info('campaign default:', campaign);
+      const campaignDefault: ICampaign = JSON.parse(campaign!);
+      offer = await getOffer(campaignDefault.offerId);
+      consola.info(`use campaign default ${CampaignDefault.CAMPAIGN_ID}`);
+      influxdb(200, 'campaign_default');
+      // throw Error(`no campaignId-${campaignId} in recipe`);
     }
     const offerInfo: IOffer = JSON.parse(offer!);
     const campaignInfo: ICampaign = JSON.parse(campaign!);

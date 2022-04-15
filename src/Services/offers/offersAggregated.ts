@@ -38,18 +38,21 @@ export const identifyBestOffer = (
 
   paramsClone.offersAggregatedIdsToRedirect = offersAggregatedIdsToRedirect;
   if (offersAggregatedIdsToRedirect.length !== 0) {
-    [bestOfferResp] = offersAggregatedIdsToRedirect;
+    const randomId = Math.floor(Math.random() * offersAggregatedIdsToRedirect.length);
+    // PH-886
+    bestOfferResp = offersAggregatedIdsToRedirect[randomId];
+    // [bestOfferResp] = offersAggregatedIdsToRedirect;
 
     // PH-38
-    const checkMargin = offersAggregatedIds.filter((i: IAggregatedOfferList) => i.aggregatedOfferId === bestOfferResp)[0];
-    const checkDuplicateMargin = offersAggregatedIds.filter((i: IAggregatedOfferList) => i.margin === checkMargin.margin
-      && offersAggregatedIdsToRedirect.includes(i.aggregatedOfferId));
-    paramsClone.offersAggregatedIdsMargin = checkDuplicateMargin;
-    if (checkDuplicateMargin.length > 1) {
-      const duplicateMarginIds = checkDuplicateMargin.map((i: IAggregatedOfferList) => i.aggregatedOfferId);
-      const randomId = Math.floor(Math.random() * duplicateMarginIds.length);
-      bestOfferResp = duplicateMarginIds[randomId];
-    }
+    // const checkMargin = offersAggregatedIds.filter((i: IAggregatedOfferList) => i.aggregatedOfferId === bestOfferResp)[0];
+    // const checkDuplicateMargin = offersAggregatedIds.filter((i: IAggregatedOfferList) => i.margin === checkMargin.margin
+    //   && offersAggregatedIdsToRedirect.includes(i.aggregatedOfferId));
+    // paramsClone.offersAggregatedIdsMargin = checkDuplicateMargin;
+    // if (checkDuplicateMargin.length > 1) {
+    //   const duplicateMarginIds = checkDuplicateMargin.map((i: IAggregatedOfferList) => i.aggregatedOfferId);
+    //   const randomId = Math.floor(Math.random() * duplicateMarginIds.length);
+    //   bestOfferResp = duplicateMarginIds[randomId];
+    // }
   }
   return {
     success: true,

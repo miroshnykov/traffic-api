@@ -1,4 +1,4 @@
 export enum CampaignDefault {
-  CAMPAIGN_ID = 1000063,
-  // CAMPAIGN_ID = 1000063 // dev
+  CAMPAIGN_ID = 1005032,
+  // CAMPAIGN_ID = 1005032 // dev
 }

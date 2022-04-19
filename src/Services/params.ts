@@ -35,11 +35,10 @@ export const getParams = async (req: Request): Promise<IParams> => {
       // throw Error(`no offerId ${offerId} in recipe`);
     }
     let campaign = await getCampaign(campaignId);
-    consola.info('campaign:', campaign);
     if (!campaign) {
       influxdb(500, `campaign_${campaignId}_recipe_error`);
       campaign = await getCampaign(CampaignDefault.CAMPAIGN_ID);
-      consola.info('campaign default:', campaign);
+      // consola.info('campaign default:', campaign);
       const campaignDefault: ICampaign = JSON.parse(campaign!);
       offer = await getOffer(campaignDefault.offerId);
       consola.info(`use campaign default ${CampaignDefault.CAMPAIGN_ID}`);

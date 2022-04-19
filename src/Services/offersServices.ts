@@ -47,11 +47,13 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
 
     ILandingPageParams.forEach((item) => {
       if (item === 'lid') {
-        finalResponse.landingPageUrl = finalResponse.landingPageUrl.replace(`{${item}}`, finalResponse.lid);
+        finalResponse.landingPageUrl = finalResponse.landingPageUrl
+          && finalResponse.landingPageUrl.replace(`{${item}}`, finalResponse.lid);
       } else {
         const tmp = req?.query[item];
         if (tmp) {
-          finalResponse.landingPageUrl = finalResponse.landingPageUrl.replace(`{${item}}`, String(tmp));
+          finalResponse.landingPageUrl = finalResponse.landingPageUrl
+            && finalResponse.landingPageUrl.replace(`{${item}}`, String(tmp));
         }
       }
     });

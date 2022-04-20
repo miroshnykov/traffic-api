@@ -8,8 +8,8 @@ import { getOffer } from '../Models/offersModel';
 import { influxdb } from '../Utils/metrics';
 import { getCampaign } from '../Models/campaignsModel';
 import { resolveIP } from '../Utils/geo';
-import { IExitOfferResult, IOffer } from '../Interfaces/offers';
-import { ICampaign } from '../Interfaces/campaigns';
+import { IExitOfferResult, IOffer, IOfferStatus } from '../Interfaces/offers';
+import { ICampaign, ICampaignStatus } from '../Interfaces/campaigns';
 import { IGeo } from '../Interfaces/geo';
 import { ICapsResult } from '../Interfaces/caps';
 import { CampaignDefault } from '../Utils/defaultCampaign';
@@ -32,21 +32,27 @@ export const getParams = async (req: Request): Promise<IParams> => {
     let offer = await getOffer(offerId);
     if (!offer) {
       influxdb(500, `offer_${offerId}_recipe_error`);
-      // throw Error(`no offerId ${offerId} in recipe`);
+      throw Error(`no offerId ${offerId} in recipe`);
     }
     let campaign = await getCampaign(campaignId);
     if (!campaign) {
       influxdb(500, `campaign_${campaignId}_recipe_error`);
+      throw Error(`no campaignId-${campaignId} in recipe`);
+    }
+
+    const campaignInfo: ICampaign = JSON.parse(campaign!);
+
+    let offerInfo: IOffer = JSON.parse(offer!);
+
+    if (offerInfo.status === IOfferStatus.INACTIVE) {
       campaign = await getCampaign(CampaignDefault.CAMPAIGN_ID);
       // consola.info('campaign default:', campaign);
       const campaignDefault: ICampaign = JSON.parse(campaign!);
       offer = await getOffer(campaignDefault.offerId);
+      offerInfo = JSON.parse(offer!);
       consola.info(`use campaign default ${CampaignDefault.CAMPAIGN_ID}`);
       influxdb(200, 'campaign_default');
-      // throw Error(`no campaignId-${campaignId} in recipe`);
     }
-    const offerInfo: IOffer = JSON.parse(offer!);
-    const campaignInfo: ICampaign = JSON.parse(campaign!);
 
     const startTime: number = new Date().getTime();
     const speedTime: number = 0;
@@ -81,6 +87,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
 
     const affiliateId: number = Number(campaignInfo.affiliateId);
     const affiliateStatus: string = String(campaignInfo.affiliateStatus);
+    const campaignStatus: string = String(campaignInfo.campaignStatus);
     const affiliateManagerId: number = Number(campaignInfo.affiliateManagerId);
     const offerType: string = offerInfo.type;
     const offerDescription: string = offerInfo.descriptions;
@@ -105,6 +112,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
       subCampaign,
       affiliateId,
       affiliateStatus,
+      campaignStatus,
       affiliateManagerId,
       offerType,
       deviceType,

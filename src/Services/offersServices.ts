@@ -12,6 +12,7 @@ import { fingerPrintOverride } from './override/fingerPrintOverride';
 import { exitOfferOverride } from './override/exitOfferOverride';
 import { handleConditions } from './handleConditions';
 import { AffiliateStatus } from '../Interfaces/affiliates';
+import { ICampaignStatus } from '../Interfaces/campaigns';
 
 export const offersServices = async (req: Request): Promise<IResponse> => {
   const debug: boolean = req?.query?.debugging! === 'debugging';
@@ -24,6 +25,21 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
       return {
         block: true,
         blockReason: `Blocked by affiliateId:${params.affiliateId}`,
+        success: false,
+        params,
+        debug,
+      };
+    }
+
+    if (params.campaignStatus === ICampaignStatus.INACTIVE
+      || params.campaignStatus === ICampaignStatus.PENDING
+      || params.campaignStatus === ICampaignStatus.BLOCKED
+    ) {
+      influxdb(200, `blocked_${params.campaignStatus}_campaign`);
+      consola.error(`Blocked by campaign:${params.campaignId} with status ${params.campaignStatus}`);
+      return {
+        block: true,
+        blockReason: `Blocked by campaign:${params.campaignId} with status ${params.campaignStatus}`,
         success: false,
         params,
         debug,

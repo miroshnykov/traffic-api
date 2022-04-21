@@ -48,11 +48,11 @@
     offer
         http://localhost:5000/getRecipeData?debugging=debugging&offerId=36349
         https://mghkpg.com/getRecipeData?debugging=debugging&offerId=35784
-        https://traffic.aezai.com/getRecipeData?debugging=debugging&offerId=36520
+        https://traffic.aezai.com/getRecipeData?debugging=debugging&offerId=38145
 
     campaign
         http://localhost:5000/getRecipeData?debugging=debugging&campaignId=40
-        https://traffic.aezai.com/getRecipeData?debugging=debugging&campaignId=40
+        https://traffic.aezai.com/getRecipeData?debugging=debugging&campaignId=1001378
 
 ### gotzha stage url
     https://traffic.stage.kprnt.com/getRecipeData?debugging=debugging&offerId=38078
@@ -71,7 +71,7 @@
 
 ### add record to redshift use lid example
 #### example    
-```shell script
+```javascript
 const timestamp = Date.now();
 const secret = '*****';
 const hash = md5(`${timestamp}|${secret}`);
@@ -100,9 +100,9 @@ interface ILidResponse {
 
 ### env example
 ```dotenv
-HOST = localhost
-ENV = development
-PORT = 5000
+HOST=localhost
+ENV=development
+PORT=5000
 SOCKET_HOST=http://localhost:3001
 
 AWS_ACCESS_KEY_ID=
@@ -139,6 +139,16 @@ GATEWAY_API_SECRET=***
 
     import * as fs from 'node:fs';
     https://nodejs.org/api/esm.html#node-imports
+
+### check hash for redirectUrl
+#### example
+```javascript
+// example url https://register.onlinetrivia.net/#&fl=qzsw&offer_id=38120&campaign_id=1003256&lid=1003256&lid=08dd23ad-12ac-492b-80a5-3c470103dbde&ap=2&src=142709&hash=ef7fc86b181a5a54f4be39f05e51d510
+const createHashFromUrl: string = redirectUrlHash('https://register.jumpermedia.net/?fl=msw&offer_id=37520&campaign_id=1003256&lid=428569c1-dce6-4300-95ea-866a6c6fbe6f&ap=2&src=142709') || '';
+if (createHashFromUrl === '733701217a9ccc87cf43b1427be70758') {
+  consola.info('hash is correct');
+}
+```
 
 # diagram
 

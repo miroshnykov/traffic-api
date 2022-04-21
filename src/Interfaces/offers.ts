@@ -66,3 +66,12 @@ export enum IOfferType {
   REGULAR = 'regular',
   AGGREGATED = 'aggregated',
 }
+
+export enum IOfferStatus {
+  INACTIVE = 'inactive',
+  DRAFT = 'draft',
+  PUBLIC = 'public',
+  PRIVATE = 'private',
+  APPLY_TO_RUN = 'apply_to_run',
+  PENDING = 'pending',
+}

@@ -13,6 +13,7 @@ export interface IParams {
   cid?: string
   affiliateId: number
   affiliateStatus: string
+  campaignStatus: string
   affiliateManagerId: number
   offerType: string
   deviceType: string

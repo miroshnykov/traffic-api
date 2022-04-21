@@ -1,16 +1,33 @@
 import url from 'node:url';
 import consola from 'consola';
 import * as dotenv from 'dotenv';
+import md5 from 'md5';
 import { sendMessageToQueue } from './sqs';
 import { influxdb } from './metrics';
 import { IParams } from '../Interfaces/params';
 import { ISqsMessage } from '../Interfaces/sqsMessage';
 import { RedirectUrls } from './defaultRedirectUrls';
 import { getDefaultOfferUrl } from './defaultOffer';
-import { encrypt } from './encrypt';
+// import { encrypt } from './encrypt';
 // import { decrypt } from './decrypt';
 
 dotenv.config();
+
+// const redirectUrlHashGenerator = (lp: string): string | undefined => {
+//   const timestamp = Date.now();
+//   const obj = {
+//     lp,
+//     timestamp,
+//   };
+//   const encodesUrl: string = JSON.stringify(obj);
+//   const encKey: string = process.env.ENCRIPTION_REDIRECT_URL_KEY || '';
+//   return encrypt(encodesUrl, encKey);
+// };
+
+const redirectUrlHash = (lp: string): string => {
+  const secret = process.env.URL_HASH_SECRET;
+  return md5(`${lp}|${secret}`);
+};
 
 export const redirectUrl = async (params: IParams): Promise<string> => {
   let lp = params.landingPageUrl;
@@ -19,6 +36,10 @@ export const redirectUrl = async (params: IParams): Promise<string> => {
     influxdb(500, `default_offer_url_for_offer_id_${params.offerId}`);
     lp = await getDefaultOfferUrl() || RedirectUrls.DEFAULT;
   }
+  // if (!params.affiliateId) {
+  //   consola.info(`affiliateId is empty  ${JSON.stringify(params)}`);
+  //   influxdb(200, `affiliate_id_empty_lid_${params.lid}`);
+  // }
   let query = url.format({
     query: {
       offer_id: params.offerId || 0,
@@ -37,8 +58,11 @@ export const redirectUrl = async (params: IParams): Promise<string> => {
   if (urlToRedirect.substr(0, prefix.length) !== prefix) {
     urlToRedirect = `${prefix}://${urlToRedirect}`;
   }
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  const hash: string = redirectUrlHashGenerator(urlToRedirect) || '';
+  // const hash: string = redirectUrlHashGenerator(urlToRedirect) || '';
+  const hash: string = redirectUrlHash(urlToRedirect) || '';
+  // const secret = process.env.URL_HASH_SECRET;
+  // const checkHash = md5(`${urlToRedirect}|${secret}`);
+
   urlToRedirect = `${urlToRedirect}&hash=${hash}`;
   // const decKey: string = process.env.ENCRIPTION_REDIRECT_URL_KEY || ''
   // const decodedString: string = decrypt(hash, decKey)
@@ -52,17 +76,6 @@ export const redirectUrl = async (params: IParams): Promise<string> => {
   }
 
   return urlToRedirect;
-};
-
-const redirectUrlHashGenerator = (lp: string): string | undefined => {
-  const timestamp = Date.now();
-  const obj = {
-    lp,
-    timestamp,
-  };
-  const encodesUrl: string = JSON.stringify(obj);
-  const encKey: string = process.env.ENCRIPTION_REDIRECT_URL_KEY || '';
-  return encrypt(encodesUrl, encKey);
 };
 
 const sqsConversionTypeCmpOrHybrid = async (params: IParams): Promise<void> => {

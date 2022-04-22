@@ -9,7 +9,7 @@ import { influxdb } from '../Utils/metrics';
 import { getCampaign } from '../Models/campaignsModel';
 import { resolveIP } from '../Utils/geo';
 import { IExitOfferResult, IOffer, IOfferStatus } from '../Interfaces/offers';
-import { ICampaign, ICampaignStatus } from '../Interfaces/campaigns';
+import { ICampaign } from '../Interfaces/campaigns';
 import { IGeo } from '../Interfaces/geo';
 import { ICapsResult } from '../Interfaces/caps';
 import { CampaignDefault } from '../Utils/defaultCampaign';
@@ -45,7 +45,11 @@ export const getParams = async (req: Request): Promise<IParams> => {
     let offerInfo: IOffer = JSON.parse(offer!);
 
     if (offerInfo.status === IOfferStatus.INACTIVE) {
-      campaign = await getCampaign(CampaignDefault.CAMPAIGN_ID);
+      const defaultCampaignId = process.env.NODE_ENV === 'production'
+        ? CampaignDefault.CAMPAIGN_ID
+        : CampaignDefault.STAGE_CAMPAIGN_ID;
+
+      campaign = await getCampaign(defaultCampaignId);
       // consola.info('campaign default:', campaign);
       const campaignDefault: ICampaign = JSON.parse(campaign!);
       offer = await getOffer(campaignDefault.offerId);

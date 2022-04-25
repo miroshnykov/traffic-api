@@ -9,9 +9,11 @@ import express, {
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as bodyParser from 'body-parser';
 import Fingerprint from 'express-fingerprint';
+// eslint-disable-next-line import/no-cycle
 import routes from './Routes/index';
 import 'dotenv/config';
 import { getFileFromBucket } from './Crons/getReceipS3Cron';
+// eslint-disable-next-line import/no-cycle
 import { sendToAggregator } from './Utils/aggregator';
 import { influxdb } from './Utils/metrics';
 import { IRedshiftData } from './Interfaces/redshiftData';

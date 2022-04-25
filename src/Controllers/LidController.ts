@@ -6,6 +6,7 @@ import { getFp, setFp } from '../Models/fpModel';
 import { getLeadData, redshiftOffer } from '../Utils/dynamoDb';
 import { IRedshiftData } from '../Interfaces/redshiftData';
 import { influxdb } from '../Utils/metrics';
+// eslint-disable-next-line import/no-cycle
 import { sendBonusLidToAggregator } from '../Utils/aggregator';
 
 interface ILidResponse {

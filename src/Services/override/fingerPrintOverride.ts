@@ -2,11 +2,11 @@ import { Request } from 'express';
 import consola from 'consola';
 import { IBaseResponse, IParams } from '../../Interfaces/params';
 import { IFingerPrintData } from '../../Interfaces/fp';
-import { fpOverride } from '../offers/fpOverride';
-import { influxdb } from '../../Utils/metrics';
-import { expireFp, setFp } from '../../Models/fpModel';
-import { IOffer, IOfferType } from '../../Interfaces/offers';
-import { getOffer } from '../../Models/offersModel';
+// import { fpOverride } from '../offers/fpOverride';
+// import { influxdb } from '../../Utils/metrics';
+import { setFp } from '../../Models/fpModel';
+// import { IOffer, IOfferType } from '../../Interfaces/offers';
+// import { getOffer } from '../../Models/offersModel';
 
 export const fingerPrintOverride = async (
   params: IParams,

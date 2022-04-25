@@ -1,6 +1,7 @@
 import {
   Router, Request, Response, NextFunction,
 } from 'express';
+// eslint-disable-next-line import/no-cycle
 import { lidController } from '../Controllers';
 
 const recipeRouter = Router();

@@ -22,6 +22,15 @@ export class OffersController extends BaseController {
     const endTime: bigint = process.hrtime.bigint();
     const diffTime: bigint = endTime - startTime;
     // const timeCurrent: number = new Date().getTime()
+
+    if (responseOffer?.block && responseOffer?.debug) {
+      res.status(404).json({
+        status: '404 Campaign not found',
+        reason: responseOffer?.blockReason,
+      });
+      return;
+    }
+
     if (responseOffer?.block) {
       res.status(404).json('404 Campaign not found');
       // res.status(403).json({
@@ -44,6 +53,15 @@ export class OffersController extends BaseController {
       // influxdb(200, `offerId_${responseOffer.data.offerId}`)
       // influxdb(200, `campaignId_${responseOffer.data.campaignId}`)
     }
+    if (!responseOffer?.success && responseOffer?.debug) {
+      influxdb(200, 'blocked_by_error');
+      res.status(404).json({
+        status: '404 Campaign not found',
+        reason: responseOffer,
+      });
+      return;
+    }
+
     if (!responseOffer?.success) {
       influxdb(200, 'blocked_by_error');
       consola.error(`Recipe is inactive or not ready or broken  ${responseOffer?.errors?.toString()}`);

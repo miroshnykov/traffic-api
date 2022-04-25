@@ -84,7 +84,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     influxdb(500, 'offer_ad_error');
     return {
       success: false,
-      errors: e,
+      errors: e.toString(),
       debug,
     };
   }

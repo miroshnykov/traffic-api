@@ -32,12 +32,12 @@ export const getParams = async (req: Request): Promise<IParams> => {
     let offer = await getOffer(offerId);
     if (!offer) {
       influxdb(500, `offer_${offerId}_recipe_error`);
-      throw Error(`no offerId ${offerId} in recipe`);
+      throw Error(`no offerId ${offerId} in recipe campaignId-${campaignId}`);
     }
     let campaign = await getCampaign(campaignId);
     if (!campaign) {
       influxdb(500, `campaign_${campaignId}_recipe_error`);
-      throw Error(`no campaignId-${campaignId} in recipe`);
+      throw Error(`no campaignId-${campaignId} in recipe offerId-${offerId}`);
     }
 
     const campaignInfo: ICampaign = JSON.parse(campaign!);

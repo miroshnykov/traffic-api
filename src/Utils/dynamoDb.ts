@@ -50,6 +50,7 @@ export const redshiftOffer = (lidObj: ILid): IRedshiftData => (
     date_added: new Date().getTime(),
     click: 1,
     event_type: lidObj.eventType || '',
+    event: lidObj.event || '',
     fingerprint: lidObj.fingerPrintKey || '',
     is_unique_visit: lidObj.isUniqueVisit || false,
   }

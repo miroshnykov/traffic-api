@@ -59,6 +59,7 @@ export interface ILid {
   fingerPrintKey: string | null
   isUniqueVisit: boolean | null
   eventType: string | null
+  event: string | null
   ttl?: number | null
   _messageType: string | null
 }

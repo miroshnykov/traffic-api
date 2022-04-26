@@ -45,6 +45,7 @@ export class RecipeController extends BaseController {
         if (respLid) {
           resendLid = respLid;
           await setFp(lid, lid);
+          respLid.event = 'traffic-manually';
           const stats: IRedshiftData = redshiftOffer(respLid);
 
           if (process.send) {

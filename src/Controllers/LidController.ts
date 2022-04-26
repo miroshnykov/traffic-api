@@ -51,7 +51,7 @@ export class LidController extends BaseController {
       if (respLid) {
         await setFp(lid, lid);
         const stats: IRedshiftData = redshiftOffer(respLid);
-
+        stats.event = 'traffic-bonus';
         const responseAggr = await sendBonusLidToAggregator(stats);
 
         if (responseAggr.success) {

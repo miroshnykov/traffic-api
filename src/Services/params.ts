@@ -26,8 +26,8 @@ export const getParams = async (req: Request): Promise<IParams> => {
 
     const inputData = decodedString.split('|');
 
-    const offerId: number = Number(inputData[0]);
-    const campaignId: number = Number(inputData[1]);
+    let offerId: number = Number(inputData[0]);
+    let campaignId: number = Number(inputData[1]);
 
     let offer = await getOffer(offerId);
     if (!offer) {
@@ -40,21 +40,20 @@ export const getParams = async (req: Request): Promise<IParams> => {
       throw Error(`no campaignId-${campaignId} in recipe offerId-${offerId}`);
     }
 
-    const campaignInfo: ICampaign = JSON.parse(campaign!);
+    let campaignInfo: ICampaign = JSON.parse(campaign!);
 
     let offerInfo: IOffer = JSON.parse(offer!);
 
     if (offerInfo.status === IOfferStatus.INACTIVE) {
-      const defaultCampaignId = process.env.NODE_ENV === 'production'
+      campaignId = process.env.NODE_ENV === 'production'
         ? CampaignDefault.CAMPAIGN_ID
         : CampaignDefault.STAGE_CAMPAIGN_ID;
-
-      campaign = await getCampaign(defaultCampaignId);
-      // consola.info('campaign default:', campaign);
-      const campaignDefault: ICampaign = JSON.parse(campaign!);
-      offer = await getOffer(campaignDefault.offerId);
+      campaign = await getCampaign(campaignId);
+      campaignInfo = JSON.parse(campaign!);
+      offerId = campaignInfo.offerId;
+      offer = await getOffer(offerId);
       offerInfo = JSON.parse(offer!);
-      consola.info(`use campaign default ${CampaignDefault.CAMPAIGN_ID}`);
+      consola.info(`Use campaign default ${campaignId}`);
       influxdb(200, 'campaign_default');
     }
 

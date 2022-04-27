@@ -63,6 +63,7 @@ export const lidOffer = (params: IParams): ILid => (
     fingerPrintKey: params?.fingerPrintKey || null,
     isUniqueVisit: params?.isUniqueVisit,
     eventType: 'click',
+    event: '',
     _messageType: 'aggregatorStatSflOffer',
   }
 );

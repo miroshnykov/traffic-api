@@ -75,6 +75,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     });
 
     const lidObj: ILid = lidOffer(finalResponse!);
+    lidObj.event = 'traffic-api';
     createLidOffer(lidObj);
     finalResponse!.lidObj = lidObj;
     handleConditionsResponse.params = { ...finalResponse! };

@@ -5,7 +5,7 @@ import { recipeCampaignsServices } from '../Services/recipeCampaignsServices';
 
 import { getOfferSize } from '../Models/offersModel';
 import { getCampaignSize } from '../Models/campaignsModel';
-import { getFp, setFp } from '../Models/fpModel';
+import { delFp, getFp, setFp } from '../Models/fpModel';
 import { getLeadData, redshiftOffer } from '../Utils/dynamoDb';
 import { IRedshiftData } from '../Interfaces/redshiftData';
 
@@ -36,6 +36,9 @@ export class RecipeController extends BaseController {
     let fpCache: boolean = true;
     let resendLid: any;
 
+    if (isResendLid === 'del' && lid) {
+      await delFp(lid);
+    }
     if (isResendLid === 'yes' && lid) {
       const lidCache = await getFp(lid);
       if (lidCache) {

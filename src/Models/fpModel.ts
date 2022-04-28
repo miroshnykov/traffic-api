@@ -51,6 +51,12 @@ export const setFp = (key: string, value: string): void => {
   }
 };
 
+export const delFp = (key: string): void => {
+  redisClient.del(key).then().catch((e: any) => {
+    consola.error('redis cluster del value error', e);
+  });
+};
+
 export const expireFp = (key: string, seconds: number): void => {
   redisClient.expire(key, seconds).then().catch((e: any) => {
     influxdb(500, 'redis_cluster_expire_fp_value_error');

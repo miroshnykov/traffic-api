@@ -7,18 +7,18 @@ import { ISqsMessage } from '../Interfaces/sqsMessage';
 // const computerName = os.hostname();
 
 export const setSqsDataToRedis = async (message: ISqsMessage): Promise<void> => {
-  // consola.info(`Getting from recipe-api update, Set to redis ${message.type}ID:${message.id}, action:${message.action}, comments:${message.comments}, Computer name { ${computerName} }`);
+  // consola.info(`Getting from recipe-api update, Set to redis ${message.type}ID:${message.id}, action:${message.action}, comments:${message.comments}, process.pid { ${process.pid} }`);
   try {
     if (message.action === 'updateOrCreate') {
-      influxdb(200, 'local_redis_update_or_create');
+      influxdb(200, `local_redis_update_or_create_${process.pid}`);
       await redis.set(`${message.type}:${message.id}`, message.body);
     }
     if (message.action === 'delete') {
-      influxdb(200, 'local_redis_delete');
+      influxdb(200, `local_redis_delete_${process.pid}`);
       await redis.del(`${message.type}:${message.id}`);
     }
   } catch (e) {
     influxdb(500, 'sqs_processing_error');
-    consola.error('sqsProcessingError');
+    consola.error('sqsProcessingError', e);
   }
 };

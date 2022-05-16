@@ -56,6 +56,32 @@ export const redshiftOffer = (lidObj: ILid): IRedshiftData => (
   }
 );
 
+export const sendLidDynamoDb = (lidInfoToSend: object) => {
+  try {
+    const dynamoDbConf = {
+      region: process.env.AWS_DYNAMODB_REGION,
+    };
+    const ddbClient: DynamoDBClient = new DynamoDBClient(dynamoDbConf);
+    const leadParams = {
+      TableName: `${process.env.AWS_DYNAMODB_TABLE_NAME}dede`,
+      Item: lidInfoToSend,
+    };
+    ddbClient.send(new PutCommand(leadParams)).then().catch((e) => {
+      influxdb(500, 'dynamo_db_create_lid_error');
+      consola.error('DynamoDb create Lid Error:', e);
+      if (process.send) {
+        process.send({
+          type: 'failedLidDynamoDb',
+          stats: lidInfoToSend,
+        });
+      }
+    });
+  } catch (e) {
+    consola.error('sendLidDynamoDb:', e);
+    influxdb(500, 'dynamo_db_create_lid_error');
+  }
+};
+
 export const createLidOffer = (lidInfo: ILid): void => {
   try {
     // const dynamoDbConf = {
@@ -66,11 +92,6 @@ export const createLidOffer = (lidInfo: ILid): void => {
     //   tableName: process.env.AWS_DYNAMODB_TABLE_NAME,
     // }
 
-    const dynamoDbConf = {
-      region: process.env.AWS_DYNAMODB_REGION,
-    };
-
-    const ddbClient: DynamoDBClient = new DynamoDBClient(dynamoDbConf);
     const stats: IRedshiftData = redshiftOffer(lidInfo);
 
     if (process.send) {
@@ -95,15 +116,7 @@ export const createLidOffer = (lidInfo: ILid): void => {
         }
       }
     }
-
-    const leadParams = {
-      TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
-      Item: lidInfoToSend,
-    };
-    ddbClient.send(new PutCommand(leadParams)).then().catch((e) => {
-      influxdb(500, 'dynamo_db_create_lid_error');
-      consola.error('DynamoDb create Lid Error:', e);
-    });
+    sendLidDynamoDb(lidInfoToSend);
     // consola.info("AWS_DYNAMODB_TABLE_NAME config:", process.env.AWS_DYNAMODB_TABLE_NAME);
     // consola.info("AWS_DYNAMODB_REGION config:", process.env.AWS_DYNAMODB_REGION);
     // consola.info("Dynamo Db Success res:", JSON.stringify(data));

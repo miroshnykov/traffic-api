@@ -64,7 +64,7 @@ export const sendLidDynamoDb = (lidInfoToSend: object) => {
     };
     const ddbClient: DynamoDBClient = new DynamoDBClient(dynamoDbConf);
     const leadParams = {
-      TableName: `${process.env.AWS_DYNAMODB_TABLE_NAME}dede`,
+      TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
       Item: lidInfoToSend,
     };
     ddbClient.send(new PutCommand(leadParams)).then().catch((e) => {

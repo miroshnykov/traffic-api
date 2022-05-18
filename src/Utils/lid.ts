@@ -32,6 +32,7 @@ export const lidOffer = (params: IParams): ILid => (
     browserVersion: params.browserVersion || null,
     affiliateId: params.affiliateId || null,
     affiliateManagerId: params.affiliateManagerId || null,
+    affiliateType: params.affiliateType || null,
     payoutPercent: params.payoutPercent || null,
     isCpmOptionEnabled: params.isCpmOptionEnabled || 0,
     landingPageUrl: params.landingPageUrl || null,

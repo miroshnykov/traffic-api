@@ -27,6 +27,7 @@ export interface ILid {
   browserVersion: string | null
   affiliateId: number | null
   affiliateManagerId: number | null
+  affiliateType: string | null
   payoutPercent: number | null
   deviceType: string | null
   isCpmOptionEnabled: boolean | number

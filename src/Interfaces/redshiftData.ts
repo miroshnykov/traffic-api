@@ -1,6 +1,7 @@
 export interface IRedshiftData {
   lid: string,
   affiliate_id: number
+  affiliate_type: string
   campaign_id: number
   sub_campaign?: string
   cid?: string

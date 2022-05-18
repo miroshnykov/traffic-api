@@ -9,6 +9,7 @@ import { redis } from '../redis';
 import { influxdb } from '../Utils/metrics';
 import { IOffer } from '../Interfaces/offers';
 import { convertHrtime } from '../Utils/convertHrtime';
+import { rangeSpeedRecipe } from '../Utils/rangeSpped';
 
 const computerName = os.hostname();
 dotenv.config();
@@ -55,7 +56,7 @@ export const setOffersToRedis = async () => {
       const endTime: bigint = process.hrtime.bigint();
       const diffTime: bigint = endTime - startTime;
       consola.info(`Finish set Offers time processing: { ${convertHrtime(diffTime)} } ms`);
-      influxdb(200, `set_local_redis_offer_time_${convertHrtime(diffTime)}`);
+      influxdb(200, `set_local_redis_offer_time_${rangeSpeedRecipe(convertHrtime(diffTime))}`);
     });
   } catch (e) {
     influxdb(500, 'set_offers_to_redis_error');
@@ -93,7 +94,7 @@ export const setCampaignsToRedis = async () => {
       const endTime: bigint = process.hrtime.bigint();
       const diffTime: bigint = endTime - startTime;
       consola.info(`Finish set Campaign time processing: { ${convertHrtime(diffTime)} } ms`);
-      influxdb(200, `set_local_redis_campaign_time_${convertHrtime(diffTime)}`);
+      influxdb(200, `set_local_redis_campaign_time_${rangeSpeedRecipe(convertHrtime(diffTime))}`);
     });
     jsonStream.on('error', async () => {
       consola.info('Campaigns recipe file got err');

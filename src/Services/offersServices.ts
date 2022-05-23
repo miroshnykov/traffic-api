@@ -67,7 +67,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
           && finalResponse.landingPageUrl.replace(`{${item}}`, finalResponse.lid);
       } else if (item === 'affiliateId') {
         finalResponse.landingPageUrl = finalResponse.landingPageUrl
-          && finalResponse.landingPageUrl.replace(`{${item}}`, finalResponse.affiliateId);
+          && finalResponse.landingPageUrl.replace(`{${item}}`, String(finalResponse.affiliateId));
       } else {
         const tmp = req?.query[item];
         if (tmp) {

@@ -44,7 +44,7 @@ export const redshiftOffer = (lidObj: ILid): IRedshiftData => (
     vertical_name: lidObj.verticalName || '',
     conversion_type: lidObj.conversionType || '',
     platform: lidObj.platform || '',
-    payout_percent: lidObj.payoutPercent || 0,
+    payout_percent: Number(lidObj.payoutPercent?.toFixed(0)) || 0,
     device: lidObj.deviceType! || '',
     os: lidObj.os || '',
     isp: lidObj.isp || '',

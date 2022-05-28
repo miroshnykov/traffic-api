@@ -9,7 +9,7 @@ import { influxdb } from '../Utils/metrics';
 import { getCampaign } from '../Models/campaignsModel';
 import { resolveIP } from '../Utils/geo';
 import { IExitOfferResult, IOffer, IOfferStatus } from '../Interfaces/offers';
-import { ICampaign, ICampaignStatus } from '../Interfaces/campaigns';
+import { ICampaign } from '../Interfaces/campaigns';
 import { IGeo } from '../Interfaces/geo';
 import { ICapsResult } from '../Interfaces/caps';
 import { CampaignDefault } from '../Utils/defaultCampaign';
@@ -26,31 +26,34 @@ export const getParams = async (req: Request): Promise<IParams> => {
 
     const inputData = decodedString.split('|');
 
-    const offerId: number = Number(inputData[0]);
-    const campaignId: number = Number(inputData[1]);
+    let offerId: number = Number(inputData[0]);
+    let campaignId: number = Number(inputData[1]);
 
     let offer = await getOffer(offerId);
     if (!offer) {
       influxdb(500, `offer_${offerId}_recipe_error`);
-      throw Error(`no offerId ${offerId} in recipe`);
+      throw Error(`no offerId ${offerId} in recipe campaignId-${campaignId}`);
     }
     let campaign = await getCampaign(campaignId);
     if (!campaign) {
       influxdb(500, `campaign_${campaignId}_recipe_error`);
-      throw Error(`no campaignId-${campaignId} in recipe`);
+      throw Error(`no campaignId-${campaignId} in recipe offerId-${offerId}`);
     }
 
-    const campaignInfo: ICampaign = JSON.parse(campaign!);
+    let campaignInfo: ICampaign = JSON.parse(campaign!);
 
     let offerInfo: IOffer = JSON.parse(offer!);
 
     if (offerInfo.status === IOfferStatus.INACTIVE) {
-      campaign = await getCampaign(CampaignDefault.CAMPAIGN_ID);
-      // consola.info('campaign default:', campaign);
-      const campaignDefault: ICampaign = JSON.parse(campaign!);
-      offer = await getOffer(campaignDefault.offerId);
+      campaignId = process.env.NODE_ENV === 'production'
+        ? CampaignDefault.CAMPAIGN_ID
+        : CampaignDefault.STAGE_CAMPAIGN_ID;
+      campaign = await getCampaign(campaignId);
+      campaignInfo = JSON.parse(campaign!);
+      offerId = campaignInfo.offerId;
+      offer = await getOffer(offerId);
       offerInfo = JSON.parse(offer!);
-      consola.info(`use campaign default ${CampaignDefault.CAMPAIGN_ID}`);
+      consola.info(`Use campaign default ${campaignId}`);
       influxdb(200, 'campaign_default');
     }
 
@@ -87,6 +90,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
 
     const affiliateId: number = Number(campaignInfo.affiliateId);
     const affiliateStatus: string = String(campaignInfo.affiliateStatus);
+    const affiliateType: string = campaignInfo.affiliateType ? String(campaignInfo.affiliateType) : '';
     const campaignStatus: string = String(campaignInfo.campaignStatus);
     const affiliateManagerId: number = Number(campaignInfo.affiliateManagerId);
     const offerType: string = offerInfo.type;
@@ -112,6 +116,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
       subCampaign,
       affiliateId,
       affiliateStatus,
+      affiliateType,
       campaignStatus,
       affiliateManagerId,
       offerType,

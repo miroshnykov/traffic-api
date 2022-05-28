@@ -9,15 +9,18 @@ import express, {
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as bodyParser from 'body-parser';
 import Fingerprint from 'express-fingerprint';
+// eslint-disable-next-line import/no-cycle
 import routes from './Routes/index';
 import 'dotenv/config';
 import { getFileFromBucket } from './Crons/getReceipS3Cron';
+// eslint-disable-next-line import/no-cycle
 import { sendToAggregator } from './Utils/aggregator';
 import { influxdb } from './Utils/metrics';
 import { IRedshiftData } from './Interfaces/redshiftData';
 import { IRecipeType } from './Interfaces/recipeTypes';
 import { socketConnection } from './socket';
 import { ISocketType } from './Interfaces/socketTypes';
+import { sendLidDynamoDb } from './Utils/dynamoDb';
 // import {setOffersToRedis} from "./Crons/setRecipeToRedisCron";
 
 const app: Application = express();
@@ -39,6 +42,11 @@ const failedLidsData: IRedshiftData[] = [];
 
 export const failedLidsObj = (stats: IRedshiftData) => {
   failedLidsData.push(stats);
+};
+
+const failedLidsDynamoDbData: any[] = [];
+export const failedLidsDynamoDb = (data: any) => {
+  failedLidsDynamoDbData.push(data);
 };
 
 function loggerMiddleware(request: express.Request, response: express.Response, next: NextFunction) {
@@ -85,6 +93,18 @@ if (cluster.isMaster) {
   };
   setInterval(failedLidsProcess, 3600000); // 1 hour
 
+  const failedLidsDynamoDbProcess = async () => {
+    if (failedLidsDynamoDbData.length === 0) return;
+    consola.info(`failedLidsDynamoDbData count:${failedLidsDynamoDbData.length}`);
+    for (let i = 0; i < failedLidsDynamoDbData.length; i++) {
+      consola.info(`resend lid to dynamoDb { ${failedLidsDynamoDbData[i].lid} }`);
+      sendLidDynamoDb(failedLidsDynamoDbData[i]);
+      influxdb(200, 're_send_to_dynamo_db_failed_lid');
+      failedLidsDynamoDbData.splice(i, 1);
+    }
+  };
+  setInterval(failedLidsDynamoDbProcess, 1800000); // 30 min
+
   for (let i = 0; i < coreThread.length; i++) {
     cluster.fork();
   }
@@ -110,6 +130,9 @@ if (cluster.isMaster) {
     const currenTime: number = Math.round(timer.getTime() / 1000);
     if (msg.type === 'clickOffer') {
       addToBufferOffer(logBufferOffer, currenTime, msg.stats);
+    }
+    if (msg.type === 'failedLidDynamoDb') {
+      failedLidsDynamoDb(msg.stats);
     }
   });
 

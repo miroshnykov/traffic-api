@@ -13,6 +13,7 @@ export interface IParams {
   cid?: string
   affiliateId: number
   affiliateStatus: string
+  affiliateType: string
   campaignStatus: string
   affiliateManagerId: number
   offerType: string
@@ -117,4 +118,4 @@ export interface IBestOffer extends IBaseResponse{
   bestOfferId: number
 }
 
-export const ILandingPageParams: (string)[] = ['subid', 'cid', 'lid'];
+export const ILandingPageParams: (string)[] = ['subid', 'cid', 'lid', 'affiliateId'];

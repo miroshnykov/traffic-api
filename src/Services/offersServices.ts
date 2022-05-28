@@ -65,6 +65,9 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
       if (item === 'lid') {
         finalResponse.landingPageUrl = finalResponse.landingPageUrl
           && finalResponse.landingPageUrl.replace(`{${item}}`, finalResponse.lid);
+      } else if (item === 'affiliateId') {
+        finalResponse.landingPageUrl = finalResponse.landingPageUrl
+          && finalResponse.landingPageUrl.replace(`{${item}}`, String(finalResponse.affiliateId));
       } else {
         const tmp = req?.query[item];
         if (tmp) {
@@ -75,6 +78,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     });
 
     const lidObj: ILid = lidOffer(finalResponse!);
+    lidObj.event = 'traffic-api';
     createLidOffer(lidObj);
     finalResponse!.lidObj = lidObj;
     handleConditionsResponse.params = { ...finalResponse! };
@@ -84,7 +88,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     influxdb(500, 'offer_ad_error');
     return {
       success: false,
-      errors: e,
+      errors: e.toString(),
       debug,
     };
   }

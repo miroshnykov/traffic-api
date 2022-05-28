@@ -6,6 +6,7 @@ import { getFp, setFp } from '../Models/fpModel';
 import { getLeadData, redshiftOffer } from '../Utils/dynamoDb';
 import { IRedshiftData } from '../Interfaces/redshiftData';
 import { influxdb } from '../Utils/metrics';
+// eslint-disable-next-line import/no-cycle
 import { sendBonusLidToAggregator } from '../Utils/aggregator';
 
 interface ILidResponse {
@@ -50,7 +51,7 @@ export class LidController extends BaseController {
       if (respLid) {
         await setFp(lid, lid);
         const stats: IRedshiftData = redshiftOffer(respLid);
-
+        stats.event = 'traffic-bonus';
         const responseAggr = await sendBonusLidToAggregator(stats);
 
         if (responseAggr.success) {

@@ -1,5 +1,6 @@
 import { OffersController } from './OffersController';
 import { RecipeController } from './RecipeController';
+// eslint-disable-next-line import/no-cycle
 import { LidController } from './LidController';
 
 const offerController = new OffersController();

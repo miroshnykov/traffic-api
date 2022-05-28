@@ -1,6 +1,6 @@
 {
   "name": "traffic-api",
-  "version": "0.2.44",
+  "version": "0.2.67",
   "description": "Traffic server",
   "main": "server.ts",
   "scripts": {

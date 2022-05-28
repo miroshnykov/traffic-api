@@ -1,9 +1,11 @@
 export interface IRedshiftData {
   lid: string,
   affiliate_id: number
+  affiliate_type: string
   campaign_id: number
   sub_campaign?: string
   cid?: string
+  domain?: string
   offer_id: number
   offer_name: string
   offer_type: string
@@ -36,6 +38,7 @@ export interface IRedshiftData {
   date_added: number
   click: number
   event_type: string
+  event: string
   referer?: string
   fingerprint?: string
   is_unique_visit?: boolean

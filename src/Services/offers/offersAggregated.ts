@@ -5,6 +5,43 @@ import { IBestOffer, IBaseResponse, IParams } from '../../Interfaces/params';
 import { IAggregatedOfferList } from '../../Interfaces/offers';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
 
+interface ICalcAggregatedOffer{
+  id: number,
+  count: number
+}
+
+let calcOfferIdProportional: ICalcAggregatedOffer[] = [];
+let aggregatedOfferSize = 0;
+
+const getProportionalOffers = (offers: number[]): number => {
+  if (offers.length !== aggregatedOfferSize) {
+    calcOfferIdProportional = [];
+  }
+  aggregatedOfferSize = offers.length;
+  for (const id of offers) {
+    const checkId = calcOfferIdProportional.filter((i: ICalcAggregatedOffer) => (i.id === id));
+    if (checkId.length === 0) {
+      calcOfferIdProportional.push({
+        id, count: 0,
+      });
+      break;
+    }
+  }
+
+  const calcOfferIdResponse = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
+  const selectedOfferId = calcOfferIdResponse[0]?.id;
+  calcOfferIdProportional.forEach((i: ICalcAggregatedOffer) => {
+    if (i.id === selectedOfferId) {
+      // eslint-disable-next-line no-param-reassign
+      i.count += 1;
+    }
+  });
+
+  // const afterCalcResponse = calcOfferIdProportional.sort((a: ICalcOffer, b: ICalcOffer) => a.count - b.count);
+  // consola.info('Update id:', JSON.stringify(afterCalcResponse));
+  return selectedOfferId;
+};
+
 const checkRestrictionsByOffer = (
   offer: IAggregatedOfferList,
   country: string,
@@ -37,10 +74,14 @@ export const identifyBestOffer = (
   }
 
   paramsClone.offersAggregatedIdsToRedirect = offersAggregatedIdsToRedirect;
+
   if (offersAggregatedIdsToRedirect.length !== 0) {
-    const randomId = Math.floor(Math.random() * offersAggregatedIdsToRedirect.length);
+    // const randomId = Math.floor(Math.random() * offersAggregatedIdsToRedirect.length);
     // PH-886
-    bestOfferResp = offersAggregatedIdsToRedirect[randomId];
+    // bestOfferResp = offersAggregatedIdsToRedirect[randomId];
+    // PH-1112
+    bestOfferResp = getProportionalOffers(offersAggregatedIdsToRedirect);
+    paramsClone.offersAggregatedIdsProportionals = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
     // [bestOfferResp] = offersAggregatedIdsToRedirect;
 
     // PH-38
@@ -81,6 +122,7 @@ export const offerAggregatedCalculations = async (
         paramsOverride = await override(paramsClone, bestOfferRes.bestOfferId);
         paramsClone = { ...paramsClone, ...paramsOverride };
         paramsClone.offersAggregatedIdsToRedirect = bestOfferRes?.params?.offersAggregatedIdsToRedirect;
+        paramsClone.offersAggregatedIdsProportionals = bestOfferRes?.params?.offersAggregatedIdsProportionals;
         paramsClone.offersAggregatedIdsMargin = bestOfferRes?.params?.offersAggregatedIdsMargin;
         pass = true;
       } else {

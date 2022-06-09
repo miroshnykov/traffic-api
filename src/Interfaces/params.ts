@@ -63,6 +63,7 @@ export interface IParams {
   groupOffer?: boolean
   offersAggregatedIds?: object[]
   offersAggregatedIdsToRedirect?: any
+  offersAggregatedIdsProportionals?: any
   offersAggregatedIdsMargin?: any
   groupBestOffer?: number
   startEndDateSetup?: boolean

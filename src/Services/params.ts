@@ -90,7 +90,7 @@ export const getParams = async (req: Request): Promise<IParams> => {
 
     const affiliateId: number = Number(campaignInfo.affiliateId);
     const affiliateStatus: string = String(campaignInfo.affiliateStatus);
-    const affiliateType: string = campaignInfo.affiliateType ? String(campaignInfo.affiliateType) : '';
+    const affiliateType: string | null = campaignInfo.affiliateType ? String(campaignInfo.affiliateType) : null;
     const campaignStatus: string = String(campaignInfo.campaignStatus);
     const affiliateManagerId: number = Number(campaignInfo.affiliateManagerId);
     const offerType: string = offerInfo.type;

@@ -20,6 +20,7 @@ const getProportionalOffers = async (offers: number[]): Promise<number> => {
   let calcOfferIdProportional: ICalcAggregatedOffer[] = await getAggregatedOffersProportional();
   if (offers.length !== aggregatedOfferSize) {
     await setAggregatedOffersProportional([]);
+    calcOfferIdProportional = [];
   }
   aggregatedOfferSize = offers.length;
   for (const id of offers) {

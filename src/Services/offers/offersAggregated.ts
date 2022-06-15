@@ -19,6 +19,7 @@ const aggregatedOfferSize: any = {};
 
 const getProportionalOffers = async (campaignId: number, offers: number[]): Promise<number> => {
   let calcOfferIdProportional: ICalcAggregatedOffer[] = await getAggregatedOffersProportional(campaignId);
+  consola.info(` ** CalcOfferIdProportional from REDIS by campaignId { ${campaignId} } ${JSON.stringify(calcOfferIdProportional)}`);
   if (offers.length !== aggregatedOfferSize[campaignId]) {
     await setAggregatedOffersProportional(campaignId, []);
     calcOfferIdProportional = [];

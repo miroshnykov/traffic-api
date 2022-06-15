@@ -29,7 +29,7 @@ export const override = async (
   if (offerExitTrafficInfo.type === IOfferType.AGGREGATED) {
     paramsClone.redirectReason = 'Offers Aggregated exit traffic to aggregatedOffer';
     paramsClone.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC_TO_AGGREGATED_OFFER;
-    const exitTrafficBestOfferRes: IBestOffer = identifyBestOffer(offerExitTrafficInfo?.offersAggregatedIds!, paramsClone);
+    const exitTrafficBestOfferRes: IBestOffer = await identifyBestOffer(offerExitTrafficInfo?.offersAggregatedIds!, paramsClone);
     if (exitTrafficBestOfferRes.success && exitTrafficBestOfferRes.bestOfferId) {
       const offerExitTrafficBestOffer: any = await getOffer(exitTrafficBestOfferRes.bestOfferId);
       offerExitTrafficInfo = JSON.parse(offerExitTrafficBestOffer);

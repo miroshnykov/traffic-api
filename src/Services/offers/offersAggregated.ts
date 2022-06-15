@@ -22,13 +22,14 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
   if (offers.length !== aggregatedOfferSize[campaignId]) {
     await setAggregatedOffersProportional(campaignId, []);
     calcOfferIdProportional = [];
+    aggregatedOfferSize[campaignId] = offers.length;
   }
-  aggregatedOfferSize[campaignId] = offers.length;
+
   for (const id of offers) {
     const checkId = calcOfferIdProportional ? calcOfferIdProportional.filter((i: ICalcAggregatedOffer) => (i.id === id)) : [];
     if (checkId.length === 0) {
       calcOfferIdProportional.push({
-        id, count: 1,
+        id, count: 0,
       });
       // eslint-disable-next-line no-await-in-loop
       await setAggregatedOffersProportional(campaignId, calcOfferIdProportional);

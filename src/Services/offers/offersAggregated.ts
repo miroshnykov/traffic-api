@@ -14,15 +14,16 @@ export interface ICalcAggregatedOffer{
   id: number,
   count: number
 }
-let aggregatedOfferSize = 0;
 
-const getProportionalOffers = async (offers: number[]): Promise<number> => {
-  let calcOfferIdProportional: ICalcAggregatedOffer[] = await getAggregatedOffersProportional();
-  if (offers.length !== aggregatedOfferSize) {
-    await setAggregatedOffersProportional([]);
+const aggregatedOfferSize: any = {};
+
+const getProportionalOffers = async (campaignId: number, offers: number[]): Promise<number> => {
+  let calcOfferIdProportional: ICalcAggregatedOffer[] = await getAggregatedOffersProportional(campaignId);
+  if (offers.length !== aggregatedOfferSize[campaignId]) {
+    await setAggregatedOffersProportional(campaignId, []);
     calcOfferIdProportional = [];
   }
-  aggregatedOfferSize = offers.length;
+  aggregatedOfferSize[campaignId] = offers.length;
   for (const id of offers) {
     const checkId = calcOfferIdProportional ? calcOfferIdProportional.filter((i: ICalcAggregatedOffer) => (i.id === id)) : [];
     if (checkId.length === 0) {
@@ -30,15 +31,15 @@ const getProportionalOffers = async (offers: number[]): Promise<number> => {
         id, count: 1,
       });
       // eslint-disable-next-line no-await-in-loop
-      await setAggregatedOffersProportional(calcOfferIdProportional);
+      await setAggregatedOffersProportional(campaignId, calcOfferIdProportional);
       // eslint-disable-next-line no-await-in-loop
-      calcOfferIdProportional = await getAggregatedOffersProportional();
+      calcOfferIdProportional = await getAggregatedOffersProportional(campaignId);
       break;
     }
   }
 
   const [calcOfferIdResponse] = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
-  consola.info(` ** CalcOfferIdResponse: ${JSON.stringify(calcOfferIdResponse)}, aggregatedOfferSize:{ ${aggregatedOfferSize} }`);
+  consola.info(` ** CalcOfferIdResponse: ${JSON.stringify(calcOfferIdResponse)}, aggregatedOfferSize: ${JSON.stringify(aggregatedOfferSize)} `);
   const selectedOfferId = calcOfferIdResponse?.id;
   calcOfferIdProportional.forEach((i: ICalcAggregatedOffer) => {
     if (i.id === selectedOfferId) {
@@ -46,7 +47,7 @@ const getProportionalOffers = async (offers: number[]): Promise<number> => {
       i.count += 1;
     }
   });
-  await setAggregatedOffersProportional(calcOfferIdProportional);
+  await setAggregatedOffersProportional(campaignId, calcOfferIdProportional);
   // const afterCalcResponse = calcOfferIdProportional.sort((a: ICalcOffer, b: ICalcOffer) => a.count - b.count);
   // consola.info('Update id:', JSON.stringify(afterCalcResponse));
   return selectedOfferId;
@@ -90,8 +91,8 @@ export const identifyBestOffer = async (
     // PH-886
     // bestOfferResp = offersAggregatedIdsToRedirect[randomId];
     // PH-1112
-    bestOfferResp = await getProportionalOffers(offersAggregatedIdsToRedirect);
-    const calcOfferIdProportional = await getAggregatedOffersProportional();
+    bestOfferResp = await getProportionalOffers(paramsClone.campaignId, offersAggregatedIdsToRedirect);
+    const calcOfferIdProportional = await getAggregatedOffersProportional(paramsClone.campaignId);
     paramsClone.offersAggregatedIdsProportionals = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
     // [bestOfferResp] = offersAggregatedIdsToRedirect;
 

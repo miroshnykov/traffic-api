@@ -4,39 +4,48 @@ import { override } from '../override/override';
 import { IBestOffer, IBaseResponse, IParams } from '../../Interfaces/params';
 import { IAggregatedOfferList } from '../../Interfaces/offers';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
+// eslint-disable-next-line import/no-cycle
+import {
+  getAggregatedOffersProportional,
+  setAggregatedOffersProportional,
+} from '../../Utils/aggregatedOffersProportional';
 
-interface ICalcAggregatedOffer{
+export interface ICalcAggregatedOffer{
   id: number,
   count: number
 }
-
-let calcOfferIdProportional: ICalcAggregatedOffer[] = [];
 let aggregatedOfferSize = 0;
 
-const getProportionalOffers = (offers: number[]): number => {
+const getProportionalOffers = async (offers: number[]): Promise<number> => {
+  let calcOfferIdProportional: ICalcAggregatedOffer[] = await getAggregatedOffersProportional();
   if (offers.length !== aggregatedOfferSize) {
-    calcOfferIdProportional = [];
+    await setAggregatedOffersProportional([]);
   }
   aggregatedOfferSize = offers.length;
   for (const id of offers) {
-    const checkId = calcOfferIdProportional.filter((i: ICalcAggregatedOffer) => (i.id === id));
+    const checkId = calcOfferIdProportional ? calcOfferIdProportional.filter((i: ICalcAggregatedOffer) => (i.id === id)) : [];
     if (checkId.length === 0) {
       calcOfferIdProportional.push({
         id, count: 0,
       });
+      // eslint-disable-next-line no-await-in-loop
+      await setAggregatedOffersProportional(calcOfferIdProportional);
+      // eslint-disable-next-line no-await-in-loop
+      calcOfferIdProportional = await getAggregatedOffersProportional();
       break;
     }
   }
 
-  const calcOfferIdResponse = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
-  const selectedOfferId = calcOfferIdResponse[0]?.id;
+  const [calcOfferIdResponse] = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
+  consola.info('calcOfferIdResponse:', calcOfferIdResponse);
+  const selectedOfferId = calcOfferIdResponse?.id;
   calcOfferIdProportional.forEach((i: ICalcAggregatedOffer) => {
     if (i.id === selectedOfferId) {
       // eslint-disable-next-line no-param-reassign
       i.count += 1;
     }
   });
-
+  await setAggregatedOffersProportional(calcOfferIdProportional);
   // const afterCalcResponse = calcOfferIdProportional.sort((a: ICalcOffer, b: ICalcOffer) => a.count - b.count);
   // consola.info('Update id:', JSON.stringify(afterCalcResponse));
   return selectedOfferId;
@@ -58,10 +67,10 @@ const checkRestrictionsByOffer = (
   }
 };
 
-export const identifyBestOffer = (
+export const identifyBestOffer = async (
   offersAggregatedIds: IAggregatedOfferList[],
   params: IParams,
-): IBestOffer => {
+): Promise<IBestOffer> => {
   let bestOfferResp: number = 0;
   const paramsClone = { ...params };
   paramsClone.offersAggregatedIds = offersAggregatedIds;
@@ -80,7 +89,8 @@ export const identifyBestOffer = (
     // PH-886
     // bestOfferResp = offersAggregatedIdsToRedirect[randomId];
     // PH-1112
-    bestOfferResp = getProportionalOffers(offersAggregatedIdsToRedirect);
+    bestOfferResp = await getProportionalOffers(offersAggregatedIdsToRedirect);
+    const calcOfferIdProportional = await getAggregatedOffersProportional();
     paramsClone.offersAggregatedIdsProportionals = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
     // [bestOfferResp] = offersAggregatedIdsToRedirect;
 
@@ -114,7 +124,7 @@ export const offerAggregatedCalculations = async (
 
       const offersAggregatedIds = paramsClone.offerInfo?.offersAggregatedIds!;
 
-      const bestOfferRes: IBestOffer = identifyBestOffer(offersAggregatedIds, paramsClone);
+      const bestOfferRes: IBestOffer = await identifyBestOffer(offersAggregatedIds, paramsClone);
       if (bestOfferRes.success && bestOfferRes.bestOfferId) {
         paramsClone.redirectReason = 'Offers Aggregated';
         paramsClone.redirectType = IRedirectType.OFFER_AGGREGATED_BEST_OFFER;

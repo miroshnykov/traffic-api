@@ -27,7 +27,7 @@ const getProportionalOffers = async (offers: number[]): Promise<number> => {
     const checkId = calcOfferIdProportional ? calcOfferIdProportional.filter((i: ICalcAggregatedOffer) => (i.id === id)) : [];
     if (checkId.length === 0) {
       calcOfferIdProportional.push({
-        id, count: 0,
+        id, count: 1,
       });
       // eslint-disable-next-line no-await-in-loop
       await setAggregatedOffersProportional(calcOfferIdProportional);
@@ -38,7 +38,7 @@ const getProportionalOffers = async (offers: number[]): Promise<number> => {
   }
 
   const [calcOfferIdResponse] = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
-  consola.info('calcOfferIdResponse:', calcOfferIdResponse);
+  consola.info(` ** CalcOfferIdResponse: ${JSON.stringify(calcOfferIdResponse)}, aggregatedOfferSize:{ ${aggregatedOfferSize} }`);
   const selectedOfferId = calcOfferIdResponse?.id;
   calcOfferIdProportional.forEach((i: ICalcAggregatedOffer) => {
     if (i.id === selectedOfferId) {

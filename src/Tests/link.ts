@@ -1,22 +1,38 @@
 import puppeteer from 'puppeteer';
+import consola from 'consola';
 // import fs from 'fs';
 
 (async () => {
   // fs.truncate('checkOfferIdProportional.txt', 0, () => {
   //   console.log('checkOfferIdProportional clean');
   // });
-  console.log('processing ...');
+  const COUNT_CLICKS = 100;
+  consola.info(`processing ${COUNT_CLICKS} clicks ...`);
   let success = 0;
   let errors = 0;
   const listOfferId = [];
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < COUNT_CLICKS; i++) {
     try {
+      // eslint-disable-next-line no-await-in-loop
       const browser = await puppeteer.launch();
+      // eslint-disable-next-line no-await-in-loop
       const page = await browser.newPage();
       // const url = 'http://localhost:5000/pl?o=4ada45cd14d1d2371b9bab42c364c387:18e7080c07919bf912b79ff361465076&debugging=debugging';
-      const url = 'https://stage.ryzvxm.com/pl?o=363a2f6f7116bf027cee6f9125c5d912:5ca826c1968ed9f58dd3e51b74b4eb47&debugging=debugging';
+      // aggreagted offer 30
+      // const url = 'https://stage.ryzvxm.com/pl?o=363a2f6f7116bf027cee6f9125c5d912:5ca826c1968ed9f58dd3e51b74b4eb47&debugging=debugging';
+      // aggreagted offer 1 stalo 7
+      const url = 'https://stage.xuzeez.com/pl?o=44424490c4dd8f88f6baaef4f7e637d3:d8491be6261a9bcb4f80b34967659dfa&debugging=debugging';
+      // const urls = [
+      //   'https://stage.ryzvxm.com/pl?o=363a2f6f7116bf027cee6f9125c5d912:5ca826c1968ed9f58dd3e51b74b4eb47&debugging=debugging',
+      //   'https://stage.xuzeez.com/pl?o=44424490c4dd8f88f6baaef4f7e637d3:d8491be6261a9bcb4f80b34967659dfa&debugging=debugging',
+      // ];
+      // const randomId = Math.floor(Math.random() * urls.length);
+      // await page.goto(urls[randomId]);
+      // eslint-disable-next-line no-await-in-loop
       await page.goto(url);
+      // eslint-disable-next-line no-await-in-loop
       const elements = await page.$('body > pre');
+      // eslint-disable-next-line no-await-in-loop
       const text = await page.evaluate((element) => element.innerText, elements);
       const obj = JSON.parse(text);
       // console.log(obj.data.lidObj.lid);
@@ -28,10 +44,11 @@ import puppeteer from 'puppeteer';
       //   if (err) throw err;
       // });
       // console.log('elements:', elements);
+      // eslint-disable-next-line no-await-in-loop
       await browser.close();
       success++;
     } catch (e) {
-      console.error('Errors:', e);
+      consola.error('Errors:', e);
       errors++;
     }
   }
@@ -60,6 +77,6 @@ import puppeteer from 'puppeteer';
   }
 
   const calcOfferIdResponse = calcOfferIdProportional.sort((a: any, b: any) => a.count - b.count);
-  console.log('calcOfferIdResponse:', calcOfferIdResponse);
-  console.log(`success:${success}, errors:${errors} `);
+  consola.info('calcOfferIdResponse:', calcOfferIdResponse);
+  consola.info(`success:${success}, errors:${errors} `);
 })();

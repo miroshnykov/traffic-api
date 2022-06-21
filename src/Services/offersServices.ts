@@ -68,6 +68,9 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
       } else if (item === 'affiliateId') {
         finalResponse.landingPageUrl = finalResponse.landingPageUrl
           && finalResponse.landingPageUrl.replace(`{${item}}`, String(finalResponse.affiliateId));
+      } else if (item === 'campaignId') {
+        finalResponse.landingPageUrl = finalResponse.landingPageUrl
+          && finalResponse.landingPageUrl.replace(`{${item}}`, String(finalResponse.campaignId));
       } else {
         const tmp = req?.query[item];
         if (tmp) {

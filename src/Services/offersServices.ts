@@ -2,7 +2,9 @@ import { Request } from 'express';
 import consola from 'consola';
 import { influxdb } from '../Utils/metrics';
 
-import { ILandingPageParams, IParams, IResponse } from '../Interfaces/params';
+import {
+  ILandingPageParams, ILandingPageParamsFields, IParams, IResponse,
+} from '../Interfaces/params';
 import { getParams } from './params';
 import { lidOffer } from '../Utils/lid';
 import { createLidOffer } from '../Utils/dynamoDb';
@@ -62,12 +64,12 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     }
 
     ILandingPageParams.forEach((item) => {
-      if (item === 'lid') {
+      if (item === ILandingPageParamsFields.LID
+        || item === ILandingPageParamsFields.AFFILIATE_ID
+        || item === ILandingPageParamsFields.CAMPAIGN_ID) {
+        const itemValue = finalResponse[item];
         finalResponse.landingPageUrl = finalResponse.landingPageUrl
-          && finalResponse.landingPageUrl.replace(`{${item}}`, finalResponse.lid);
-      } else if (item === 'affiliateId') {
-        finalResponse.landingPageUrl = finalResponse.landingPageUrl
-          && finalResponse.landingPageUrl.replace(`{${item}}`, String(finalResponse.affiliateId));
+          && finalResponse.landingPageUrl.replace(`{${item}}`, String(itemValue));
       } else {
         const tmp = req?.query[item];
         if (tmp) {

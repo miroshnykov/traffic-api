@@ -119,4 +119,18 @@ export interface IBestOffer extends IBaseResponse{
   bestOfferId: number
 }
 
-export const ILandingPageParams: (string)[] = ['subid', 'cid', 'lid', 'affiliateId'];
+export enum ILandingPageParamsFields {
+  SUB_ID = 'subid',
+  CID = 'cid',
+  LID = 'lid',
+  AFFILIATE_ID = 'affiliateId',
+  CAMPAIGN_ID = 'campaignId',
+}
+
+export const ILandingPageParams: (string)[] = [
+  `${ILandingPageParamsFields.SUB_ID}`,
+  `${ILandingPageParamsFields.CID}`,
+  `${ILandingPageParamsFields.LID}`,
+  `${ILandingPageParamsFields.AFFILIATE_ID}`,
+  `${ILandingPageParamsFields.CAMPAIGN_ID}`,
+];

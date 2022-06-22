@@ -5,15 +5,18 @@ import { IBestOffer, IBaseResponse, IParams } from '../../Interfaces/params';
 import { IAggregatedOfferList } from '../../Interfaces/offers';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
 // eslint-disable-next-line import/no-cycle
-import { getAggregatedOffersProportional, setAggregatedOffersProportional } from '../../Models/fpModel';
+import {
+  getAggOffersCountByCampaign,
+  getAggregatedOffersProportional,
+  setAggOffersCountByCampaign,
+  setAggregatedOffersProportional,
+} from '../../Models/fpModel';
 import { influxdb } from '../../Utils/metrics';
 
 export interface ICalcAggregatedOffer{
   id: number,
   count: number
 }
-
-const aggregatedOfferSize: any = {};
 
 const getProportionalOffers = async (campaignId: number, offers: number[]): Promise<number> => {
   let calcOfferIdProportional: ICalcAggregatedOffer[] | null = await getAggregatedOffersProportional(campaignId);
@@ -23,11 +26,10 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
     const randomId = Math.floor(Math.random() * offers.length);
     return offers[randomId];
   }
-  consola.info(` ** CalcOfferIdProportional from REDIS by campaignId { ${campaignId} } ${JSON.stringify(calcOfferIdProportional)}`);
-  if (offers.length !== aggregatedOfferSize[campaignId]) {
-    await setAggregatedOffersProportional(campaignId, []);
+  const countOffers = await getAggOffersCountByCampaign(campaignId);
+  if (offers.length !== countOffers) {
+    await setAggOffersCountByCampaign(campaignId, offers.length);
     calcOfferIdProportional = [];
-    aggregatedOfferSize[campaignId] = offers.length;
   }
 
   for (const id of offers) {
@@ -45,17 +47,20 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
   }
 
   const [calcOfferIdResponse] = calcOfferIdProportional ? calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count) : [];
-  consola.info(` ** CalcOfferIdResponse: ${JSON.stringify(calcOfferIdResponse)}, aggregatedOfferSize: ${JSON.stringify(aggregatedOfferSize)} `);
   const selectedOfferId = calcOfferIdResponse?.id;
+  const currentCount = calcOfferIdResponse?.count;
+
+  consola.info(` ** Selected Offer { ${selectedOfferId} } CalcOfferIdProportional from REDIS by campaignId { ${campaignId} } ${JSON.stringify(calcOfferIdProportional)}`);
   calcOfferIdProportional?.forEach((i: ICalcAggregatedOffer) => {
     if (i.id === selectedOfferId) {
       // eslint-disable-next-line no-param-reassign
       i.count += 1;
     }
   });
+  if (currentCount > Number.MAX_SAFE_INTEGER) {
+    calcOfferIdProportional = [];
+  }
   await setAggregatedOffersProportional(campaignId, calcOfferIdProportional!);
-  // const afterCalcResponse = calcOfferIdProportional.sort((a: ICalcOffer, b: ICalcOffer) => a.count - b.count);
-  // consola.info('Update id:', JSON.stringify(afterCalcResponse));
   return selectedOfferId;
 };
 

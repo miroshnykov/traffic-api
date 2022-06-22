@@ -6,7 +6,7 @@ import consola from 'consola';
   // fs.truncate('checkOfferIdProportional1.txt', 0, () => {
   //   console.log('checkOfferIdProportional clean');
   // });
-  const COUNT_CLICKS = 10;
+  const COUNT_CLICKS = 100;
   consola.info(`processing ${COUNT_CLICKS} clicks ...`);
   let success = 0;
   let errors = 0;
@@ -17,9 +17,9 @@ import consola from 'consola';
       const browser = await puppeteer.launch();
       // eslint-disable-next-line no-await-in-loop
       const page = await browser.newPage();
-      const url = 'http://localhost:5000/pl?o=4ada45cd14d1d2371b9bab42c364c387:18e7080c07919bf912b79ff361465076&debugging=debugging';
+      // const url = 'http://localhost:5000/pl?o=4ada45cd14d1d2371b9bab42c364c387:18e7080c07919bf912b79ff361465076&debugging=debugging';
       // aggreagted offer 30
-      // const url = 'https://stage.ryzvxm.com/pl?o=363a2f6f7116bf027cee6f9125c5d912:5ca826c1968ed9f58dd3e51b74b4eb47&debugging=debugging';
+      const url = 'https://stage.ryzvxm.com/pl?o=363a2f6f7116bf027cee6f9125c5d912:5ca826c1968ed9f58dd3e51b74b4eb47&debugging=debugging';
       // aggreagted offer 1 stalo 7
       // const url = 'https://stage.xuzeez.com/pl?o=44424490c4dd8f88f6baaef4f7e637d3:d8491be6261a9bcb4f80b34967659dfa&debugging=debugging';
       // PROD

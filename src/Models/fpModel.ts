@@ -85,3 +85,12 @@ export const getAggregatedOffersProportional = async (campaignId: number) => {
   influxdb(500, `redis_cluster_set_not_ready_status_${redisClient.status}`);
   return null;
 };
+
+export const setAggOffersCountByCampaign = async (campaignId: number, count: number) => {
+  await redisClient.set(`aggregatedOffersCount:${campaignId}`, count);
+};
+
+export const getAggOffersCountByCampaign = async (campaignId: number) => {
+  const resp = await redisClient.get(`aggregatedOffersCount:${campaignId}`);
+  return Number(resp);
+};

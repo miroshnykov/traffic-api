@@ -3,6 +3,8 @@ import { Redis } from 'ioredis';
 import { redis } from '../redis';
 import { influxdb } from '../Utils/metrics';
 import { RedisHelper } from '../Utils/redisHelper';
+// eslint-disable-next-line import/no-cycle
+import { ICalcAggregatedOffer } from '../Services/offers/offersAggregated';
 
 export enum IRedisStatuses {
   READY = 'ready',
@@ -62,4 +64,24 @@ export const expireFp = (key: string, seconds: number): void => {
     influxdb(500, 'redis_cluster_expire_fp_value_error');
     consola.error('redis cluster expire Fp value error', e);
   });
+};
+
+export const setAggregatedOffersProportional = async (campaignId: number, arr: ICalcAggregatedOffer[]) => {
+  if (redisClient.status === IRedisStatuses.READY) {
+    const format = JSON.stringify(arr);
+    await redisClient.set(`aggregatedOffersProportional:${campaignId}`, format);
+  } else {
+    consola.error(`setAggregatedOffersProportional, redis server cluster not ready yet for some reason, status:${redisClient.status}`);
+    influxdb(500, `redis_cluster_set_not_ready_status_${redisClient.status}`);
+  }
+};
+
+export const getAggregatedOffersProportional = async (campaignId: number) => {
+  if (redisClient.status === IRedisStatuses.READY) {
+    const response = await redisClient.get(`aggregatedOffersProportional:${campaignId}`);
+    return response ? JSON.parse(response) : [];
+  }
+  consola.error(`getAggregatedOffersProportional, redis server cluster not ready yet for some reason, status:${redisClient.status}`);
+  influxdb(500, `redis_cluster_set_not_ready_status_${redisClient.status}`);
+  return null;
 };

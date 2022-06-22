@@ -5,10 +5,8 @@ import { IBestOffer, IBaseResponse, IParams } from '../../Interfaces/params';
 import { IAggregatedOfferList } from '../../Interfaces/offers';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
 // eslint-disable-next-line import/no-cycle
-import {
-  getAggregatedOffersProportional,
-  setAggregatedOffersProportional,
-} from '../../Utils/aggregatedOffersProportional';
+import { getAggregatedOffersProportional, setAggregatedOffersProportional } from '../../Models/fpModel';
+import { influxdb } from '../../Utils/metrics';
 
 export interface ICalcAggregatedOffer{
   id: number,
@@ -18,7 +16,13 @@ export interface ICalcAggregatedOffer{
 const aggregatedOfferSize: any = {};
 
 const getProportionalOffers = async (campaignId: number, offers: number[]): Promise<number> => {
-  let calcOfferIdProportional: ICalcAggregatedOffer[] = await getAggregatedOffersProportional(campaignId);
+  let calcOfferIdProportional: ICalcAggregatedOffer[] | null = await getAggregatedOffersProportional(campaignId);
+  if (calcOfferIdProportional === null) {
+    influxdb(500, 'aggregated_offers_proportional_use_random_offer_id');
+    consola.warn(' ** CalcOfferIdProportional is NULL check redis connection ');
+    const randomId = Math.floor(Math.random() * offers.length);
+    return offers[randomId];
+  }
   consola.info(` ** CalcOfferIdProportional from REDIS by campaignId { ${campaignId} } ${JSON.stringify(calcOfferIdProportional)}`);
   if (offers.length !== aggregatedOfferSize[campaignId]) {
     await setAggregatedOffersProportional(campaignId, []);
@@ -35,21 +39,21 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
       // eslint-disable-next-line no-await-in-loop
       await setAggregatedOffersProportional(campaignId, calcOfferIdProportional);
       // eslint-disable-next-line no-await-in-loop
-      calcOfferIdProportional = await getAggregatedOffersProportional(campaignId);
+      calcOfferIdProportional = await getAggregatedOffersProportional(campaignId) || [];
       break;
     }
   }
 
-  const [calcOfferIdResponse] = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
+  const [calcOfferIdResponse] = calcOfferIdProportional ? calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count) : [];
   consola.info(` ** CalcOfferIdResponse: ${JSON.stringify(calcOfferIdResponse)}, aggregatedOfferSize: ${JSON.stringify(aggregatedOfferSize)} `);
   const selectedOfferId = calcOfferIdResponse?.id;
-  calcOfferIdProportional.forEach((i: ICalcAggregatedOffer) => {
+  calcOfferIdProportional?.forEach((i: ICalcAggregatedOffer) => {
     if (i.id === selectedOfferId) {
       // eslint-disable-next-line no-param-reassign
       i.count += 1;
     }
   });
-  await setAggregatedOffersProportional(campaignId, calcOfferIdProportional);
+  await setAggregatedOffersProportional(campaignId, calcOfferIdProportional!);
   // const afterCalcResponse = calcOfferIdProportional.sort((a: ICalcOffer, b: ICalcOffer) => a.count - b.count);
   // consola.info('Update id:', JSON.stringify(afterCalcResponse));
   return selectedOfferId;

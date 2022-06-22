@@ -13,7 +13,7 @@ export enum IRedisStatuses {
 }
 
 let redisClient: any;
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
   redisClient = RedisHelper.createClient(RedisHelper.readOptions()) as Redis;
 } else {
   redisClient = redis;

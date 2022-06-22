@@ -4,14 +4,14 @@ import { override } from '../override/override';
 import { IBestOffer, IBaseResponse, IParams } from '../../Interfaces/params';
 import { IAggregatedOfferList } from '../../Interfaces/offers';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
+
+import { influxdb } from '../../Utils/metrics';
 // eslint-disable-next-line import/no-cycle
 import {
   getAggOffersCountByCampaign,
-  getAggregatedOffersProportional,
-  setAggOffersCountByCampaign,
+  getAggregatedOffersProportional, setAggOffersCountByCampaign,
   setAggregatedOffersProportional,
-} from '../../Models/fpModel';
-import { influxdb } from '../../Utils/metrics';
+} from '../../Utils/aggregatedOffersProportional';
 
 export interface ICalcAggregatedOffer{
   id: number,
@@ -26,11 +26,11 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
     const randomId = Math.floor(Math.random() * offers.length);
     return offers[randomId];
   }
-  const countOffers = await getAggOffersCountByCampaign(campaignId);
-  if (offers.length !== countOffers) {
-    await setAggOffersCountByCampaign(campaignId, offers.length);
-    calcOfferIdProportional = [];
-  }
+  // const countOffers = await getAggOffersCountByCampaign(campaignId);
+  // if (offers.length !== countOffers) {
+  //   await setAggOffersCountByCampaign(campaignId, offers.length);
+  //   calcOfferIdProportional = [];
+  // }
 
   for (const id of offers) {
     const checkId = calcOfferIdProportional ? calcOfferIdProportional.filter((i: ICalcAggregatedOffer) => (i.id === id)) : [];

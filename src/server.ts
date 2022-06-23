@@ -21,6 +21,7 @@ import { IRecipeType } from './Interfaces/recipeTypes';
 import { socketConnection } from './socket';
 import { ISocketType } from './Interfaces/socketTypes';
 import { sendLidDynamoDb } from './Utils/dynamoDb';
+import { IntervalTime } from './Constants/intervalTime';
 // import {setOffersToRedis} from "./Crons/setRecipeToRedisCron";
 
 const app: Application = express();
@@ -49,11 +50,6 @@ export const failedLidsDynamoDb = (data: any) => {
   failedLidsDynamoDbData.push(data);
 };
 
-function loggerMiddleware(request: express.Request, response: express.Response, next: NextFunction) {
-  // consola.info(`${request.method} ${request.path}`);
-  next();
-}
-
 consola.info(`Cores number:${coreThread.length}`);
 if (cluster.isMaster) {
   socketConnection(ISocketType.MASTER);
@@ -79,7 +75,7 @@ if (cluster.isMaster) {
     }
   };
 
-  setInterval(aggregatorData, 20000); // 20 sec
+  setInterval(aggregatorData, IntervalTime.SEND_TO_AGGREGATOR);
 
   const failedLidsProcess = async () => {
     if (failedLidsData.length === 0) return;
@@ -91,7 +87,7 @@ if (cluster.isMaster) {
       failedLidsData.splice(i, 1);
     }
   };
-  setInterval(failedLidsProcess, 3600000); // 1 hour
+  setInterval(failedLidsProcess, IntervalTime.FAILED_LIDS_PROCESS);
 
   const failedLidsDynamoDbProcess = async () => {
     if (failedLidsDynamoDbData.length === 0) return;
@@ -103,7 +99,7 @@ if (cluster.isMaster) {
       failedLidsDynamoDbData.splice(i, 1);
     }
   };
-  setInterval(failedLidsDynamoDbProcess, 1800000); // 30 min
+  setInterval(failedLidsDynamoDbProcess, IntervalTime.FAILED_LIDS_DYNAMO_DB_PROCESS);
 
   for (let i = 0; i < coreThread.length; i++) {
     cluster.fork();
@@ -158,7 +154,6 @@ if (cluster.isMaster) {
   // setTimeout(setCampaignsToRedis, 20000)
 } else {
   const server = http.createServer(app) as Server;
-  app.use(loggerMiddleware);
   app.use(bodyParser.json());
   app.get('/api/v1/health', (req: Request, res: Response) => {
     res.send('Ok');

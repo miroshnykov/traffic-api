@@ -15,7 +15,7 @@ import 'dotenv/config';
 import { getFileFromBucket } from './Crons/getReceipS3Cron';
 // eslint-disable-next-line import/no-cycle
 import { sendToAggregator } from './Utils/aggregator';
-import { influxdb } from './Utils/metrics';
+import { influxdb, sendMetricsSystem } from './Utils/metrics';
 import { IRedshiftData } from './Interfaces/redshiftData';
 import { IRecipeType } from './Interfaces/recipeTypes';
 import { socketConnection } from './socket';
@@ -100,6 +100,11 @@ if (cluster.isMaster) {
     }
   };
   setInterval(failedLidsDynamoDbProcess, IntervalTime.FAILED_LIDS_DYNAMO_DB_PROCESS);
+
+  setInterval(() => {
+    if (process.env.NODE_ENV === 'development') return;
+    sendMetricsSystem();
+  }, IntervalTime.SEND_METRICS_SYSTEM);
 
   for (let i = 0; i < coreThread.length; i++) {
     cluster.fork();

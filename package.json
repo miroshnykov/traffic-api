@@ -10,8 +10,8 @@
     "lint": "npx eslint ./src --ext .ts",
     "lint:fix": "npx eslint --fix ./src --ext .ts",
     "start": "node -r dotenv/config ./dist/server.js dotenv_config_path=/var/run/secrets/environment",
-    "testUrl": "node ./dist/Tests/link.js",
-    "clean": "rimraf ./dist"
+    "clean": "rimraf ./dist",
+    "stageLink": "ts-node -r dotenv/config src/Tests/link.ts dotenv_config_path=.env"
   },
   "repository": {
     "type": "git",

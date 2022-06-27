@@ -10,18 +10,16 @@ import { setFp } from '../../Models/fpModel';
 
 export const fingerPrintOverride = async (
   params: IParams,
-  req: Request,
   fpData: string | undefined,
 ): Promise<IBaseResponse> => {
-  const debugFp: boolean = req?.query?.fp! === 'disabled';
   let pass: boolean = false;
   const paramsClone = { ...params };
-  if (debugFp) {
+  if (params.debugFp) {
     return {
       success: pass,
     };
   }
-  const fpKey = `fp:${req.fingerprint?.hash!}-${paramsClone.campaignId}`;
+  const fpKey = `fp:${params.fingerPrintKey!}-${paramsClone.campaignId}`;
   if (fpData) {
     consola.info(` ***** GET FINGER_PRINT FROM CACHE ${fpKey} from cache, data  `, fpData);
     // disabled cache because  of PH-885

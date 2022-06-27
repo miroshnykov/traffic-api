@@ -16,11 +16,11 @@ import { handleConditions } from './handleConditions';
 import { AffiliateStatus } from '../Interfaces/affiliates';
 import { ICampaignStatus } from '../Interfaces/campaigns';
 
-export const offersServices = async (req: Request): Promise<IResponse> => {
-  const debug: boolean = req?.query?.debugging! === 'debugging';
+export const offersServices = async (params: IParams): Promise<IResponse> => {
+  // const debug: boolean = req?.query?.debugging! === 'debugging';
+  const debug: boolean = params?.debug!;
   try {
     influxdb(200, 'offers_all_request');
-    const params: IParams = await getParams(req);
     if (params.affiliateStatus === AffiliateStatus.BLACKLISTED) {
       influxdb(200, 'blocked_affiliate');
       consola.error(`Blocked by affiliateId:${params.affiliateId} with status ${params.affiliateStatus}`);
@@ -48,7 +48,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
       };
     }
     // consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`);
-    const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`);
+    const fpData = await getFp(`fp:${params.fingerPrintKey}-${params.campaignId}`);
 
     const handleConditionsResponse: IResponse = await handleConditions(params, debug);
     let finalResponse: IParams;
@@ -57,7 +57,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     } else {
       finalResponse = { ...params };
     }
-    const fingerPrintRes: IResponse = await fingerPrintOverride(finalResponse, req, fpData);
+    const fingerPrintRes: IResponse = await fingerPrintOverride(finalResponse, fpData);
 
     if (fingerPrintRes.success) {
       finalResponse = { ...finalResponse, ...fingerPrintRes.params };
@@ -71,7 +71,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
         finalResponse.landingPageUrl = finalResponse.landingPageUrl
           && finalResponse.landingPageUrl.replace(`{${item}}`, String(itemValue));
       } else {
-        const tmp = req?.query[item];
+        const tmp = params?.query[item];
         if (tmp) {
           finalResponse.landingPageUrl = finalResponse.landingPageUrl
             && finalResponse.landingPageUrl.replace(`{${item}}`, String(tmp));

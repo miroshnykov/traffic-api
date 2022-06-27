@@ -11,6 +11,9 @@ export interface IParams {
   campaignId: number
   subCampaign?: string
   cid?: string
+  debug?: boolean
+  debugFp?: boolean
+  query?: object[] | any
   affiliateId: number
   affiliateStatus: string
   affiliateType: string | null

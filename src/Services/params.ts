@@ -16,6 +16,9 @@ import { CampaignDefault } from '../Utils/defaultCampaign';
 
 export const getParams = async (req: Request): Promise<IParams> => {
   try {
+    const debug: boolean = req?.query?.debugging! === 'debugging';
+    const query: object[] | any = req?.query;
+    const debugFp: boolean = req?.query?.fp! === 'disabled';
     const fingerPrintKey = req.fingerprint?.hash;
     const offerEncoded: string = String(req.query.o! || '');
     const encKey: string = process.env.ENCRIPTION_KEY || '';
@@ -165,6 +168,9 @@ export const getParams = async (req: Request): Promise<IParams> => {
       fingerPrintKey,
       isUniqueVisit,
       cid,
+      debug,
+      debugFp,
+      query,
     };
   } catch (e) {
     influxdb(500, 'get_params_error');

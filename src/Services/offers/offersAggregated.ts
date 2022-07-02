@@ -1,7 +1,10 @@
 import consola from 'consola';
 // eslint-disable-next-line import/no-cycle
 import { override } from '../override/override';
-import { IBestOffer, IBaseResponse, IParams } from '../../Interfaces/params';
+// eslint-disable-next-line import/no-cycle
+import {
+  IBestOffer, IBaseResponse, IParams, ICalcAggregatedOffer,
+} from '../../Interfaces/params';
 import { IAggregatedOfferList } from '../../Interfaces/offers';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
 
@@ -13,24 +16,26 @@ import {
   setAggregatedOffersProportional,
 } from '../../Utils/aggregatedOffersProportional';
 
-export interface ICalcAggregatedOffer{
-  id: number,
-  count: number
-}
-
-const getProportionalOffers = async (campaignId: number, offers: number[]): Promise<number> => {
+const getProportionalOffers = async (campaignId: number, offers: number[]): Promise<IBestOffer> => {
   let calcOfferIdProportional: ICalcAggregatedOffer[] | null = await getAggregatedOffersProportional(campaignId);
   if (calcOfferIdProportional === null) {
     influxdb(500, 'aggregated_offers_proportional_use_random_offer_id');
-    consola.warn(' ** CalcOfferIdProportional is NULL check redis connection ');
+    consola.warn('[CHOOSE_BEST_OFFER] ** CalcOfferIdProportional is NULL check redis connection ');
     const randomId = Math.floor(Math.random() * offers.length);
-    return offers[randomId];
+    return {
+      success: true,
+      bestOfferId: offers[randomId],
+      cacheData: null,
+    };
   }
-  // const countOffers = await getAggOffersCountByCampaign(campaignId);
-  // if (offers.length !== countOffers) {
-  //   await setAggOffersCountByCampaign(campaignId, offers.length);
-  //   calcOfferIdProportional = [];
-  // }
+  const countOffers = await getAggOffersCountByCampaign(campaignId);
+  if (offers.length !== countOffers) {
+    consola.warn('[CHOOSE_BEST_OFFER] ** count of aggregated offers and REDIS is different, reset redis');
+    influxdb(200, 'aggregated_offers_proportional_upd_count');
+
+    await setAggOffersCountByCampaign(campaignId, offers.length);
+    calcOfferIdProportional = [];
+  }
 
   for (const id of offers) {
     const checkId = calcOfferIdProportional ? calcOfferIdProportional.filter((i: ICalcAggregatedOffer) => (i.id === id)) : [];
@@ -46,11 +51,12 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
     }
   }
 
-  const [calcOfferIdResponse] = calcOfferIdProportional ? calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count) : [];
+  const [calcOfferIdResponse] = calcOfferIdProportional ? calcOfferIdProportional
+    .sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count) : [];
   const selectedOfferId = calcOfferIdResponse?.id;
   const currentCount = calcOfferIdResponse?.count;
 
-  consola.info(` ** Selected Offer { ${selectedOfferId} } CalcOfferIdProportional from REDIS by campaignId { ${campaignId} } ${JSON.stringify(calcOfferIdProportional)}`);
+  consola.info(`[CHOOSE_BEST_OFFER] ** Selected Offer { ${selectedOfferId} } CalcOfferIdProportional from REDIS by campaignId { ${campaignId} } ${JSON.stringify(calcOfferIdProportional)}`);
   calcOfferIdProportional?.forEach((i: ICalcAggregatedOffer) => {
     if (i.id === selectedOfferId) {
       // eslint-disable-next-line no-param-reassign
@@ -61,7 +67,11 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
     calcOfferIdProportional = [];
   }
   await setAggregatedOffersProportional(campaignId, calcOfferIdProportional!);
-  return selectedOfferId;
+  return {
+    success: true,
+    bestOfferId: selectedOfferId,
+    cacheData: calcOfferIdProportional,
+  };
 };
 
 const checkRestrictionsByOffer = (
@@ -98,13 +108,18 @@ export const identifyBestOffer = async (
   paramsClone.offersAggregatedIdsToRedirect = offersAggregatedIdsToRedirect;
 
   if (offersAggregatedIdsToRedirect.length !== 0) {
-    const randomId = Math.floor(Math.random() * offersAggregatedIdsToRedirect.length);
+    // const randomId = Math.floor(Math.random() * offersAggregatedIdsToRedirect.length);
     // PH-886
-    bestOfferResp = offersAggregatedIdsToRedirect[randomId];
+    // bestOfferResp = offersAggregatedIdsToRedirect[randomId];
     // PH-1112
-    // bestOfferResp = await getProportionalOffers(paramsClone.campaignId, offersAggregatedIdsToRedirect);
-    // const calcOfferIdProportional = await getAggregatedOffersProportional(paramsClone.campaignId);
-    // paramsClone.offersAggregatedIdsProportionals = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
+    const proportionalOffersResp: IBestOffer = await getProportionalOffers(paramsClone.campaignId, offersAggregatedIdsToRedirect);
+    bestOfferResp = proportionalOffersResp?.bestOfferId;
+    const calcOfferIdProportional = proportionalOffersResp?.cacheData;
+    if (calcOfferIdProportional) {
+      paramsClone.offersAggregatedIdsProportionals = calcOfferIdProportional
+        .sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
+    }
+
     // [bestOfferResp] = offersAggregatedIdsToRedirect;
 
     // PH-38
@@ -145,7 +160,7 @@ export const offerAggregatedCalculations = async (
         paramsOverride = await override(paramsClone, bestOfferRes.bestOfferId);
         paramsClone = { ...paramsClone, ...paramsOverride };
         paramsClone.offersAggregatedIdsToRedirect = bestOfferRes?.params?.offersAggregatedIdsToRedirect;
-        // paramsClone.offersAggregatedIdsProportionals = bestOfferRes?.params?.offersAggregatedIdsProportionals;
+        paramsClone.offersAggregatedIdsProportionals = bestOfferRes?.params?.offersAggregatedIdsProportionals;
         paramsClone.offersAggregatedIdsMargin = bestOfferRes?.params?.offersAggregatedIdsMargin;
         pass = true;
       } else {

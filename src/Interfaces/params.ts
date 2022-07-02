@@ -118,8 +118,14 @@ export interface IResponse extends IBaseResponse{
   blockReason?: string;
 }
 
+export interface ICalcAggregatedOffer{
+  id: number,
+  count: number
+}
+
 export interface IBestOffer extends IBaseResponse{
   bestOfferId: number
+  cacheData?: ICalcAggregatedOffer[] | null
 }
 
 export enum ILandingPageParamsFields {

@@ -98,13 +98,13 @@ export const identifyBestOffer = async (
   paramsClone.offersAggregatedIdsToRedirect = offersAggregatedIdsToRedirect;
 
   if (offersAggregatedIdsToRedirect.length !== 0) {
-    // const randomId = Math.floor(Math.random() * offersAggregatedIdsToRedirect.length);
+    const randomId = Math.floor(Math.random() * offersAggregatedIdsToRedirect.length);
     // PH-886
-    // bestOfferResp = offersAggregatedIdsToRedirect[randomId];
+    bestOfferResp = offersAggregatedIdsToRedirect[randomId];
     // PH-1112
-    bestOfferResp = await getProportionalOffers(paramsClone.campaignId, offersAggregatedIdsToRedirect);
-    const calcOfferIdProportional = await getAggregatedOffersProportional(paramsClone.campaignId);
-    paramsClone.offersAggregatedIdsProportionals = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
+    // bestOfferResp = await getProportionalOffers(paramsClone.campaignId, offersAggregatedIdsToRedirect);
+    // const calcOfferIdProportional = await getAggregatedOffersProportional(paramsClone.campaignId);
+    // paramsClone.offersAggregatedIdsProportionals = calcOfferIdProportional.sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count);
     // [bestOfferResp] = offersAggregatedIdsToRedirect;
 
     // PH-38
@@ -145,7 +145,7 @@ export const offerAggregatedCalculations = async (
         paramsOverride = await override(paramsClone, bestOfferRes.bestOfferId);
         paramsClone = { ...paramsClone, ...paramsOverride };
         paramsClone.offersAggregatedIdsToRedirect = bestOfferRes?.params?.offersAggregatedIdsToRedirect;
-        paramsClone.offersAggregatedIdsProportionals = bestOfferRes?.params?.offersAggregatedIdsProportionals;
+        // paramsClone.offersAggregatedIdsProportionals = bestOfferRes?.params?.offersAggregatedIdsProportionals;
         paramsClone.offersAggregatedIdsMargin = bestOfferRes?.params?.offersAggregatedIdsMargin;
         pass = true;
       } else {

@@ -1,6 +1,5 @@
 import { redis } from '../redis';
-// eslint-disable-next-line import/no-cycle
-import { ICalcAggregatedOffer } from '../Services/offers/offersAggregated';
+import { ICalcAggregatedOffer } from '../Interfaces/params';
 
 export const setAggregatedOffersProportional = async (campaignId: number, arr: ICalcAggregatedOffer[]) => {
   const format = JSON.stringify(arr);

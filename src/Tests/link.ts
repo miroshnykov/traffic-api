@@ -79,7 +79,8 @@ import consola from 'consola';
     }
   }
 
-  const calcOfferIdResponse = calcOfferIdProportional.sort((a: any, b: any) => a.count - b.count);
+  const calcOfferIdResponse = calcOfferIdProportional
+    .sort((a: any, b: any) => a.count - b.count);
   consola.info(`calcOfferIdResponse: ${JSON.stringify(calcOfferIdResponse)}`);
   consola.info(`success:${success}, errors:${errors} `);
 })();

@@ -144,10 +144,10 @@ if (cluster.isMaster) {
     }
   });
 
-  cluster.on('exit', (worker: Worker): void => {
+  cluster.on('exit', (worker: Worker, code: number, signal: string): void => {
     if (worker.isDead()) {
       influxdb(500, 'worker_dead');
-      consola.info(`${chalk.redBright('worker dead pid')}: ${worker.process.pid}`);
+      consola.info(`${chalk.redBright('worker dead pid')}: ${worker.process.pid} code:${code} signal:${signal}`);
     }
     cluster.fork();
   });

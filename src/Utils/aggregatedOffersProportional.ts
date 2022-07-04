@@ -1,3 +1,4 @@
+import consola from 'consola';
 import { redis } from '../redis';
 import { ICalcAggregatedOffer } from '../Interfaces/params';
 import { influxdb } from './metrics';
@@ -20,7 +21,7 @@ export const getAggregatedOffersProportional = async (campaignId: number) => {
     const response = await redis.get(`aggregatedOffersProportional:${campaignId}`);
     return response ? JSON.parse(response) : [];
   } catch (e) {
-    console.error('getAggregatedOffersProportionalErrors:', e);
+    consola.error('getAggregatedOffersProportionalErrors:', e);
     influxdb(500, 'aggregated_offers_proportional_redis_error');
     return null;
   }

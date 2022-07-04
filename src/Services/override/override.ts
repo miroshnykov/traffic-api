@@ -7,8 +7,8 @@ import { RedirectUrls } from '../../Utils/defaultRedirectUrls';
 import { getDefaultOfferUrl, OfferDefault } from '../../Utils/defaultOffer';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
 // eslint-disable-next-line import/no-cycle
-import { identifyBestOffer } from '../offers/offersAggregated';
 import { influxdb } from '../../Utils/metrics';
+import { identifyBestOffer } from '../offers/aggregated/identifyBestOffer';
 
 export const override = async (
   params: IParams,
@@ -31,9 +31,11 @@ export const override = async (
     paramsClone.redirectType = IRedirectType.OFFER_AGGREGATED_EXIT_TRAFFIC_TO_AGGREGATED_OFFER;
     const exitTrafficBestOfferRes: IBestOffer = await identifyBestOffer(offerExitTrafficInfo?.offersAggregatedIds!, paramsClone);
     if (exitTrafficBestOfferRes.success && exitTrafficBestOfferRes.bestOfferId) {
+      influxdb(200, `aggregated_offer_identify_best_offer_in_override_campaign_${paramsClone.campaignId}`);
       const offerExitTrafficBestOffer: any = await getOffer(exitTrafficBestOfferRes.bestOfferId);
       offerExitTrafficInfo = JSON.parse(offerExitTrafficBestOffer);
     } else {
+      influxdb(200, `aggregated_offer_default_campaign_${paramsClone.campaignId}`);
       const defaultOffer: any = await getOffer(OfferDefault.OFFER_ID);
       offerExitTrafficInfo = JSON.parse(defaultOffer);
     }

@@ -3,7 +3,7 @@ import {
   IBaseResponse, IParams, IResponse,
 } from '../Interfaces/params';
 import { IOfferType } from '../Interfaces/offers';
-import { offerAggregatedCalculations } from './offers/offersAggregated';
+import { offerAggregatedCalculations } from './offers/aggregated/offersAggregated';
 import { influxdb } from '../Utils/metrics';
 import { offersStartEndDateSetupCalculations } from './offers/restrictions/offersStartEndDateSetup';
 import { offersGeoRestrictions } from './offers/restrictions/offersGeoRestrictions';

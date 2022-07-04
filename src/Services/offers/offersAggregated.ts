@@ -30,8 +30,8 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
   }
   const countOffers = await getAggOffersCountByCampaign(campaignId);
   if (offers.length !== countOffers) {
-    consola.warn('[CHOOSE_BEST_OFFER] ** count of aggregated offers and REDIS is different, reset redis');
-    influxdb(200, 'aggregated_offers_proportional_upd_count');
+    consola.warn(`[CHOOSE_BEST_OFFER] ** count by campaign(${campaignId}) for aggregated offers(${offers.length}) and REDIS(${countOffers}) is different, reset redis`);
+    influxdb(200, `aggregated_offers_proportional_upd_count_campaign_id_${campaignId}`);
 
     await setAggOffersCountByCampaign(campaignId, offers.length);
     calcOfferIdProportional = [];

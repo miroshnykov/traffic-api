@@ -16,9 +16,8 @@ import {
 } from '../../Utils/aggregatedOffersProportional';
 
 const getProportionalOffers = async (campaignId: number, offers: number[]): Promise<IBestOffer> => {
-  let calcOfferIdProportionalCache: ICalculationCache = await getAggregatedOffersProportional(campaignId);
-  let calcOfferIdProportional: ICalcAggregatedOffer[] | undefined = calcOfferIdProportionalCache?.data;
-  if (!calcOfferIdProportional) {
+  let calcOfferIdProportionalCache: ICalculationCache | undefined | null = await getAggregatedOffersProportional(campaignId);
+  if (!calcOfferIdProportionalCache) {
     influxdb(500, 'aggregated_offers_proportional_use_random_offer_id');
     const randomId = Math.floor(Math.random() * offers.length);
     consola.warn(`[CHOOSE_BEST_OFFER] ** CalcOfferIdProportional is NULL check redis connection, get random bestOffer:${offers[randomId]}`);
@@ -28,6 +27,7 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
       cacheData: null,
     };
   }
+  let calcOfferIdProportional: ICalcAggregatedOffer[] | undefined = calcOfferIdProportionalCache?.data;
   const countOffers = calcOfferIdProportionalCache?.countOffers;
   if (offers.length !== countOffers) {
     consola.warn(`[CHOOSE_BEST_OFFER] ** count by campaign(${campaignId}) for aggregated offers(${offers.length}) and REDIS(${countOffers}) is different, reset redis`);

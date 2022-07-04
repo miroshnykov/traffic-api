@@ -1,11 +1,9 @@
-import { Request } from 'express';
 import consola from 'consola';
 import { influxdb } from '../Utils/metrics';
 
 import {
   ILandingPageParams, ILandingPageParamsFields, IParams, IResponse,
 } from '../Interfaces/params';
-import { getParams } from './params';
 import { lidOffer } from '../Utils/lid';
 import { createLidOffer } from '../Utils/dynamoDb';
 import { ILid } from '../Interfaces/lid';

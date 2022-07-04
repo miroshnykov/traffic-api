@@ -4,7 +4,7 @@ import { CpuInfo, cpus } from 'node:os';
 import consola from 'consola';
 import chalk from 'chalk';
 import express, {
-  Application, NextFunction, Request, Response,
+  Application, Request, Response,
 } from 'express';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as bodyParser from 'body-parser';

@@ -38,7 +38,9 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
   }
 
   for (const id of offers) {
-    const checkId = calcOfferIdProportional ? calcOfferIdProportional.filter((i: ICalcAggregatedOffer) => (i.id === id)) : [];
+    const checkId = calcOfferIdProportional ? calcOfferIdProportional.filter(
+      (i: ICalcAggregatedOffer) => (i.id === id),
+    ) : [];
     if (checkId.length === 0) {
       calcOfferIdProportional.push({
         id, count: 0,
@@ -56,7 +58,7 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
   const selectedOfferId = calcOfferIdResponse?.id;
   const currentCount = calcOfferIdResponse?.count;
 
-  consola.info(`[CHOOSE_BEST_OFFER] ** Selected Offer { ${selectedOfferId} } CalcOfferIdProportional from REDIS by campaignId { ${campaignId} } ${JSON.stringify(calcOfferIdProportional)}`);
+  consola.info(`[CHOOSE_BEST_OFFER] ** Selected Offer { ${selectedOfferId} } CalcOfferIdProportional from REDIS by campaignId { ${campaignId} }`);
   calcOfferIdProportional?.forEach((i: ICalcAggregatedOffer) => {
     if (i.id === selectedOfferId) {
       // eslint-disable-next-line no-param-reassign
@@ -64,6 +66,7 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
     }
   });
   if (currentCount > Number.MAX_SAFE_INTEGER) {
+    influxdb(500, 'aggregated_offers_proportional_huge_count');
     calcOfferIdProportional = [];
   }
   await setAggregatedOffersProportional(campaignId, calcOfferIdProportional!);
@@ -112,7 +115,9 @@ export const identifyBestOffer = async (
     // PH-886
     // bestOfferResp = offersAggregatedIdsToRedirect[randomId];
     // PH-1112
-    const proportionalOffersResp: IBestOffer = await getProportionalOffers(paramsClone.campaignId, offersAggregatedIdsToRedirect);
+    const proportionalOffersResp: IBestOffer = await getProportionalOffers(
+      paramsClone.campaignId, offersAggregatedIdsToRedirect,
+    );
     bestOfferResp = proportionalOffersResp?.bestOfferId;
     const calcOfferIdProportional = proportionalOffersResp?.cacheData;
     if (calcOfferIdProportional) {

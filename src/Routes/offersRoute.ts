@@ -72,8 +72,8 @@ offersRouter.get('/', async (req: Request, res: Response): Promise<void> => {
     }
 
     if (responseOffer?.success && responseOffer?.debug) {
-      consola.info(`Redirect to ${responseOffer?.params?.redirectUrl}`);
-      consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} } redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
+      consola.info(`[REDIRECT_FINAL_URL] ${responseOffer?.params?.redirectUrl}`);
+      consola.info(`[REDIRECT_FINAL_INFO] CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} } redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
 
       if (responseOffer.params?.offerId === OfferDefault.OFFER_ID) {
         consola.info('Offers_default_redirect');
@@ -87,8 +87,8 @@ offersRouter.get('/', async (req: Request, res: Response): Promise<void> => {
 
     if (responseOffer?.success) {
       const redirectUrlFinal: string = responseOffer.params?.redirectUrl || RedirectUrls.DEFAULT;
-      consola.info(`Redirect to ${redirectUrlFinal}`);
-      consola.info(`CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} }  redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
+      consola.info(`[REDIRECT_FINAL_URL] ${redirectUrlFinal}`);
+      consola.info(`[REDIRECT_FINAL_INFO] CampaignId: { ${responseOffer.params?.campaignId} } OfferId: { ${responseOffer.params?.offerId} } PayIn: { ${responseOffer.params?.payIn} } PayOut: { ${responseOffer.params?.payOut} }  redirectType { ${responseOffer.params?.redirectType} } redirectReason { ${responseOffer.params?.redirectReason} }`);
       if (responseOffer.params?.offerId === OfferDefault.OFFER_ID) {
         influxdb(200, 'offers_default_redirect');
       } else {

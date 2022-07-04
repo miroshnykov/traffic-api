@@ -15,6 +15,11 @@ import {
   setAggregatedOffersProportional,
 } from '../../Utils/aggregatedOffersProportional';
 
+const randomOffer = (offers: number[]) => {
+  const randomId = Math.floor(Math.random() * offers.length);
+  return offers[randomId];
+};
+
 const getProportionalOffers = async (campaignId: number, offers: number[]): Promise<IBestOffer> => {
   let calcOfferIdProportionalCache: ICalculationCache | undefined | null = await getAggregatedOffersProportional(campaignId);
   if (!calcOfferIdProportionalCache) {
@@ -23,7 +28,7 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
     consola.warn(`[CHOOSE_BEST_OFFER] ** CalcOfferIdProportional is NULL check redis connection, get random bestOffer:${offers[randomId]}`);
     return {
       success: true,
-      bestOfferId: offers[randomId],
+      bestOfferId: randomOffer(offers),
       cacheData: null,
     };
   }
@@ -120,6 +125,12 @@ export const identifyBestOffer = async (
       paramsClone.campaignId, offersAggregatedIdsToRedirect,
     );
     bestOfferResp = proportionalOffersResp?.bestOfferId;
+    if (!bestOfferResp) {
+      consola.error(`[CHOOSE_BEST_OFFER] bestOffer for campaignId ${paramsClone.campaignId} did not defined for some reason use random offer`);
+      influxdb(500, 'aggregated_offers_proportional_null_use_random_offer_id');
+      bestOfferResp = randomOffer(offersAggregatedIdsToRedirect);
+    }
+
     const calcOfferIdProportional = proportionalOffersResp?.cacheData;
     if (calcOfferIdProportional) {
       paramsClone.offersAggregatedIdsProportionals = calcOfferIdProportional
@@ -140,7 +151,7 @@ export const identifyBestOffer = async (
     // }
   }
   return {
-    success: true,
+    success: !!bestOfferResp,
     bestOfferId: bestOfferResp,
     params: paramsClone,
   };

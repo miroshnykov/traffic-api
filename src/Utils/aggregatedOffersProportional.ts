@@ -5,10 +5,10 @@ import { influxdb } from './metrics';
 export const setAggregatedOffersProportional = async (
   campaignId: number,
   aggregatedOffersData: ICalcAggregatedOffer[],
-  offersCount: number,
+  countOffers: number,
 ) => {
   const cache = {
-    count: offersCount,
+    countOffers,
     data: aggregatedOffersData,
   };
   const format = JSON.stringify(cache);

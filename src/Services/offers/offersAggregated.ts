@@ -3,7 +3,7 @@ import consola from 'consola';
 import { override } from '../override/override';
 // eslint-disable-next-line import/no-cycle
 import {
-  IBestOffer, IBaseResponse, IParams, ICalcAggregatedOffer,
+  IBestOffer, IBaseResponse, IParams, ICalcAggregatedOffer, ICalculationCache,
 } from '../../Interfaces/params';
 import { IAggregatedOfferList } from '../../Interfaces/offers';
 import { IRedirectType } from '../../Interfaces/recipeTypes';
@@ -11,30 +11,30 @@ import { IRedirectType } from '../../Interfaces/recipeTypes';
 import { influxdb } from '../../Utils/metrics';
 // eslint-disable-next-line import/no-cycle
 import {
-  getAggOffersCountByCampaign,
-  getAggregatedOffersProportional, setAggOffersCountByCampaign,
+  getAggregatedOffersProportional,
   setAggregatedOffersProportional,
 } from '../../Utils/aggregatedOffersProportional';
 
 const getProportionalOffers = async (campaignId: number, offers: number[]): Promise<IBestOffer> => {
-  let calcOfferIdProportional: ICalcAggregatedOffer[] | null = await getAggregatedOffersProportional(campaignId);
-  if (calcOfferIdProportional === null) {
+  let calcOfferIdProportionalCache: ICalculationCache = await getAggregatedOffersProportional(campaignId);
+  let calcOfferIdProportional: ICalcAggregatedOffer[] | undefined = calcOfferIdProportionalCache?.data;
+  if (!calcOfferIdProportional) {
     influxdb(500, 'aggregated_offers_proportional_use_random_offer_id');
-    consola.warn('[CHOOSE_BEST_OFFER] ** CalcOfferIdProportional is NULL check redis connection ');
     const randomId = Math.floor(Math.random() * offers.length);
+    consola.warn(`[CHOOSE_BEST_OFFER] ** CalcOfferIdProportional is NULL check redis connection, get random bestOffer:${offers[randomId]}`);
     return {
       success: true,
       bestOfferId: offers[randomId],
       cacheData: null,
     };
   }
-  const countOffers = await getAggOffersCountByCampaign(campaignId);
+  const countOffers = calcOfferIdProportionalCache?.countOffers;
   if (offers.length !== countOffers) {
     consola.warn(`[CHOOSE_BEST_OFFER] ** count by campaign(${campaignId}) for aggregated offers(${offers.length}) and REDIS(${countOffers}) is different, reset redis`);
     influxdb(200, `aggregated_offers_proportional_upd_count_campaign_id_${campaignId}`);
 
-    await setAggOffersCountByCampaign(campaignId, offers.length);
     calcOfferIdProportional = [];
+    await setAggregatedOffersProportional(campaignId, calcOfferIdProportional, offers.length);
   }
 
   for (const id of offers) {
@@ -46,9 +46,10 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
         id, count: 0,
       });
       // eslint-disable-next-line no-await-in-loop
-      await setAggregatedOffersProportional(campaignId, calcOfferIdProportional);
+      await setAggregatedOffersProportional(campaignId, calcOfferIdProportional, offers.length);
       // eslint-disable-next-line no-await-in-loop
-      calcOfferIdProportional = await getAggregatedOffersProportional(campaignId) || [];
+      calcOfferIdProportionalCache = await getAggregatedOffersProportional(campaignId) || [];
+      calcOfferIdProportional = calcOfferIdProportionalCache?.data;
       break;
     }
   }
@@ -69,7 +70,7 @@ const getProportionalOffers = async (campaignId: number, offers: number[]): Prom
     influxdb(500, 'aggregated_offers_proportional_huge_count');
     calcOfferIdProportional = [];
   }
-  await setAggregatedOffersProportional(campaignId, calcOfferIdProportional!);
+  await setAggregatedOffersProportional(campaignId, calcOfferIdProportional!, offers.length);
   return {
     success: true,
     bestOfferId: selectedOfferId,

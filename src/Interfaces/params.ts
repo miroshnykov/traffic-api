@@ -118,6 +118,11 @@ export interface IResponse extends IBaseResponse{
   blockReason?: string;
 }
 
+export interface ICalculationCache {
+  data: ICalcAggregatedOffer[],
+  countOffers: number
+}
+
 export interface ICalcAggregatedOffer{
   id: number,
   count: number

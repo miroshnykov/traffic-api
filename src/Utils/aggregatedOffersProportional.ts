@@ -1,21 +1,36 @@
 import { redis } from '../redis';
 import { ICalcAggregatedOffer } from '../Interfaces/params';
+import { influxdb } from './metrics';
 
-export const setAggregatedOffersProportional = async (campaignId: number, arr: ICalcAggregatedOffer[]) => {
-  const format = JSON.stringify(arr);
+export const setAggregatedOffersProportional = async (
+  campaignId: number,
+  aggregatedOffersData: ICalcAggregatedOffer[],
+  offersCount: number,
+) => {
+  const cache = {
+    count: offersCount,
+    data: aggregatedOffersData,
+  };
+  const format = JSON.stringify(cache);
   await redis.set(`aggregatedOffersProportional:${campaignId}`, format);
 };
 
 export const getAggregatedOffersProportional = async (campaignId: number) => {
-  const response = await redis.get(`aggregatedOffersProportional:${campaignId}`);
-  return response ? JSON.parse(response) : [];
+  try {
+    const response = await redis.get(`aggregatedOffersProportional:${campaignId}`);
+    return response ? JSON.parse(response) : [];
+  } catch (e) {
+    console.error('getAggregatedOffersProportionalErrors:', e);
+    influxdb(500, 'aggregated_offers_proportional_redis_error');
+    return null;
+  }
 };
 
-export const setAggOffersCountByCampaign = async (campaignId: number, count: number) => {
-  await redis.set(`aggregatedOffersCount:${campaignId}`, count);
-};
-
-export const getAggOffersCountByCampaign = async (campaignId: number) => {
-  const resp = await redis.get(`aggregatedOffersCount:${campaignId}`);
-  return Number(resp);
-};
+// export const setAggOffersCountByCampaign = async (campaignId: number, count: number) => {
+//   await redis.set(`aggregatedOffersCount:${campaignId}`, count);
+// };
+//
+// export const getAggOffersCountByCampaign = async (campaignId: number) => {
+//   const resp = await redis.get(`aggregatedOffersCount:${campaignId}`);
+//   return Number(resp);
+// };

@@ -15,11 +15,11 @@ export const getProportionalOffers = async (campaignId: number, offers: number[]
   let calcOfferIdProportionalCache: ICalculationCache | undefined | null = await getAggregatedOffersProportional(campaignId);
   if (!calcOfferIdProportionalCache) {
     influxdb(500, 'aggregated_offers_proportional_use_random_offer_id');
-    const randomId = Math.floor(Math.random() * offers.length);
-    consola.warn(`[CHOOSE_BEST_OFFER] ** CalcOfferIdProportional is NULL check redis connection, get random bestOffer:${offers[randomId]}`);
+    const randomOfferId = randomOffer(offers);
+    consola.warn(`[CHOOSE_BEST_OFFER] ** CalcOfferIdProportional is NULL check redis connection, get random bestOffer:randomOfferId${randomOfferId}`);
     return {
       success: true,
-      bestOfferId: randomOffer(offers),
+      bestOfferId: randomOfferId,
       cacheData: null,
     };
   }

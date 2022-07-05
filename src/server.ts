@@ -183,3 +183,14 @@ if (cluster.isMaster) {
     consola.success(`Server is running on host http://${host}:${port}, env:${process.env.NODE_ENV} Using node - { ${process.version} } `);
   });
 }
+
+process
+  .on('unhandledRejection', (reason, p) => {
+    consola.error(reason, 'Unhandled Rejection at Promise', p);
+    influxdb(500, 'unhandledRejection');
+  })
+  .on('uncaughtException', (err: Error) => {
+    consola.error(err, 'Uncaught Exception thrown');
+    influxdb(500, 'uncaughtException');
+    process.exit(1);
+  });

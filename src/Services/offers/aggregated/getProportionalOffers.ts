@@ -50,10 +50,15 @@ export const getProportionalOffers = async (campaignId: number, offers: number[]
     }
   }
 
-  const [calcOfferIdResponse] = calcOfferIdProportional ? calcOfferIdProportional
+  const calcOfferIdSort = calcOfferIdProportional ? calcOfferIdProportional
     .sort((a: ICalcAggregatedOffer, b: ICalcAggregatedOffer) => a.count - b.count) : [];
-  const selectedOfferId = calcOfferIdResponse?.id;
+  const [calcOfferIdResponse] = calcOfferIdSort;
   const currentCount = calcOfferIdResponse?.count;
+  const offersSameCount = calcOfferIdSort
+    .filter((i: ICalcAggregatedOffer) => i.count === currentCount)
+    .map((i: ICalcAggregatedOffer) => i.id);
+  // const selectedOfferId = calcOfferIdResponse?.id;
+  const selectedOfferId = randomOffer(offersSameCount);
 
   consola.info(`[CHOOSE_BEST_OFFER] ** Selected Offer { ${selectedOfferId} } CalcOfferIdProportional from REDIS by campaignId { ${campaignId} }`);
   calcOfferIdProportional?.forEach((i: ICalcAggregatedOffer) => {

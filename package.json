@@ -11,7 +11,8 @@
     "lint:fix": "npx eslint --fix ./src --ext .ts",
     "start": "node -r dotenv/config ./dist/server.js dotenv_config_path=/var/run/secrets/environment",
     "clean": "rimraf ./dist",
-    "stageLink": "ts-node -r dotenv/config src/Tests/link.ts dotenv_config_path=.env"
+    "stageLink": "ts-node -r dotenv/config src/Tests/link.ts dotenv_config_path=.env",
+    "devTest": "ts-node -r dotenv/config src/Tests/devEs2021.ts dotenv_config_path=.env"
   },
   "repository": {
     "type": "git",

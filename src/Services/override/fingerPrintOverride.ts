@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import consola from 'consola';
 import { IBaseResponse, IParams } from '../../Interfaces/params';
 import { IFingerPrintData } from '../../Interfaces/fp';
@@ -10,20 +9,18 @@ import { setFp } from '../../Models/fpModel';
 
 export const fingerPrintOverride = async (
   params: IParams,
-  req: Request,
   fpData: string | undefined,
 ): Promise<IBaseResponse> => {
-  const debugFp: boolean = req?.query?.fp! === 'disabled';
   let pass: boolean = false;
   const paramsClone = { ...params };
-  if (debugFp) {
+  if (params.debugFp) {
     return {
       success: pass,
     };
   }
-  const fpKey = `fp:${req.fingerprint?.hash!}-${paramsClone.campaignId}`;
+  const fpKey = `fp:${params.fingerPrintKey!}-${paramsClone.campaignId}`;
   if (fpData) {
-    consola.info(` ***** GET FINGER_PRINT FROM CACHE ${fpKey} from cache, data  `, fpData);
+    consola.info(` *** [GET_FINGER_PRINT] *** FROM CACHE ${fpKey}`);
     // disabled cache because  of PH-885
     // if (paramsClone.offerType === IOfferType.AGGREGATED) {
     //   const fpDataObj: IFingerPrintData = JSON.parse(fpData);
@@ -62,7 +59,7 @@ export const fingerPrintOverride = async (
       payin: paramsClone.payIn,
       payout: paramsClone.payOut,
     };
-    consola.info(' ***** SET CACHE FINGER_PRINT');
+    consola.info(' *** [SET_FINGER_PRINT] ***');
     setFp(fpKey, JSON.stringify(fpStore));
     pass = false;
   }

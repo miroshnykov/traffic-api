@@ -9,6 +9,7 @@ import { influxdb } from './Utils/metrics';
 import { setSqsDataToRedis } from './Utils/cache';
 import { ISocketType } from './Interfaces/socketTypes';
 import { ISqsMessage } from './Interfaces/sqsMessage';
+import { IntervalTime } from './Constants/intervalTime';
 
 const computerName = os.hostname();
 let masterServerRunning: boolean = false;
@@ -92,7 +93,7 @@ export const socketConnection = (type: ISocketType) => {
       consola.error(`setOffersCheckSizeError${type}:`, e);
     }
   };
-  setInterval(setOffersCheckSize, 10000);
+  setInterval(setOffersCheckSize, IntervalTime.OFFERS_CHECK_SIZE);
 
   const socketEmitOffersRun = async () => {
     // consola.info(`fileSizeOffersCheck, Socket type: { ${type} } masterServerRunning:${masterServerRunning}, slaveServerRunning:${slaveServerRunning} `)
@@ -120,7 +121,7 @@ export const socketConnection = (type: ISocketType) => {
     socket[type].emit('fileSizeCampaignsCheck', campaignsSize);
   };
 
-  setInterval(setCampaignsCheckSize, 10000);
+  setInterval(setCampaignsCheckSize, IntervalTime.CAMPAIGN_CHECK_SIZE);
 
   if (ISocketType.MASTER === type) {
     // consola.warn(`ISocketType:${type}`)
@@ -132,12 +133,12 @@ export const socketConnection = (type: ISocketType) => {
       const campaignRedisKeys = await redis.keys('campaign:*');
       influxdb(200, `redis_size_campaigns_${campaignRedisKeys.length}_for_${computerName}`);
     };
-    setInterval(checkRedisSizeCampaigns, 600000); // 600000 every 10 min
+    setInterval(checkRedisSizeCampaigns, IntervalTime.CHECK_REDIS_SIZE_CAMPAIGNS);
 
     const checkRedisSizeOffers = async () => {
       const offersRedisKeys = await redis.keys('offer:*');
       influxdb(200, `redis_size_offers_${offersRedisKeys.length}_for_${computerName}`);
     };
-    setInterval(checkRedisSizeOffers, 720000); // 720000 every 12 min
+    setInterval(checkRedisSizeOffers, IntervalTime.CHECK_REDIS_SIZE_OFFERS);
   }
 };

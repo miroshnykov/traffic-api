@@ -11,9 +11,12 @@ export interface IParams {
   campaignId: number
   subCampaign?: string
   cid?: string
+  debug?: boolean
+  debugFp?: boolean
+  query?: object[] | any
   affiliateId: number
   affiliateStatus: string
-  affiliateType: string
+  affiliateType: string | null
   campaignStatus: string
   affiliateManagerId: number
   offerType: string
@@ -63,6 +66,7 @@ export interface IParams {
   groupOffer?: boolean
   offersAggregatedIds?: object[]
   offersAggregatedIdsToRedirect?: any
+  offersAggregatedIdsProportionals?: any
   offersAggregatedIdsMargin?: any
   groupBestOffer?: number
   startEndDateSetup?: boolean
@@ -114,8 +118,33 @@ export interface IResponse extends IBaseResponse{
   blockReason?: string;
 }
 
-export interface IBestOffer extends IBaseResponse{
-  bestOfferId: number
+export interface ICalculationCache {
+  data: ICalcAggregatedOffer[],
+  countOffers: number
 }
 
-export const ILandingPageParams: (string)[] = ['subid', 'cid', 'lid', 'affiliateId'];
+export interface ICalcAggregatedOffer{
+  id: number,
+  count: number
+}
+
+export interface IBestOffer extends IBaseResponse{
+  bestOfferId: number
+  cacheData?: ICalcAggregatedOffer[] | null
+}
+
+export enum ILandingPageParamsFields {
+  SUB_ID = 'subid',
+  CID = 'cid',
+  LID = 'lid',
+  AFFILIATE_ID = 'affiliateId',
+  CAMPAIGN_ID = 'campaignId',
+}
+
+export const ILandingPageParams: (string)[] = [
+  `${ILandingPageParamsFields.SUB_ID}`,
+  `${ILandingPageParamsFields.CID}`,
+  `${ILandingPageParamsFields.LID}`,
+  `${ILandingPageParamsFields.AFFILIATE_ID}`,
+  `${ILandingPageParamsFields.CAMPAIGN_ID}`,
+];

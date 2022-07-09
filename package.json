@@ -1,6 +1,6 @@
 {
   "name": "traffic-api",
-  "version": "0.2.67",
+  "version": "0.2.86",
   "description": "Traffic server",
   "main": "server.ts",
   "scripts": {
@@ -10,7 +10,9 @@
     "lint": "npx eslint ./src --ext .ts",
     "lint:fix": "npx eslint --fix ./src --ext .ts",
     "start": "node -r dotenv/config ./dist/server.js dotenv_config_path=/var/run/secrets/environment",
-    "clean": "rimraf ./dist"
+    "clean": "rimraf ./dist",
+    "stageLink": "ts-node -r dotenv/config src/Tests/link.ts dotenv_config_path=.env",
+    "devTest": "ts-node -r dotenv/config src/Tests/devEs2021.ts dotenv_config_path=.env"
   },
   "repository": {
     "type": "git",
@@ -36,6 +38,7 @@
     "chalk": "^4.1.2",
     "cluster": "^0.7.7",
     "consola": "^2.15.3",
+    "cpu": "^1.0.1",
     "device-detector": "^1.0.2",
     "device-detector-js": "^2.2.10",
     "dotenv": "^10.0.0",
@@ -53,6 +56,7 @@
     "md5": "^2.3.0",
     "mmdb-reader": "^1.2.0",
     "os": "^0.1.2",
+    "puppeteer": "^14.4.0",
     "redis": "^3.1.2",
     "request-ip": "^2.1.3",
     "socket.io-client": "^4.1.3",

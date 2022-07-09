@@ -1,9 +1,9 @@
-import { Request } from 'express';
 import consola from 'consola';
 import { influxdb } from '../Utils/metrics';
 
-import { ILandingPageParams, IParams, IResponse } from '../Interfaces/params';
-import { getParams } from './params';
+import {
+  ILandingPageParams, ILandingPageParamsFields, IParams, IResponse,
+} from '../Interfaces/params';
 import { lidOffer } from '../Utils/lid';
 import { createLidOffer } from '../Utils/dynamoDb';
 import { ILid } from '../Interfaces/lid';
@@ -14,11 +14,11 @@ import { handleConditions } from './handleConditions';
 import { AffiliateStatus } from '../Interfaces/affiliates';
 import { ICampaignStatus } from '../Interfaces/campaigns';
 
-export const offersServices = async (req: Request): Promise<IResponse> => {
-  const debug: boolean = req?.query?.debugging! === 'debugging';
+export const offersServices = async (params: IParams): Promise<IResponse> => {
+  // const debug: boolean = req?.query?.debugging! === 'debugging';
+  const debug: boolean = params?.debug!;
   try {
     influxdb(200, 'offers_all_request');
-    const params: IParams = await getParams(req);
     if (params.affiliateStatus === AffiliateStatus.BLACKLISTED) {
       influxdb(200, 'blocked_affiliate');
       consola.error(`Blocked by affiliateId:${params.affiliateId} with status ${params.affiliateStatus}`);
@@ -46,7 +46,7 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
       };
     }
     // consola.info(`finger print key fp:${req.fingerprint?.hash!}-${params.campaignId}`);
-    const fpData = await getFp(`fp:${req.fingerprint?.hash!}-${params.campaignId}`);
+    const fpData = await getFp(`fp:${params.fingerPrintKey}-${params.campaignId}`);
 
     const handleConditionsResponse: IResponse = await handleConditions(params, debug);
     let finalResponse: IParams;
@@ -55,21 +55,21 @@ export const offersServices = async (req: Request): Promise<IResponse> => {
     } else {
       finalResponse = { ...params };
     }
-    const fingerPrintRes: IResponse = await fingerPrintOverride(finalResponse, req, fpData);
+    const fingerPrintRes: IResponse = await fingerPrintOverride(finalResponse, fpData);
 
     if (fingerPrintRes.success) {
       finalResponse = { ...finalResponse, ...fingerPrintRes.params };
     }
 
     ILandingPageParams.forEach((item) => {
-      if (item === 'lid') {
+      if (item === ILandingPageParamsFields.LID
+        || item === ILandingPageParamsFields.AFFILIATE_ID
+        || item === ILandingPageParamsFields.CAMPAIGN_ID) {
+        const itemValue = finalResponse[item];
         finalResponse.landingPageUrl = finalResponse.landingPageUrl
-          && finalResponse.landingPageUrl.replace(`{${item}}`, finalResponse.lid);
-      } else if (item === 'affiliateId') {
-        finalResponse.landingPageUrl = finalResponse.landingPageUrl
-          && finalResponse.landingPageUrl.replace(`{${item}}`, String(finalResponse.affiliateId));
+          && finalResponse.landingPageUrl.replace(`{${item}}`, String(itemValue));
       } else {
-        const tmp = req?.query[item];
+        const tmp = params?.query[item];
         if (tmp) {
           finalResponse.landingPageUrl = finalResponse.landingPageUrl
             && finalResponse.landingPageUrl.replace(`{${item}}`, String(tmp));

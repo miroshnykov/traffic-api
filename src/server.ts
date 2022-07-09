@@ -4,7 +4,7 @@ import { CpuInfo, cpus } from 'node:os';
 import consola from 'consola';
 import chalk from 'chalk';
 import express, {
-  Application, NextFunction, Request, Response,
+  Application, Request, Response,
 } from 'express';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as bodyParser from 'body-parser';
@@ -15,12 +15,13 @@ import 'dotenv/config';
 import { getFileFromBucket } from './Crons/getReceipS3Cron';
 // eslint-disable-next-line import/no-cycle
 import { sendToAggregator } from './Utils/aggregator';
-import { influxdb } from './Utils/metrics';
+import { influxdb, sendMetricsSystem } from './Utils/metrics';
 import { IRedshiftData } from './Interfaces/redshiftData';
 import { IRecipeType } from './Interfaces/recipeTypes';
 import { socketConnection } from './socket';
 import { ISocketType } from './Interfaces/socketTypes';
 import { sendLidDynamoDb } from './Utils/dynamoDb';
+import { IntervalTime } from './Constants/intervalTime';
 // import {setOffersToRedis} from "./Crons/setRecipeToRedisCron";
 
 const app: Application = express();
@@ -49,11 +50,6 @@ export const failedLidsDynamoDb = (data: any) => {
   failedLidsDynamoDbData.push(data);
 };
 
-function loggerMiddleware(request: express.Request, response: express.Response, next: NextFunction) {
-  // consola.info(`${request.method} ${request.path}`);
-  next();
-}
-
 consola.info(`Cores number:${coreThread.length}`);
 if (cluster.isMaster) {
   socketConnection(ISocketType.MASTER);
@@ -79,7 +75,7 @@ if (cluster.isMaster) {
     }
   };
 
-  setInterval(aggregatorData, 20000); // 20 sec
+  setInterval(aggregatorData, IntervalTime.SEND_TO_AGGREGATOR);
 
   const failedLidsProcess = async () => {
     if (failedLidsData.length === 0) return;
@@ -91,7 +87,7 @@ if (cluster.isMaster) {
       failedLidsData.splice(i, 1);
     }
   };
-  setInterval(failedLidsProcess, 3600000); // 1 hour
+  setInterval(failedLidsProcess, IntervalTime.FAILED_LIDS_PROCESS);
 
   const failedLidsDynamoDbProcess = async () => {
     if (failedLidsDynamoDbData.length === 0) return;
@@ -103,7 +99,12 @@ if (cluster.isMaster) {
       failedLidsDynamoDbData.splice(i, 1);
     }
   };
-  setInterval(failedLidsDynamoDbProcess, 1800000); // 30 min
+  setInterval(failedLidsDynamoDbProcess, IntervalTime.FAILED_LIDS_DYNAMO_DB_PROCESS);
+
+  setInterval(() => {
+    if (process.env.NODE_ENV === 'development') return;
+    sendMetricsSystem();
+  }, IntervalTime.SEND_METRICS_SYSTEM);
 
   for (let i = 0; i < coreThread.length; i++) {
     cluster.fork();
@@ -143,10 +144,10 @@ if (cluster.isMaster) {
     }
   });
 
-  cluster.on('exit', (worker: Worker): void => {
+  cluster.on('exit', (worker: Worker, code: number, signal: string): void => {
     if (worker.isDead()) {
       influxdb(500, 'worker_dead');
-      consola.info(`${chalk.redBright('worker dead pid')}: ${worker.process.pid}`);
+      consola.info(`${chalk.redBright('worker dead pid')}: ${worker.process.pid} code:${code} signal:${signal}`);
     }
     cluster.fork();
   });
@@ -158,7 +159,6 @@ if (cluster.isMaster) {
   // setTimeout(setCampaignsToRedis, 20000)
 } else {
   const server = http.createServer(app) as Server;
-  app.use(loggerMiddleware);
   app.use(bodyParser.json());
   app.get('/api/v1/health', (req: Request, res: Response) => {
     res.send('Ok');
@@ -183,3 +183,14 @@ if (cluster.isMaster) {
     consola.success(`Server is running on host http://${host}:${port}, env:${process.env.NODE_ENV} Using node - { ${process.version} } `);
   });
 }
+
+process
+  .on('unhandledRejection', (reason, p) => {
+    consola.error(reason, 'Unhandled Rejection at Promise', p);
+    influxdb(500, 'unhandledRejection');
+  })
+  .on('uncaughtException', (err: Error) => {
+    consola.error(err, 'Uncaught Exception thrown');
+    influxdb(500, 'uncaughtException');
+    process.exit(1);
+  });
